@@ -37,6 +37,17 @@
   }
 }
 
+.columnContainer{
+  display: flex;
+  flex: 1;
+}
+.column{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 50%;
+}
+
 .navigation{
   display:flex;
   align-items: center;
