@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+
+.navigation{
+  display:flex;
+  align-items: center;
+  background-color: midnightblue;
+  height: 60px;
+  width:100%;
+}
+.navigation-menu{
+  margin-left: auto;
+}
+
+.navigation-menu ul{
+  list-style-type: none;
+  display: flex;
+}
+
+.navigation-menu a{
+  margin: 0 1.5em;
+  text-decoration: none;
+  color: #CADCE4;
+}
