@@ -5,15 +5,15 @@ const Layout = () => {
     <>
       <nav className="navigation">
         <img
-          src={"./whodo.svg"}
+          src={"whodo.svg"}
           alt={"WhoDo Logo"}
-          style={{ height: "50px", margin: "0 1em" }}
+          style={{ height: "25px", margin: "0 0.5em 0 1.5em" }}
         />
-        <h1 style={{ color: "white" }}> WhoDo </h1>
+        <h3 style={{ color: "white" }}> WhoDo </h3>
         <div className="navigation-menu">
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/">Blog</Link>
             </li>
             <li>
               <Link to="/contact">Contact</Link>

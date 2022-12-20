@@ -1,10 +1,27 @@
-const Home = () => {
+import { Link } from "react-router-dom";
+
+const BlogArticle = () => {
   return (
-    <div>
-      <h1>Welcome To Whodo</h1>
-      <div className="columnContainer">
-        <div className="column">
-          <h3>
+    <>
+      <div className="blog-title">
+        <img
+          className="profile-pic"
+          src="blank-profile-picture-973460_1280.webp"
+        />
+        <div>
+          <p>
+            Written by:{" "}
+            <Link
+              to="/author/howard-lorum-wu"
+              state={{ name: "Howard Lorum Wu" }}
+            >
+              Howard Lorum Wu
+            </Link>{" "}
+            on December 18, 2022
+          </p>
+          <h1 style={{ width: "100%" }}>What is WhoDo</h1>
+          <img src={"sample-1.jpeg"} />
+          <h4>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
             vel tortor pharetra diam porta rhoncus non id nibh. Aliquam vitae
             tortor tristique, accumsan ligula quis, fermentum leo. In non sapien
@@ -16,11 +33,11 @@ const Home = () => {
             Sed interdum orci dui, nec porttitor enim malesuada nec. Proin nibh
             orci, porta feugiat cursus a, fringilla a nisl. Fusce euismod
             consequat sapien, eu rutrum odio.
-          </h3>
+          </h4>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default Home;
+export default BlogArticle;

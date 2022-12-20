@@ -39,20 +39,46 @@
 
 .columnContainer{
   display: flex;
-  flex: 1;
-}
-.column{
-  display: flex;
   flex-direction: row;
+  justify-content: center;
+}
+
+.column{
+  flex: 2;
+  margin: 1em 3em;
   flex-wrap: wrap;
-  width: 50%;
+  text-align: left;
+}
+
+.blog-links-column{
+  flex: 1;
+  margin: 1em 3em;
+  flex-wrap: wrap;
+  border-left: 1px solid black;
+}
+
+.blog-title{
+  display:flex;
+}
+
+.profile-pic{
+  max-height: 100px;
+  width: 100px;
+  margin: 1em;
+}
+.whodo-links{
+  text-align:left;
+}
+
+h1.column{
+  text-align: center;
 }
 
 .navigation{
   display:flex;
   align-items: center;
   background-color: midnightblue;
-  height: 60px;
+  height: 50px;
   width:100%;
 }
 .navigation-menu{
