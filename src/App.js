@@ -5,6 +5,8 @@ import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Author from "./pages/Author";
+import Dashboard from "./pages/Dashboard";
+
 function App() {
   return (
     <div className="App">
@@ -15,6 +17,7 @@ function App() {
             <Route path="contact" element={<Contact />} />
             <Route path="login" element={<Login />} />
             <Route path="author/:name" element={<Author />} />
+            <Route path="dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>
