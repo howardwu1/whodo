@@ -35,7 +35,7 @@ const Login = () => {
           {...register("name", { required: true })}
           id="name"
           onChange={() => {
-            clearErrors("signin");
+            clearErrors(["signin", "name"]);
           }}
         />
         <label htmlFor="password">Password</label>
@@ -44,7 +44,7 @@ const Login = () => {
           id="password"
           type="password"
           onChange={() => {
-            clearErrors("signin");
+            clearErrors(["signin", "password"]);
           }}
         />
         {errors.name && (
