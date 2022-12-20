@@ -35,7 +35,7 @@ const Blog = () => {
                     <a href="#">Our Philosophy On Mentorship and Giving Back</a>
                   </li>
                   <li>
-                    <a href="#">"WhoDo" We Look For Mentorship</a>
+                    <a href="#">"WhoDo" We Look To Mentor</a>
                   </li>
                 </ul>
               </div>
