@@ -34,8 +34,8 @@ const Login = () => {
         <input
           {...register("name", { required: true })}
           id="name"
-          onChange={() => {
-            clearErrors(["signin", "name"]);
+          onClick={() => {
+            clearErrors("signin");
           }}
         />
         <label htmlFor="password">Password</label>
@@ -43,8 +43,8 @@ const Login = () => {
           {...register("password", { required: true })}
           id="password"
           type="password"
-          onChange={() => {
-            clearErrors(["signin", "password"]);
+          onClick={() => {
+            clearErrors("password");
           }}
         />
         {errors.name && (
