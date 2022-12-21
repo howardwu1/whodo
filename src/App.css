@@ -105,6 +105,7 @@ h1.column{
   min-width: 400px;
   display:flex;
   flex-direction: column;
+  padding: 1em 1em;
 }
 
 label, input{
