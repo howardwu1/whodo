@@ -44,7 +44,7 @@ const Login = () => {
           id="password"
           type="password"
           onClick={() => {
-            clearErrors("password");
+            clearErrors("signin");
           }}
         />
         {errors.name && (
