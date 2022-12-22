@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router-dom";
+import { AppContext } from "../App";
 
 const Login = () => {
   const {
@@ -15,10 +16,11 @@ const Login = () => {
 
   const [hasForgottenPassword, setHasForgottenPassword] = useState(false);
   const [isPasswordResetSent, setIsPasswordResetSent] = useState(false);
-  const [username, setUsername] = useState("");
+  const { username, setUsername } = useContext(AppContext);
 
   const onSubmit = (data) => {
     if (data.name === "asdf" && data.password === "asdf") {
+      setUsername(data.name);
       navigate("/dashboard");
     } else {
       setError("signin", {

@@ -1,6 +1,10 @@
 import { Outlet, Link } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../App";
 
 const Layout = () => {
+  const { username } = useContext(AppContext);
+
   return (
     <>
       <nav className="navigation">
@@ -19,7 +23,7 @@ const Layout = () => {
               <Link to="/contact">Contact</Link>
             </li>
             <li>
-              <Link to="/login">Login</Link>
+              <Link to="/login">{username === "" ? "Login" : username}</Link>
             </li>
           </ul>
         </div>

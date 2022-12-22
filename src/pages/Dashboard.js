@@ -1,5 +1,9 @@
+import { AppContext } from "../App";
+import { useContext } from "react";
+
 const Dashboard = () => {
-  return <h1>Dashboard</h1>;
+  const { username } = useContext(AppContext);
+  return <h1>Dashboard {username}</h1>;
 };
 
 export default Dashboard;
