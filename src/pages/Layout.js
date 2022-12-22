@@ -1,10 +1,10 @@
 import { Outlet, Link } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../App";
 
 const Layout = () => {
   const { username } = useContext(AppContext);
-
+  const [userDropdown, setUserDropdown] = useState(false);
   return (
     <>
       <nav className="navigation">
@@ -23,12 +23,26 @@ const Layout = () => {
               <Link to="/contact">Contact</Link>
             </li>
             <li>
-              <Link to="/login">{username === "" ? "Login" : username}</Link>
+              {username === "" ? (
+                <Link to="/login">Login</Link>
+              ) : (
+                <Link onClick={() => setUserDropdown(true)}>{username}</Link>
+              )}
             </li>
           </ul>
         </div>
       </nav>
-
+      {userDropdown ? (
+        <div
+          style={{
+            border: "1px solid black",
+            position: "absolute",
+            right: "300px",
+          }}
+        >
+          <p>hey</p>
+        </div>
+      ) : null}
       <Outlet />
     </>
   );
