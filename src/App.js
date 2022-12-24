@@ -7,6 +7,8 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Author from "./pages/Author";
 import Dashboard from "./pages/Dashboard";
+import Report from "./pages/Report";
+import Profile from "./pages/Profile";
 
 export const AppContext = createContext();
 
@@ -24,6 +26,8 @@ function App() {
               <Route path="login" element={<Login />} />
               <Route path="author/:name" element={<Author />} />
               <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="reports" element={<Report />} />
             </Route>
           </Routes>
         </BrowserRouter>

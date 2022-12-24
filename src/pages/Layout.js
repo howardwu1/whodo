@@ -1,10 +1,12 @@
 import { Outlet, Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useState, useRef } from "react";
 import { AppContext } from "../App";
 
 const Layout = () => {
-  const { username } = useContext(AppContext);
+  const { username, setUsername } = useContext(AppContext);
   const [userDropdown, setUserDropdown] = useState(false);
+  const loginButtonRef = useRef(null);
+
   return (
     <>
       <nav className="navigation">
@@ -26,7 +28,12 @@ const Layout = () => {
               {username === "" ? (
                 <Link to="/login">Login</Link>
               ) : (
-                <Link onClick={() => setUserDropdown(true)}>{username}</Link>
+                <Link
+                  onClick={() => setUserDropdown(true)}
+                  ref={loginButtonRef}
+                >
+                  {username}
+                </Link>
               )}
             </li>
           </ul>
@@ -34,15 +41,75 @@ const Layout = () => {
       </nav>
       {userDropdown ? (
         <div
+          onClick={() => setUserDropdown(false)}
           style={{
-            border: "1px solid black",
-            position: "absolute",
-            right: "300px",
+            width: "100%",
+            height: "100vh",
+            zIndex: "1",
+            position: "fixed",
           }}
         >
-          <p>hey</p>
+          <div
+            style={{
+              boxShadow:
+                "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+              position: "fixed",
+              marginLeft: "auto",
+              right: loginButtonRef.current.getBoundingClientRect()["y"] + "px",
+              top: "50px",
+              width: "130px",
+              zIndex: "2",
+            }}
+          >
+            <img
+              src="blank-profile-picture-973460_1280.webp"
+              className="profile-pic"
+            />
+            <p
+              style={{
+                borderBottom: "1.5px solid lightgray",
+                fontWeight: "bold",
+                paddingBottom: "1em",
+                marginTop: "0",
+                marginBottom: "0",
+              }}
+            >
+              {username}
+            </p>
+            <div
+              style={{
+                paddingTop: "0.5em",
+                paddingBottom: "0.5em",
+                fontSize: "10pt",
+                borderBottom: "1.5px solid lightgray",
+              }}
+            >
+              <Link to="/profile" className="profile-menu">
+                Profile
+              </Link>
+              <Link to="/reports" className="profile-menu">
+                Reports
+              </Link>
+            </div>
+            <div
+              style={{
+                paddingTop: "0.5em",
+                paddingBottom: "0.5em",
+                fontSize: "10pt",
+              }}
+            >
+              <Link
+                to="/login"
+                className="profile-menu"
+                onClick={() => setUsername("")}
+              >
+                Sign Out
+              </Link>
+            </div>
+          </div>
         </div>
       ) : null}
+
       <Outlet />
     </>
   );
