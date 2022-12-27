@@ -6,23 +6,17 @@ import "react-tabs/style/react-tabs.css";
 import "../App.css";
 
 const Dashboard = () => {
-  const tabPanelDivRef = useRef();
-
   const { username } = useContext(AppContext);
   return (
     <Tabs>
       <TabList>
-        <Tab
-          style={{
-            marginLeft: tabPanelDivRef.current.getBoundingClientRect().x + "px",
-          }}
-        >
-          Projects
-        </Tab>
-        <Tab disabled>Workspaces (Paid Feature)</Tab>
+        <div style={{ maxWidth: "800px", margin: "auto" }}>
+          <Tab>Projects</Tab>
+          <Tab disabled>Workspaces (Paid Feature)</Tab>
+        </div>
       </TabList>
 
-      <div ref={tabPanelDivRef} style={{ maxWidth: "800px", margin: "auto" }}>
+      <div style={{ maxWidth: "800px", margin: "auto" }}>
         <TabPanel>
           <h2>Projects {username}</h2>
         </TabPanel>
