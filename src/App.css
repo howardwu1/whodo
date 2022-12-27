@@ -161,3 +161,10 @@ input{
   border-bottom: 4px solid midnightblue !important;
   position: static !important;
 }
+
+.project-card{
+  margin-top: 30px;
+  width: 300px;
+  border: 1px solid grey;
+  background-color: whitesmoke;
+}

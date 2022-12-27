@@ -67,6 +67,7 @@ const Layout = () => {
             <img
               src="blank-profile-picture-973460_1280.webp"
               className="profile-pic"
+              alt="profile-pic"
             />
             <p
               style={{
