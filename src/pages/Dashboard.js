@@ -30,6 +30,14 @@ const Dashboard = () => {
     setProjects(newProjects);
   };
 
+  const updatePrivate = (project, index) => {
+    updateProjects([
+      ...projects.slice(0, index),
+      { ...project, isPrivate: !project.isPrivate },
+      ...projects.slice(index + 1, projects.length),
+    ]);
+  };
+
   useEffect(() => {
     setProjects(getProjects(projects));
   }, [projects]);
@@ -61,24 +69,10 @@ const Dashboard = () => {
                 >
                   <div style={{ display: "flex", alignItems: "center" }}>
                     {project.isPrivate ? (
-                      <LockIcon
-                        onClick={() =>
-                          updateProjects([
-                            ...projects.slice(0, index),
-                            { ...project, isPrivate: !project.isPrivate },
-                            ...projects.slice(index + 1, projects.length),
-                          ])
-                        }
-                      />
+                      <LockIcon onClick={() => updatePrivate(project, index)} />
                     ) : (
                       <LockOpenIcon
-                        onClick={() =>
-                          updateProjects([
-                            ...projects.slice(0, index),
-                            { ...project, isPrivate: !project.isPrivate },
-                            ...projects.slice(index + 1, projects.length),
-                          ])
-                        }
+                        onClick={() => updatePrivate(project, index)}
                       />
                     )}
                     <h3 style={{ paddingLeft: "15px" }}>{project.name}</h3>
