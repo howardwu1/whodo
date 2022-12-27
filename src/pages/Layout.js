@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useContext, useState, useRef } from "react";
 import { AppContext } from "../App";
 
@@ -6,7 +6,7 @@ const Layout = () => {
   const { username, setUsername } = useContext(AppContext);
   const [userDropdown, setUserDropdown] = useState(false);
   const loginButtonRef = useRef(null);
-
+  const navigate = useNavigate();
   return (
     <>
       <nav className="navigation">
@@ -14,6 +14,9 @@ const Layout = () => {
           src={"whodo.svg"}
           alt={"WhoDo Logo"}
           style={{ height: "25px", margin: "0 0.5em 0 1.5em" }}
+          onClick={() =>
+            username ? navigate("/dashboard") : navigate("/login")
+          }
         />
         <h3 style={{ color: "white" }}> WhoDo </h3>
         <div className="navigation-menu">

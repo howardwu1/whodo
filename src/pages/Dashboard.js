@@ -1,5 +1,5 @@
 import { AppContext } from "../App";
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
