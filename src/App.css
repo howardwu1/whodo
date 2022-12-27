@@ -144,3 +144,20 @@ input{
 .login-error{
   color: red;
 }
+
+.react-tabs__tab-list{
+  height: 40px !important;
+  line-height: 40px !important;
+  padding-bottom: 4px !important;
+  text-align: initial !important;
+}
+
+.react-tabs__tab{
+  padding: 0px 12px !important;
+}
+.react-tabs__tab--selected{
+  height: inherit !important;
+  border: none !important;
+  border-bottom: 4px solid midnightblue !important;
+  position: static !important;
+}
