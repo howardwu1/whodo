@@ -81,7 +81,7 @@ const Dashboard = () => {
                         }
                       />
                     )}
-                    <h3 style={{ textAlign: "center" }}>{project.name}</h3>
+                    <h3 style={{ paddingLeft: "15px" }}>{project.name}</h3>
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <FavoriteIcon
