@@ -5,6 +5,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -12,6 +13,7 @@ const Dashboard = () => {
     if (projects.length === 0) {
       return [
         {
+          id: 12321,
           name: "My Project",
           isFavorite: false,
           isPrivate: true,
@@ -25,7 +27,7 @@ const Dashboard = () => {
   };
 
   const updateProjects = (newProjects) => {
-    //placeholder
+    //placeholder until backend
     console.log("updated state would now be ", newProjects);
     setProjects(newProjects);
   };
@@ -55,7 +57,7 @@ const Dashboard = () => {
         <TabPanel>
           <>
             {projects.map((project, index) => (
-              <div key={project.name} className="project-card">
+              <div key={project.id} className="project-card">
                 <div
                   style={{
                     display: "flex",
@@ -75,7 +77,9 @@ const Dashboard = () => {
                         onClick={() => updatePrivate(project, index)}
                       />
                     )}
-                    <h3 style={{ paddingLeft: "15px" }}>{project.name}</h3>
+                    <Link to={`/projects/${project.id}`} className="hiddenLink">
+                      <h3 style={{ paddingLeft: "15px" }}>{project.name}</h3>
+                    </Link>
                   </div>
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <FavoriteIcon

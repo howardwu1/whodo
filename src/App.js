@@ -9,14 +9,16 @@ import Author from "./pages/Author";
 import Dashboard from "./pages/Dashboard";
 import Report from "./pages/Report";
 import Profile from "./pages/Profile";
+import Project from "./pages/Project";
 
 export const AppContext = createContext();
 
 function App() {
   const [username, setUsername] = useState("");
+  const [project, setProject] = useState("");
 
   return (
-    <AppContext.Provider value={{ username, setUsername }}>
+    <AppContext.Provider value={{ username, setUsername, project, setProject }}>
       <div className="App">
         <BrowserRouter>
           <Routes>
@@ -28,6 +30,7 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               <Route path="reports" element={<Report />} />
+              <Route path="projects/:projectId" element={<Project />} />
             </Route>
           </Routes>
         </BrowserRouter>

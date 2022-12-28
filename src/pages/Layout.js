@@ -1,12 +1,14 @@
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useState, useRef } from "react";
 import { AppContext } from "../App";
 
 const Layout = () => {
-  const { username, setUsername } = useContext(AppContext);
+  const { username, setUsername, project } = useContext(AppContext);
   const [userDropdown, setUserDropdown] = useState(false);
   const loginButtonRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <>
       <nav className="navigation">
@@ -19,6 +21,12 @@ const Layout = () => {
           }
         />
         <h3 style={{ color: "white" }}> WhoDo </h3>
+        {location.pathname.split("/")[1] === "projects" ? (
+          <h2 style={{ color: "white" }}>&nbsp;- {project}</h2>
+        ) : (
+          <h3 style={{ color: "white" }}>&nbsp;- hmm</h3>
+        )}
+
         <div className="navigation-menu">
           <ul>
             <li>
