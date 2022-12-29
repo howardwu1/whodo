@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { AppContext } from "../App";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
 
 const Project = () => {
   const projectID = useParams();
@@ -51,7 +53,27 @@ const Project = () => {
     setProjectDetails(getProjectDetails(projectID));
   }, []);
 
-  return <h1>{projectDetails.name}</h1>;
+  return (
+    <Tabs>
+      <TabList className="navigation-tabs">
+        <Tab>Stories</Tab>
+        <Tab disabled>Analytics (Paid Feature)</Tab>
+        <Tab>Members</Tab>
+      </TabList>
+
+      <TabPanel>
+        <>
+          <h1>Stories TODO</h1>
+        </>
+      </TabPanel>
+      <TabPanel>
+        <h2>Not yet implemented</h2>
+      </TabPanel>
+      <TabPanel>
+        <h2>Not yet implemented</h2>
+      </TabPanel>
+    </Tabs>
+  );
 };
 
 export default Project;

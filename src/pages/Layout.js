@@ -23,9 +23,7 @@ const Layout = () => {
         <h3 style={{ color: "white" }}> WhoDo </h3>
         {location.pathname.split("/")[1] === "projects" ? (
           <h2 style={{ color: "white" }}>&nbsp;- {project}</h2>
-        ) : (
-          <h3 style={{ color: "white" }}>&nbsp;- hmm</h3>
-        )}
+        ) : null}
 
         <div className="navigation-menu">
           <ul>

@@ -85,6 +85,7 @@ h1.column{
   position: sticky;
   top: 0;
 }
+
 .navigation-menu{
   margin-left: auto;
 }
@@ -158,7 +159,9 @@ input{
 .react-tabs__tab--selected{
   height: inherit !important;
   border: none !important;
-  border-bottom: 4px solid midnightblue !important;
+  background-color: inherit !important;
+  color: inherit !important;
+  border-bottom: 4px solid !important;
   position: static !important;
 }
 
@@ -176,5 +179,17 @@ input{
 
 .hiddenLink:hover{
   text-decoration: underline;
+}
+
+.navigation-tabs{
+  background-color: midnightblue !important;
+  position: sticky;
+  top: 0;
+  color: white !important;
+  height: 40px !important;
+  line-height: 40px !important;
+  padding-bottom: 4px !important;
+  text-align: initial !important;
+  margin: 0 !important;
 }
 
