@@ -19,7 +19,7 @@ function App() {
 
   return (
     <AppContext.Provider value={{ username, setUsername, project, setProject }}>
-      <div className="App">
+      <div className="App" style={{ overflowY: "hidden", height: "100vh" }}>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Layout />}>

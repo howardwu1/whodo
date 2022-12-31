@@ -84,6 +84,7 @@ h1.column{
   width:100%;
   position: sticky;
   top: 0;
+  left: 0;
 }
 
 .navigation-menu{
@@ -184,7 +185,7 @@ input{
 .navigation-tabs{
   background-color: midnightblue !important;
   position: sticky;
-  top: 0;
+  top: 50px;
   color: white !important;
   height: 40px !important;
   line-height: 40px !important;
@@ -193,3 +194,40 @@ input{
   margin: 0 !important;
 }
 
+.sidebar{
+  background-color: dimgray;
+  position: initial;
+  display: flex;
+  flex-flow: flex-start;
+  min-width: 20%;
+  flex-direction: column;
+  position: sticky;
+  left: 0px;  
+  top: 50px;
+  overflow:hidden;
+}
+
+.sidebar-btn{
+  background-color: dimgray;
+  flex: 1;
+  max-height: 50px;
+  border-bottom: 2px solid black;
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+.sidebar-btn:hover{
+  background-color:#505050	;
+}
+
+.stories-column{
+  background-color:darkgrey;
+  min-height: 100vh;
+  width:30%;
+  display: flex;
+  min-width: 30vh;
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+  margin-right: 2px;
+  margin-left: 2px;
+}
