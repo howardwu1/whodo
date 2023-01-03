@@ -89,17 +89,21 @@ h1.column{
 
 .navigation-menu{
   margin-left: auto;
+  
 }
 
 .navigation-menu ul{
   list-style-type: none;
   display: flex;
+  flex-direction: row;
 }
 
 .navigation-menu a{
   margin: 0 1.5em;
   text-decoration: none;
   color: #CADCE4;
+  display: flex;
+  max-height:19px;
 }
 
 a.profile-menu{

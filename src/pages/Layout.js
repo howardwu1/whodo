@@ -1,4 +1,5 @@
 import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useContext, useState, useRef } from "react";
 import { AppContext } from "../App";
 
@@ -13,7 +14,7 @@ const Layout = () => {
     <>
       <nav className="navigation">
         <img
-          src={"whodo.svg"}
+          src={"/whodo.svg"}
           alt={"WhoDo Logo"}
           style={{ height: "25px", margin: "0 0.5em 0 1.5em" }}
           onClick={() =>
@@ -41,7 +42,14 @@ const Layout = () => {
                   onClick={() => setUserDropdown(true)}
                   ref={loginButtonRef}
                 >
-                  {username}
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {username} <ArrowDropDownIcon />
+                  </span>
                 </Link>
               )}
             </li>
@@ -54,24 +62,27 @@ const Layout = () => {
           style={{
             width: "100%",
             height: "100vh",
-            zIndex: "1",
+            zIndex: "2",
             position: "fixed",
+            top: "0px",
           }}
         >
           <div
             style={{
               boxShadow:
                 "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-              position: "fixed",
+              position: "relative",
               marginLeft: "auto",
               right: loginButtonRef.current.getBoundingClientRect()["y"] + "px",
-              top: "50px",
               width: "130px",
-              zIndex: "2",
+              zIndex: "3",
+              opacity: "100%",
+              backgroundColor: "white",
+              top: "50px",
             }}
           >
             <img
-              src="blank-profile-picture-973460_1280.webp"
+              src="/blank-profile-picture-973460_1280.webp"
               className="profile-pic"
               alt="profile-pic"
             />
