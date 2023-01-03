@@ -19,7 +19,7 @@ const Login = () => {
   const { username, setUsername } = useContext(AppContext);
 
   const onSubmit = (data) => {
-    if (data.name === "asdf" && data.password === "asdf") {
+    if (data.name === "asdf" && data.password === "asdfdsamyrandompass") {
       setUsername(data.name);
       navigate("/dashboard");
     } else {

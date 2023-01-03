@@ -10,6 +10,10 @@ const Project = () => {
   const { setProject } = useContext(AppContext);
   const [showMyStories, setShowMyStories] = useState(true);
   const [showCurrentIteration, setShowCurrentIteration] = useState(true);
+  const [showMyCol, setShowMyCol] = useState(true);
+  const [showMyCol2, setShowMyCol2] = useState(true);
+  const numColumns =
+    showCurrentIteration + showMyStories + showMyCol + showMyCol2;
 
   const getProjectDetails = (id) => {
     setProject("Sample");
@@ -67,7 +71,7 @@ const Project = () => {
         style={{
           display: "flex",
           height: "100%",
-          overflowY: "hidden",
+          overflow: "hidden",
         }}
       >
         <>
@@ -90,33 +94,87 @@ const Project = () => {
             >
               Current Iteration
             </button>
+            <button
+              className="sidebar-btn"
+              onClick={() => {
+                setShowMyCol(!showMyCol);
+              }}
+              style={{ color: showMyCol ? "white" : "gray" }}
+            >
+              MyCol1
+            </button>
+            <button
+              className="sidebar-btn"
+              onClick={() => {
+                setShowMyCol2(!showMyCol2);
+              }}
+              style={{ color: showMyCol2 ? "white" : "gray" }}
+            >
+              MyCol2
+            </button>
           </div>
           <div
             style={{
-              overflowY: "false",
               display: "flex",
-              flexDirection: "row",
+              overflowX: "auto",
+              overflowY: "hidden",
+              height: "91vh",
+              width: "100%",
+              justifyContent: numColumns < 3 ? "space-evenly" : null,
             }}
           >
             {showMyStories ? (
-              <div className="stories-column">
+              <div
+                className="stories-column"
+                style={{
+                  marginRight: numColumns < 3 ? null : "2px",
+                  marginLeft: numColumns < 3 ? null : "2px",
+                  minWidth:
+                    numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+                }}
+              >
                 <h1>my stories</h1>
               </div>
             ) : null}
             {showCurrentIteration ? (
-              <div className="stories-column">
+              <div
+                className="stories-column"
+                style={{
+                  marginRight: numColumns < 3 ? null : "2px",
+                  marginLeft: numColumns < 3 ? null : "2px",
+                  minWidth:
+                    numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+                }}
+              >
                 <h1>current iteration</h1>
               </div>
             ) : null}
-            <div className="stories-column">
-              <h1>hello</h1>
-            </div>
-            <div className="stories-column">
-              <h1>hello</h1>
-            </div>
-            <div className="stories-column">
-              <h1>hello</h1>
-            </div>
+            {showMyCol ? (
+              <div
+                className="stories-column"
+                style={{
+                  marginRight: numColumns < 3 ? null : "2px",
+                  marginLeft: numColumns < 3 ? null : "2px",
+                  minWidth:
+                    numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+                }}
+              >
+                <h1>mycol1</h1>
+              </div>
+            ) : null}
+            {showMyCol2 ? (
+              <div
+                className="stories-column"
+                style={{
+                  marginRight: numColumns < 3 ? null : "2px",
+                  marginLeft: numColumns < 3 ? null : "2px",
+                  minWidth:
+                    numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+                }}
+              >
+                <h1>mycol2</h1>
+              </div>
+            ) : null}
           </div>
         </>
       </TabPanel>
