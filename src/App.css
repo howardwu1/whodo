@@ -246,6 +246,7 @@ input{
     font-size: 18px;
     background-color: #eee;
     flex-direction: column;
+    height: 100%;
   }
   .item-container {
     background-color: #fff;
