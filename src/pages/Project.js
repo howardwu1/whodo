@@ -9,7 +9,7 @@ import StoriesColumn from "../component/StoriesColumn";
 const Project = () => {
   const { projectId } = useParams();
   const [projectDetails, setProjectDetails] = useState({});
-  const { setProject } = useContext(AppContext);
+  const { username, setProject } = useContext(AppContext);
   const [showMyStories, setShowMyStories] = useState(true);
   const [showCurrentIteration, setShowCurrentIteration] = useState(true);
   const [showMyCol, setShowMyCol] = useState(true);
@@ -27,7 +27,7 @@ const Project = () => {
         {
           id: 123,
           title: "sample story",
-          assignee: "HW",
+          assignee: "asdf",
           points: 3,
           isFinished: false,
           dateCreated: "December 27, 2022",
@@ -36,8 +36,17 @@ const Project = () => {
         {
           id: 1234,
           title: "sample story 2",
-          assignee: "HW",
+          assignee: "asdf",
           points: 5,
+          isFinished: false,
+          dateCreated: "December 28, 2022",
+          type: "feature",
+        },
+        {
+          id: 12345,
+          title: "sample story 3",
+          assignee: "SR",
+          points: 2,
           isFinished: false,
           dateCreated: "December 28, 2022",
           type: "feature",
@@ -58,6 +67,10 @@ const Project = () => {
   };
 
   const [currentIterationStories, setCurrentIterationStories] = useState([]);
+
+  const myStories = currentIterationStories.filter(
+    (story) => story.assignee === username
+  );
 
   const handleDrop = (droppedItem, storyList, setStoryList) => {
     // Ignore drop outside droppable container
@@ -145,7 +158,8 @@ const Project = () => {
             >
               {showMyStories ? (
                 <StoriesColumn
-                  storyList={currentIterationStories}
+                  draggable={false}
+                  storyList={myStories}
                   setShowStoryList={setShowMyStories}
                   handleDrop={(e) =>
                     handleDrop(

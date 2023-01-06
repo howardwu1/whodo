@@ -6,6 +6,7 @@ const StoriesColumn = ({
   handleDrop,
   numColumns,
   columnName,
+  draggable = true,
 }) => {
   return (
     <div
@@ -42,24 +43,28 @@ const StoriesColumn = ({
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {storyList.map((story, index) => (
-                <Draggable
-                  key={story.id}
-                  draggableId={story.id.toString()}
-                  index={index}
-                >
-                  {(provided) => (
-                    <div
-                      className="item-container"
-                      ref={provided.innerRef}
-                      {...provided.dragHandleProps}
-                      {...provided.draggableProps}
-                    >
-                      {story.title}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
+              {storyList.map((story, index) =>
+                draggable ? (
+                  <Draggable
+                    key={story.id}
+                    draggableId={story.id.toString()}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div
+                        className="item-container"
+                        ref={provided.innerRef}
+                        {...provided.dragHandleProps}
+                        {...provided.draggableProps}
+                      >
+                        {story.title}
+                      </div>
+                    )}
+                  </Draggable>
+                ) : (
+                  <div className="item-container">{story.title}</div>
+                )
+              )}
               {provided.placeholder}
             </div>
           )}
