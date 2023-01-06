@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import { AppContext } from "../App";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Project = () => {
   const { projectId } = useParams();
@@ -57,7 +58,31 @@ const Project = () => {
 
   const [currentIterationStories, setCurrentIterationStories] = useState([]);
 
-  const handleDrop = (droppedItem, setItemList) => {
+  // const handleDrop = (droppedItem) => {
+  //   // Ignore drop outside droppable container
+  //   if (!droppedItem.destination) return;
+  //   var updatedList = [...currentIterationStories];
+  //   // Remove dragged item
+  //   const [reorderedItem] = updatedList.splice(droppedItem.source.index, 1);
+  //   // Add dropped item
+  //   updatedList.splice(droppedItem.destination.index, 0, reorderedItem);
+  //   // Update State
+  //   setCurrentIterationStories(updatedList);
+  // };
+
+  useEffect(() => {
+    setProjectDetails(getProjectDetails(projectId));
+    setCurrentIterationStories(
+      getProjectDetails(projectId).currentIterationStories
+    );
+  }, []);
+
+  const defaultList = ["A", "B", "C", "D", "E"];
+  // React state to track order of items
+  const [itemList, setItemList] = useState(defaultList);
+
+  // Function to update list on drop
+  const handleDrop = (droppedItem) => {
     // Ignore drop outside droppable container
     if (!droppedItem.destination) return;
     var updatedList = [...itemList];
@@ -68,14 +93,6 @@ const Project = () => {
     // Update State
     setItemList(updatedList);
   };
-
-  useEffect(() => {
-    setProjectDetails(getProjectDetails(projectId));
-    setCurrentIterationStories(
-      getProjectDetails(projectId).currentIterationStories
-    );
-  }, []);
-
   if (currentIterationStories !== undefined) {
     return (
       <Tabs>
@@ -142,19 +159,38 @@ const Project = () => {
               }}
             >
               {showMyStories ? (
-                <div
-                  className="stories-column"
-                  style={{
-                    marginRight: numColumns < 3 ? null : "2px",
-                    marginLeft: numColumns < 3 ? null : "2px",
-                    minWidth:
-                      numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
-                    flexFlow: "column",
-                  }}
-                >
-                  {currentIterationStories.map((story) => {
-                    return <h1 key={story.id}>{story.title}</h1>;
-                  })}
+                <div className="App">
+                  <DragDropContext onDragEnd={handleDrop}>
+                    <Droppable droppableId="list-container">
+                      {(provided) => (
+                        <div
+                          className="list-container"
+                          {...provided.droppableProps}
+                          ref={provided.innerRef}
+                        >
+                          {itemList.map((item, index) => (
+                            <Draggable
+                              key={item}
+                              draggableId={item}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <div
+                                  className="item-container"
+                                  ref={provided.innerRef}
+                                  {...provided.dragHandleProps}
+                                  {...provided.draggableProps}
+                                >
+                                  {item}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
                 </div>
               ) : null}
               {showCurrentIteration ? (
@@ -210,6 +246,178 @@ const Project = () => {
   } else {
     return <h1>loading</h1>;
   }
+
+  // if (currentIterationStories !== undefined) {
+  //   return (
+  //     <Tabs>
+  //       <TabList className="navigation-tabs">
+  //         <Tab>Stories</Tab>
+  //         <Tab disabled>Analytics (Paid Feature)</Tab>
+  //         <Tab>Members</Tab>
+  //       </TabList>
+
+  //       <TabPanel
+  //         style={{
+  //           display: "flex",
+  //           height: "100%",
+  //           overflow: "hidden",
+  //         }}
+  //       >
+  //         <>
+  //           <div className="sidebar">
+  //             <button
+  //               className="sidebar-btn"
+  //               onClick={() => {
+  //                 setShowMyStories(!showMyStories);
+  //               }}
+  //               style={{ color: showMyStories ? "white" : "gray" }}
+  //             >
+  //               My Stories
+  //             </button>
+  //             <button
+  //               className="sidebar-btn"
+  //               onClick={() => {
+  //                 setShowCurrentIteration(!showCurrentIteration);
+  //               }}
+  //               style={{ color: showCurrentIteration ? "white" : "gray" }}
+  //             >
+  //               Current Iteration
+  //             </button>
+  //             <button
+  //               className="sidebar-btn"
+  //               onClick={() => {
+  //                 setShowMyCol(!showMyCol);
+  //               }}
+  //               style={{ color: showMyCol ? "white" : "gray" }}
+  //             >
+  //               MyCol1
+  //             </button>
+  //             <button
+  //               className="sidebar-btn"
+  //               onClick={() => {
+  //                 setShowMyCol2(!showMyCol2);
+  //               }}
+  //               style={{ color: showMyCol2 ? "white" : "gray" }}
+  //             >
+  //               MyCol2
+  //             </button>
+  //           </div>
+  //           <div
+  //             style={{
+  //               display: "flex",
+  //               overflowX: "auto",
+  //               overflowY: "hidden",
+  //               height: "91vh",
+  //               width: "100%",
+  //               justifyContent: numColumns < 3 ? "space-evenly" : null,
+  //             }}
+  //           >
+  //             {showMyStories ? (
+  //               // <DragDropContext onDragEnd={handleDrop}>
+  //               //   <Droppable droppableId="list-container">
+  //               //     {(provided) => (
+  //               <div
+  //                 className="stories-column"
+  //                 style={{
+  //                   marginRight: numColumns < 3 ? null : "2px",
+  //                   marginLeft: numColumns < 3 ? null : "2px",
+  //                   minWidth:
+  //                     numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+  //                   flexFlow: "column",
+  //                 }}
+  //                 // {...provided.droppableProps}
+  //                 // ref={provided.innerRef}
+  //               >
+  //                 {
+  //                   currentIterationStories.map(
+  //                     (story, index) => {
+  //                       return (
+  //                         // <Draggable
+  //                         //   key={story.id}
+  //                         //   draggableId={story.id}
+  //                         //   index={index}
+  //                         //   ref={provided.innerRef}
+  //                         //   {...provided.dragHandleProps}
+  //                         //   {...provided.draggableProps}
+  //                         // >
+  //                         //   {(provided) => {
+  //                         //     return (
+  //                         <div
+  //                         // key={story.id}
+  //                         // ref={provided.innerRef}
+  //                         // {...provided.dragHandleProps}
+  //                         // {...provided.draggableProps}
+  //                         >
+  //                           <h4>{story.title}</h4>
+  //                         </div>
+  //                       );
+  //                     }
+  //                     //     }
+  //                     //     </Draggable>
+  //                   )
+  //                   // })
+  //                 }
+  //                 {/* {provided.placeholder} */}
+  //               </div>
+  //             ) : // )}
+  //             //     )
+  //             //   </Droppable>
+  //             //  </DragDropContext>
+  //             null}
+
+  //             {showCurrentIteration ? (
+  //               <div
+  //                 className="stories-column"
+  //                 style={{
+  //                   marginRight: numColumns < 3 ? null : "2px",
+  //                   marginLeft: numColumns < 3 ? null : "2px",
+  //                   minWidth:
+  //                     numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+  //                 }}
+  //               >
+  //                 <h1>current iteration</h1>
+  //               </div>
+  //             ) : null}
+  //             {showMyCol ? (
+  //               <div
+  //                 className="stories-column"
+  //                 style={{
+  //                   marginRight: numColumns < 3 ? null : "2px",
+  //                   marginLeft: numColumns < 3 ? null : "2px",
+  //                   minWidth:
+  //                     numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+  //                 }}
+  //               >
+  //                 <h1>mycol1</h1>
+  //               </div>
+  //             ) : null}
+  //             {showMyCol2 ? (
+  //               <div
+  //                 className="stories-column"
+  //                 style={{
+  //                   marginRight: numColumns < 3 ? null : "2px",
+  //                   marginLeft: numColumns < 3 ? null : "2px",
+  //                   minWidth:
+  //                     numColumns < 3 ? 80 / numColumns - 1 + "vw" : "30vw",
+  //                 }}
+  //               >
+  //                 <h1>mycol2</h1>
+  //               </div>
+  //             ) : null}
+  //           </div>
+  //         </>
+  //       </TabPanel>
+  //       <TabPanel>
+  //         <h2>Not yet implemented</h2>
+  //       </TabPanel>
+  //       <TabPanel>
+  //         <h2>Not yet implemented</h2>
+  //       </TabPanel>
+  //     </Tabs>
+  //   );
+  // } else {
+  //   return <h1>loading</h1>;
+  // }
 };
 
 export default Project;
