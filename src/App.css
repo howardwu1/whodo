@@ -225,6 +225,7 @@ input{
   background-color:darkgrey;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   min-width: 30vw;
   border-right: 2px solid black;
   border-left: 2px solid black;
