@@ -22,6 +22,8 @@ const StoriesColumn = ({
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
+          marginLeft: "4px",
+          marginRight: "4px",
         }}
       >
         <h3>{columnName}</h3>
@@ -43,34 +45,32 @@ const StoriesColumn = ({
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {storyList.map((story, index) =>
-                draggable ? (
-                  <Draggable
-                    key={story.id}
-                    draggableId={story.id.toString()}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        className="item-container"
-                        ref={provided.innerRef}
-                        {...provided.dragHandleProps}
-                        {...provided.draggableProps}
-                      >
-                        {story.title}
-                      </div>
-                    )}
-                  </Draggable>
-                ) : (
-                  <div
-                    className="item-container"
-                    title="Can't change order here -- use Current Iteration"
-                    style={{ cursor: "not-allowed" }}
-                  >
-                    {story.title}
-                  </div>
-                )
-              )}
+              {storyList.map((story, index) => (
+                <Draggable
+                  key={story.id}
+                  draggableId={story.id.toString()}
+                  index={index}
+                  isDragDisabled={!draggable}
+                >
+                  {(provided) => (
+                    <div
+                      className="item-container"
+                      ref={provided.innerRef}
+                      {...provided.dragHandleProps}
+                      {...provided.draggableProps}
+                      title={
+                        draggable
+                          ? ""
+                          : "Use Current Iteration to change your story order"
+                      }
+                      style={{ cursor: draggable ? "grab" : "not-allowed" }}
+                    >
+                      {story.title}
+                      <button>Just A Test</button>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
               {provided.placeholder}
             </div>
           )}
