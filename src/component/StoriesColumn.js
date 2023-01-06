@@ -62,7 +62,13 @@ const StoriesColumn = ({
                     )}
                   </Draggable>
                 ) : (
-                  <div className="item-container">{story.title}</div>
+                  <div
+                    className="item-container"
+                    title="Can't change order here -- use Current Iteration"
+                    style={{ cursor: "not-allowed" }}
+                  >
+                    {story.title}
+                  </div>
                 )
               )}
               {provided.placeholder}
