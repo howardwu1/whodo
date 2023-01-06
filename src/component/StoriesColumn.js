@@ -37,45 +37,57 @@ const StoriesColumn = ({
           <button onClick={() => setShowStoryList(false)}>X</button>
         </span>
       </div>
-      <DragDropContext onDragEnd={handleDrop}>
-        <Droppable droppableId="list-container">
-          {(provided) => (
-            <div
-              className="list-container"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              {storyList.map((story, index) => (
-                <Draggable
-                  key={story.id}
-                  draggableId={story.id.toString()}
-                  index={index}
-                  isDragDisabled={!draggable}
-                >
-                  {(provided) => (
-                    <div
-                      className="item-container"
-                      ref={provided.innerRef}
-                      {...provided.dragHandleProps}
-                      {...provided.draggableProps}
-                      title={
-                        draggable
-                          ? ""
-                          : "Use Current Iteration to change your story order"
-                      }
-                      style={{ cursor: draggable ? "grab" : "not-allowed" }}
-                    >
-                      {story.title}
-                      <button>Just A Test</button>
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <div
+        style={{
+          overflowY: "auto",
+          backgroundColor: "#eee",
+          height: "100%",
+        }}
+      >
+        <DragDropContext onDragEnd={handleDrop}>
+          <Droppable droppableId="list-container">
+            {(provided) => (
+              <div
+                className="list-container"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {storyList.map((story, index) => (
+                  <Draggable
+                    key={story.id}
+                    draggableId={story.id.toString()}
+                    index={index}
+                    isDragDisabled={!draggable}
+                  >
+                    {(provided) => (
+                      <span
+                        style={{ cursor: draggable ? "grab" : "not-allowed" }}
+                      >
+                        <div
+                          className="item-container"
+                          ref={provided.innerRef}
+                          {...provided.dragHandleProps}
+                          {...provided.draggableProps}
+                          title={
+                            draggable
+                              ? ""
+                              : "Use Current Iteration to change your story order"
+                          }
+                        >
+                          {story.title}
+
+                          <button>Just A Test</button>
+                        </div>
+                      </span>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </div>
     </div>
   );
 };

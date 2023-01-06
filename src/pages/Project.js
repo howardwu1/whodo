@@ -12,10 +12,10 @@ const Project = () => {
   const { username, setProject } = useContext(AppContext);
   const [showMyStories, setShowMyStories] = useState(true);
   const [showCurrentIteration, setShowCurrentIteration] = useState(true);
-  const [showMyCol, setShowMyCol] = useState(true);
+  const [showIceBox, setShowIceBox] = useState(true);
   const [showMyCol2, setShowMyCol2] = useState(true);
   const numColumns =
-    showCurrentIteration + showMyStories + showMyCol + showMyCol2;
+    showCurrentIteration + showMyStories + showIceBox + showMyCol2;
 
   const getProjectDetails = (id) => {
     setProject("Sample");
@@ -51,8 +51,62 @@ const Project = () => {
           dateCreated: "December 28, 2022",
           type: "feature",
         },
+        {
+          id: 223,
+          title: "sample story",
+          assignee: "asdf",
+          points: 3,
+          isFinished: false,
+          dateCreated: "December 27, 2022",
+          type: "feature",
+        },
+        {
+          id: 2234,
+          title: "sample story 2",
+          assignee: "asdf",
+          points: 5,
+          isFinished: false,
+          dateCreated: "December 28, 2022",
+          type: "feature",
+        },
+        {
+          id: 22345,
+          title: "sample story 3",
+          assignee: "SR",
+          points: 2,
+          isFinished: false,
+          dateCreated: "December 28, 2022",
+          type: "feature",
+        },
+        {
+          id: 323,
+          title: "sample story",
+          assignee: "asdf",
+          points: 3,
+          isFinished: false,
+          dateCreated: "December 27, 2022",
+          type: "feature",
+        },
+        {
+          id: 3234,
+          title: "sample story 2",
+          assignee: "asdf",
+          points: 5,
+          isFinished: false,
+          dateCreated: "December 28, 2022",
+          type: "feature",
+        },
+        {
+          id: 32345,
+          title: "sample story 3",
+          assignee: "SR",
+          points: 2,
+          isFinished: false,
+          dateCreated: "December 28, 2022",
+          type: "feature",
+        },
       ],
-      iceboxStories: [
+      iceBoxStories: [
         {
           id: 998,
           title: "forgotten story",
@@ -67,6 +121,7 @@ const Project = () => {
   };
 
   const [currentIterationStories, setCurrentIterationStories] = useState([]);
+  const [iceBoxStories, setIceBoxStories] = useState([]);
 
   const myStories = currentIterationStories.filter(
     (story) => story.assignee === username
@@ -89,6 +144,7 @@ const Project = () => {
     setCurrentIterationStories(
       getProjectDetails(projectId).currentIterationStories
     );
+    setIceBoxStories(getProjectDetails(projectId).iceBoxStories);
   }, []);
 
   if (currentIterationStories !== undefined) {
@@ -130,11 +186,11 @@ const Project = () => {
               <button
                 className="sidebar-btn"
                 onClick={() => {
-                  setShowMyCol(!showMyCol);
+                  setShowIceBox(!showIceBox);
                 }}
-                style={{ color: showMyCol ? "white" : "gray" }}
+                style={{ color: showIceBox ? "white" : "gray" }}
               >
-                MyCol1
+                Ice Box
               </button>
               <button
                 className="sidebar-btn"
@@ -187,19 +243,15 @@ const Project = () => {
                   columnName="Current Iteration"
                 />
               ) : null}
-              {showMyCol ? (
+              {showIceBox ? (
                 <StoriesColumn
-                  storyList={currentIterationStories}
-                  setShowStoryList={setShowMyCol}
+                  storyList={iceBoxStories}
+                  setShowStoryList={setShowIceBox}
                   handleDrop={(e) =>
-                    handleDrop(
-                      e,
-                      currentIterationStories,
-                      setCurrentIterationStories
-                    )
+                    handleDrop(e, iceBoxStories, setIceBoxStories)
                   }
                   numColumns={numColumns}
-                  columnName="My Col 1"
+                  columnName="IceBox"
                 />
               ) : null}
               {showMyCol2 ? (
