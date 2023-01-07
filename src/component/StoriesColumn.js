@@ -60,28 +60,78 @@ const StoriesColumn = ({
                     isDragDisabled={!draggable}
                   >
                     {(provided) => (
-                      <span
-                        style={{ cursor: draggable ? "grab" : "not-allowed" }}
+                      <div
+                        className="item-container"
+                        ref={provided.innerRef}
+                        {...provided.dragHandleProps}
+                        {...provided.draggableProps}
+                        title={
+                          draggable
+                            ? ""
+                            : "Use Current Iteration to change your story order"
+                        }
                       >
-                        <div
-                          className="item-container"
-                          ref={provided.innerRef}
-                          {...provided.dragHandleProps}
-                          {...provided.draggableProps}
-                          title={
-                            draggable
-                              ? ""
-                              : "Use Current Iteration to change your story order"
-                          }
+                        <span
+                          style={{
+                            cursor: draggable ? "all-scroll" : "not-allowed",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "25px 10px",
+                          }}
                         >
                           {story.title}
 
                           <button>Just A Test</button>
-                        </div>
-                      </span>
+                        </span>
+                      </div>
                     )}
                   </Draggable>
                 ))}
+                {storyList.length === 0 ? (
+                  <>
+                    <div
+                      style={{
+                        margin: "20% 10% 0% 10%  ",
+                        backgroundColor: "gray",
+                        height: "50px",
+                        borderRadius: "5pt",
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        margin: "2% 10% 0% 10%  ",
+                        backgroundColor: "gray",
+                        height: "30px",
+                        borderRadius: "5pt",
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        margin: "2% 10% 0% 10%  ",
+                        backgroundColor: "gray",
+                        height: "40px",
+                        borderRadius: "5pt",
+                      }}
+                    />
+                    <div
+                      style={{
+                        margin: "2% 10% 0% 10%  ",
+                        backgroundColor: "gray",
+                        height: "50px",
+                        borderRadius: "5pt",
+                      }}
+                    />
+                    <h3
+                      style={{
+                        margin: "10% 10% 0% 10%  ",
+                      }}
+                    >
+                      Nothing here yet. Add stories to your list!
+                    </h3>
+                  </>
+                ) : null}
                 {provided.placeholder}
               </div>
             )}
