@@ -1,5 +1,5 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
+import ContentPlaceholder from "./ContentPlaceholder";
 const StoriesColumn = ({
   storyList,
   setShowStoryList,
@@ -88,40 +88,7 @@ const StoriesColumn = ({
                 ))}
                 {storyList.length === 0 ? (
                   <>
-                    <div
-                      style={{
-                        margin: "20% 10% 0% 10%  ",
-                        backgroundColor: "gray",
-                        height: "50px",
-                        borderRadius: "5pt",
-                      }}
-                    />
-
-                    <div
-                      style={{
-                        margin: "2% 10% 0% 10%  ",
-                        backgroundColor: "gray",
-                        height: "30px",
-                        borderRadius: "5pt",
-                      }}
-                    />
-
-                    <div
-                      style={{
-                        margin: "2% 10% 0% 10%  ",
-                        backgroundColor: "gray",
-                        height: "40px",
-                        borderRadius: "5pt",
-                      }}
-                    />
-                    <div
-                      style={{
-                        margin: "2% 10% 0% 10%  ",
-                        backgroundColor: "gray",
-                        height: "50px",
-                        borderRadius: "5pt",
-                      }}
-                    />
+                    <ContentPlaceholder color={"#ccc"} />
                     <h3
                       style={{
                         margin: "10% 10% 0% 10%  ",
