@@ -79,8 +79,7 @@ const StoriesColumn = ({
                             padding: "25px 10px",
                           }}
                         >
-                          {story.title}
-
+                          {story.title} ({story.assignee})
                           <button>Just A Test</button>
                         </span>
                       </div>
@@ -128,7 +127,7 @@ const StoriesColumn = ({
                         margin: "10% 10% 0% 10%  ",
                       }}
                     >
-                      Nothing here yet. Add stories to your list!
+                      Nothing here yet. Add stories to this list!
                     </h3>
                   </>
                 ) : null}

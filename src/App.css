@@ -228,7 +228,6 @@ input{
 
 .stories-column{
   background-color:darkgrey;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   min-width: 30vw;
@@ -252,8 +251,8 @@ input{
     font-size: 18px;
     background-color: #eee;
     flex-direction: column;
-    height: 100%;
     margin-top: 30px;
+    margin-bottom:30px;
   }
   .item-container {
     background-color: #fff;
