@@ -63,7 +63,6 @@ const StoriesColumn = ({
                   !showStoryArr[index] ? (
                     <div
                       onClick={() => {
-                        console.log("fug");
                         setShowStoryArr([
                           ...showStoryArr.slice(0, index),
                           true,
@@ -107,7 +106,18 @@ const StoriesColumn = ({
                       </Draggable>
                     </div>
                   ) : (
-                    <div> placeholder </div>
+                    <div
+                      onClick={() => {
+                        setShowStoryArr([
+                          ...showStoryArr.slice(0, index),
+                          false,
+                          ...showStoryArr.slice(index + 1),
+                        ]);
+                      }}
+                    >
+                      {" "}
+                      placeholder{" "}
+                    </div>
                   )
                 )}
                 {storyList.length === 0 ? (
