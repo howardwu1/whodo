@@ -1,5 +1,6 @@
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import ContentPlaceholder from "./ContentPlaceholder";
+import { useRef, useState, useEffect } from "react";
 const StoriesColumn = ({
   storyList,
   setShowStoryList,
@@ -8,6 +9,12 @@ const StoriesColumn = ({
   columnName,
   draggable = true,
 }) => {
+  const [showStoryArr, setShowStoryArr] = useState([]);
+
+  useEffect(() => {
+    setShowStoryArr(storyList.map(() => false));
+  }, []);
+
   return (
     <div
       className="stories-column"
@@ -52,40 +59,57 @@ const StoriesColumn = ({
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                {storyList.map((story, index) => (
-                  <Draggable
-                    key={story.id}
-                    draggableId={story.id.toString()}
-                    index={index}
-                    isDragDisabled={!draggable}
-                  >
-                    {(provided) => (
-                      <div
-                        className="item-container"
-                        ref={provided.innerRef}
-                        {...provided.dragHandleProps}
-                        {...provided.draggableProps}
-                        title={
-                          draggable
-                            ? ""
-                            : "Use Current Iteration to change your story order"
-                        }
+                {storyList.map((story, index) =>
+                  !showStoryArr[index] ? (
+                    <div
+                      onClick={() => {
+                        console.log("fug");
+                        setShowStoryArr([
+                          ...showStoryArr.slice(0, index),
+                          true,
+                          ...showStoryArr.slice(index + 1),
+                        ]);
+                      }}
+                    >
+                      <Draggable
+                        key={story.id}
+                        draggableId={story.id.toString()}
+                        index={index}
+                        isDragDisabled={!draggable}
                       >
-                        <span
-                          style={{
-                            cursor: draggable ? "all-scroll" : "not-allowed",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            padding: "25px 10px",
-                          }}
-                        >
-                          {story.title} ({story.assignee})
-                          <button>Just A Test</button>
-                        </span>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+                        {(provided) => (
+                          <div
+                            className="item-container"
+                            ref={provided.innerRef}
+                            {...provided.dragHandleProps}
+                            {...provided.draggableProps}
+                            title={
+                              draggable
+                                ? ""
+                                : "Use Current Iteration to change your story order"
+                            }
+                          >
+                            <span
+                              style={{
+                                cursor: draggable
+                                  ? "all-scroll"
+                                  : "not-allowed",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                padding: "25px 10px",
+                              }}
+                            >
+                              {story.title} ({story.assignee})
+                              <button>Just A Test</button>
+                            </span>
+                          </div>
+                        )}
+                      </Draggable>
+                    </div>
+                  ) : (
+                    <div> placeholder </div>
+                  )
+                )}
                 {storyList.length === 0 ? (
                   <>
                     <ContentPlaceholder color={"#ccc"} />
