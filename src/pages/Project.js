@@ -28,7 +28,7 @@ const Project = () => {
           id: 123,
           title: "sample story",
           assignee: "asdf",
-          points: 3,
+          points: "unestimated",
           isFinished: false,
           dateCreated: "December 27, 2022",
           type: "feature",
@@ -40,7 +40,7 @@ const Project = () => {
           points: 5,
           isFinished: false,
           dateCreated: "December 28, 2022",
-          type: "feature",
+          type: "bug",
         },
         {
           id: 12345,
@@ -64,7 +64,7 @@ const Project = () => {
           id: 2234,
           title: "sample story 2",
           assignee: "asdf",
-          points: 5,
+          points: "unestimated",
           isFinished: false,
           dateCreated: "December 28, 2022",
           type: "feature",
@@ -122,10 +122,6 @@ const Project = () => {
 
   const [currentIterationStories, setCurrentIterationStories] = useState([]);
   const [iceBoxStories, setIceBoxStories] = useState([]);
-
-  const myStories = currentIterationStories.filter(
-    (story) => story.assignee === username
-  );
 
   const handleDrop = (droppedItem, storyList, setStoryList) => {
     // Ignore drop outside droppable container
@@ -215,7 +211,9 @@ const Project = () => {
               {showMyStories ? (
                 <StoriesColumn
                   draggable={false}
-                  storyList={myStories}
+                  filterBy={[username]}
+                  storyList={currentIterationStories}
+                  setStorylist={setCurrentIterationStories}
                   setShowStoryList={setShowMyStories}
                   handleDrop={(e) =>
                     handleDrop(
@@ -231,6 +229,7 @@ const Project = () => {
               {showCurrentIteration ? (
                 <StoriesColumn
                   storyList={currentIterationStories}
+                  setStorylist={setCurrentIterationStories}
                   setShowStoryList={setShowCurrentIteration}
                   handleDrop={(e) =>
                     handleDrop(
@@ -246,6 +245,7 @@ const Project = () => {
               {showIceBox ? (
                 <StoriesColumn
                   storyList={iceBoxStories}
+                  setStorylist={setIceBoxStories}
                   setShowStoryList={setShowIceBox}
                   handleDrop={(e) =>
                     handleDrop(e, iceBoxStories, setIceBoxStories)
@@ -257,6 +257,7 @@ const Project = () => {
               {showMyCol2 ? (
                 <StoriesColumn
                   storyList={currentIterationStories}
+                  setStorylist={setCurrentIterationStories}
                   setShowStoryList={setShowMyCol2}
                   handleDrop={(e) =>
                     handleDrop(

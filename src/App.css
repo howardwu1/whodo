@@ -259,3 +259,7 @@ input{
     border: 1px solid black;
     margin: 5px 30px;
   }
+
+  .text-button:hover{
+    cursor:pointer
+  }
