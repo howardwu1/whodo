@@ -107,12 +107,12 @@ const StoriesColumn = ({
                     </div>
                   ) : (
                     <div
-                    style={{
-                      height: "500px",
-                      backgroundColor: "grey",
-                      border: "1px solid gold",
-                      margin: "5px 30px"
-                    }}
+                      style={{
+                        height: "500px",
+                        backgroundColor: "grey",
+                        border: "1px solid gold",
+                        margin: "5px 30px",
+                      }}
                       onClick={() => {
                         setShowStoryArr([
                           ...showStoryArr.slice(0, index),
@@ -122,8 +122,7 @@ const StoriesColumn = ({
                       }}
                     >
                       sample story expanded form
-
-                      <form>
+                      <form onClick={(e) => e.stopPropagation()}>
                         <div className="story-group">
                           <label htmlFor="story-type"> Story type</label>
                           <select id="story-types">
@@ -131,7 +130,7 @@ const StoriesColumn = ({
                             <option value="bug">Bug</option>
                             <option value="chore">Chore</option>
                             <option value="release">Release</option>
-                          </select>               
+                          </select>
                         </div>
 
                         <div className="point-system">
@@ -144,9 +143,7 @@ const StoriesColumn = ({
                             <option>3 Points</option>
                           </select>
                         </div>
-                      
                       </form>
-                      
                     </div>
                   )
                 )}
