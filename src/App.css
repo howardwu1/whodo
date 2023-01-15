@@ -259,6 +259,7 @@ input{
     border: 1px solid black;
     margin: 5px 30px;
   }
+  
   .item-container-details {
     background-color: #fff;
     border: 1px solid black;
@@ -266,6 +267,7 @@ input{
     padding: 2px 10px;
     height: 500px;
   }
+
   .text-button:hover{
     cursor:pointer
   }

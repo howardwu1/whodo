@@ -7,9 +7,10 @@ const ContentPlaceholder = ({ color }) => {
           marginTop: "20%",
         }}
       />
-      {heights.map((height) => {
+      {heights.map((height, index) => {
         return (
           <div
+            key={height + "" + index}
             style={{
               margin: "2% 10% 0% 10%",
               backgroundColor: color,
