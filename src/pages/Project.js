@@ -8,7 +8,6 @@ import StoriesColumn from "../component/StoriesColumn";
 
 const Project = () => {
   const { projectId } = useParams();
-  const [projectDetails, setProjectDetails] = useState({});
   const { username, setProject } = useContext(AppContext);
   const [showMyStories, setShowMyStories] = useState(true);
   const [showCurrentIteration, setShowCurrentIteration] = useState(true);
@@ -136,7 +135,6 @@ const Project = () => {
   };
 
   useEffect(() => {
-    setProjectDetails(getProjectDetails(projectId));
     setCurrentIterationStories(
       getProjectDetails(projectId).currentIterationStories
     );
