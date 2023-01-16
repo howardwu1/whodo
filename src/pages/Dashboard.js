@@ -8,6 +8,30 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
+  const [projectHealth, setProjectHealth] = useState([]);
+
+  const pointsGap = (projectIndex) => {
+    return (
+      projects[projectIndex]?.target?.reduce((sum, x) => sum + x) -
+      projects[projectIndex]?.velocity?.reduce((sum, x) => sum + x)
+    );
+  };
+
+  const calcProjectHealth = (projectIndex) => {
+    return pointsGap(projectIndex) <=
+      projects[projectIndex]?.velocity[
+        projects[projectIndex]?.velocity.length - 1
+      ]
+      ? "green"
+      : pointsGap(projectIndex) <=
+        projects[projectIndex]?.velocity[
+          projects[projectIndex]?.velocity.length - 1
+        ] *
+          1.5
+      ? "yellow"
+      : "red";
+  };
+
   const getProjects = (projects = []) => {
     if (projects.length === 0) {
       return [
@@ -16,7 +40,8 @@ const Dashboard = () => {
           name: "My Project",
           isFavorite: false,
           isPrivate: true,
-          velocity: 1,
+          velocity: [2, 1],
+          target: [3, 2],
           health: "red",
         },
       ];
@@ -41,6 +66,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     setProjects(getProjects(projects));
+
+    setProjectHealth(projects.map((_, index) => calcProjectHealth(index)));
   }, [projects]);
 
   return (
@@ -96,11 +123,13 @@ const Dashboard = () => {
                     />
                   </div>
                 </div>
-                <h4>Velocity: {project.velocity}</h4>
+                <h4>
+                  Velocity: {project.velocity[project.velocity.length - 1]}
+                </h4>
                 <h4>
                   Project Health:{" "}
-                  <span style={{ color: project.health }}>
-                    {project.health.toUpperCase()}
+                  <span style={{ color: projectHealth[index] }}>
+                    {projectHealth[index]?.toUpperCase()}
                   </span>
                 </h4>
               </div>

@@ -22,6 +22,8 @@ const Project = () => {
     return {
       id: id,
       name: "Sample",
+      targetVelocity: [2, 2],
+      velocity: [2, 1],
       currentIterationStories: [
         {
           id: 123,
