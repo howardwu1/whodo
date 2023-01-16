@@ -10,6 +10,7 @@ const StoriesColumn = ({
   numColumns,
   columnName,
   draggable = true,
+  username,
 }) => {
   const [showStoryMap, setShowStoryMap] = useState(new Map());
 
@@ -76,7 +77,12 @@ const StoriesColumn = ({
                         {(provided) =>
                           !showStoryMap.get(story.id) ? (
                             <div
-                              className="item-container"
+                              className={
+                                "item-container " +
+                                (story.assignee !== "none"
+                                  ? ""
+                                  : "none-assigned")
+                              }
                               ref={provided.innerRef}
                               {...provided.dragHandleProps}
                               {...provided.draggableProps}
@@ -94,8 +100,29 @@ const StoriesColumn = ({
                                   padding: "25px 10px",
                                 }}
                               >
-                                {story.title} ({story.assignee})
-                                {!story.isFinished ? (
+                                {story.title}{" "}
+                                {story.assignee === "none"
+                                  ? null
+                                  : `(${story.assignee})`}
+                                {story.assignee === "none" ? (
+                                  <button
+                                    onClick={(e) => {
+                                      setStorylist([
+                                        ...storyList.slice(0, index),
+                                        {
+                                          ...story,
+                                          assignee: username,
+                                        },
+                                        ...storyList.slice(index + 1),
+                                      ]);
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    Start
+                                  </button>
+                                ) : null}
+                                {!story.isFinished &&
+                                story.assignee !== "none" ? (
                                   <button
                                     onClick={(e) => {
                                       setStorylist([

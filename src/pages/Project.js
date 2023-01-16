@@ -11,10 +11,10 @@ const Project = () => {
   const { username, setProject } = useContext(AppContext);
   const [showMyStories, setShowMyStories] = useState(true);
   const [showCurrentIteration, setShowCurrentIteration] = useState(true);
-  const [showIceBox, setShowIceBox] = useState(true);
+  const [showIcebox, setShowIcebox] = useState(true);
   const [showDoneStories, setShowDoneStories] = useState(true);
   const numColumns =
-    showCurrentIteration + showMyStories + showIceBox + showDoneStories;
+    showCurrentIteration + showMyStories + showIcebox + showDoneStories;
 
   const getProjectDetails = (id) => {
     setProject("Sample");
@@ -30,16 +30,28 @@ const Project = () => {
           points: "unestimated",
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 27, 2022",
           type: "feature",
         },
         {
           id: 1234,
           title: "sample story 2",
-          assignee: "asdf",
+          assignee: "none",
           points: 5,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 28, 2022",
           type: "bug",
         },
@@ -50,6 +62,12 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -60,6 +78,12 @@ const Project = () => {
           points: 3,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 27, 2022",
           type: "feature",
         },
@@ -70,6 +94,12 @@ const Project = () => {
           points: "unestimated",
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -80,6 +110,12 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -90,6 +126,12 @@ const Project = () => {
           points: 3,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 27, 2022",
           type: "feature",
         },
@@ -100,6 +142,12 @@ const Project = () => {
           points: 5,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -110,11 +158,17 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 28, 2022",
           type: "feature",
         },
       ],
-      iceBoxStories: [
+      iceboxStories: [
         {
           id: 998,
           title: "forgotten story",
@@ -122,6 +176,12 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          mentor: "",
+          secondaryAssignee: "",
+          secondaryMentor: "",
+          aTeamSupportTime: "",
+          standupComments: "",
+          sessionAndPMComments: "",
           dateCreated: "December 12, 2022",
           type: "feature",
         },
@@ -135,6 +195,7 @@ const Project = () => {
           isFinished: true,
           isDelivered: true,
           dateCreated: "November 31, 2022",
+          dateAccepted: "December 1, 2022",
           type: "feature",
         },
       ],
@@ -142,7 +203,7 @@ const Project = () => {
   };
 
   const [currentIterationStories, setCurrentIterationStories] = useState([]);
-  const [iceBoxStories, setIceBoxStories] = useState([]);
+  const [iceboxStories, setIceboxStories] = useState([]);
   const [doneStories, setDoneStories] = useState([]);
 
   const handleDrop = (droppedItem, storyList, setStoryList) => {
@@ -161,7 +222,7 @@ const Project = () => {
     setCurrentIterationStories(
       getProjectDetails(projectId).currentIterationStories
     );
-    setIceBoxStories(getProjectDetails(projectId).iceBoxStories);
+    setIceboxStories(getProjectDetails(projectId).iceboxStories);
     setDoneStories(getProjectDetails(projectId).doneStories);
   }, []);
 
@@ -204,11 +265,11 @@ const Project = () => {
               <button
                 className="sidebar-btn"
                 onClick={() => {
-                  setShowIceBox(!showIceBox);
+                  setShowIcebox(!showIcebox);
                 }}
-                style={{ color: showIceBox ? "white" : "gray" }}
+                style={{ color: showIcebox ? "white" : "gray" }}
               >
-                Ice Box
+                Icebox
               </button>
               <button
                 className="sidebar-btn"
@@ -245,6 +306,7 @@ const Project = () => {
                     )
                   }
                   numColumns={numColumns}
+                  username={username}
                   columnName="My Stories"
                 />
               ) : null}
@@ -261,19 +323,21 @@ const Project = () => {
                     )
                   }
                   numColumns={numColumns}
+                  username={username}
                   columnName="Current Iteration"
                 />
               ) : null}
-              {showIceBox ? (
+              {showIcebox ? (
                 <StoriesColumn
-                  storyList={iceBoxStories}
-                  setStorylist={setIceBoxStories}
-                  setShowStoryList={setShowIceBox}
+                  storyList={iceboxStories}
+                  setStorylist={setIceboxStories}
+                  setShowStoryList={setShowIcebox}
                   handleDrop={(e) =>
-                    handleDrop(e, iceBoxStories, setIceBoxStories)
+                    handleDrop(e, iceboxStories, setIceboxStories)
                   }
                   numColumns={numColumns}
-                  columnName="IceBox"
+                  username={username}
+                  columnName="Icebox"
                 />
               ) : null}
               {showDoneStories ? (
@@ -283,6 +347,7 @@ const Project = () => {
                   setShowStoryList={setShowDoneStories}
                   handleDrop={(e) => handleDrop(e, doneStories, setDoneStories)}
                   numColumns={numColumns}
+                  username={username}
                   columnName="Done Stories"
                 />
               ) : null}

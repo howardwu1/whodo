@@ -259,7 +259,7 @@ input{
     border: 1px solid black;
     margin: 5px 30px;
   }
-  
+
   .item-container-details {
     background-color: #fff;
     border: 1px solid black;
@@ -270,4 +270,8 @@ input{
 
   .text-button:hover{
     cursor:pointer
+  }
+
+  .none-assigned{
+    background-color: yellow;
   }
