@@ -88,9 +88,7 @@ const StoriesColumn = ({
                             >
                               <span
                                 style={{
-                                  cursor: draggable
-                                    ? "all-scroll"
-                                    : "not-allowed",
+                                  cursor: draggable ? "all-scroll" : "default",
                                   display: "flex",
                                   justifyContent: "space-between",
                                   padding: "25px 10px",
