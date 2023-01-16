@@ -9,6 +9,8 @@ const StoriesColumn = ({
   handleDrop,
   numColumns,
   columnName,
+  setDoneList,
+  doneList,
   draggable = true,
   username,
 }) => {
@@ -121,8 +123,26 @@ const StoriesColumn = ({
                                     Start
                                   </button>
                                 ) : null}
+                                {story.isRejected ? (
+                                  <button
+                                    onClick={(e) => {
+                                      setStorylist([
+                                        ...storyList.slice(0, index),
+                                        {
+                                          ...story,
+                                          isRejected: false,
+                                        },
+                                        ...storyList.slice(index + 1),
+                                      ]);
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    Restart
+                                  </button>
+                                ) : null}
                                 {!story.isFinished &&
-                                story.assignee !== "none" ? (
+                                story.assignee !== "none" &&
+                                !story.isRejected ? (
                                   <button
                                     onClick={(e) => {
                                       setStorylist([
@@ -156,7 +176,51 @@ const StoriesColumn = ({
                                     Deliver
                                   </button>
                                 ) : null}
-                                {}
+                                {story.isDelivered && !story.isAccepted ? (
+                                  <span
+                                    style={{
+                                      display: "flex",
+                                      flexDirection: "row",
+                                    }}
+                                  >
+                                    <button
+                                      onClick={(e) => {
+                                        setStorylist([
+                                          ...storyList.slice(0, index),
+                                          ...storyList.slice(index + 1),
+                                        ]);
+                                        setDoneList([
+                                          ...doneList,
+                                          {
+                                            ...story,
+                                            isAccepted: true,
+                                          },
+                                        ]);
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Accept
+                                    </button>
+
+                                    <button
+                                      onClick={(e) => {
+                                        setStorylist([
+                                          ...storyList.slice(0, index),
+                                          {
+                                            ...story,
+                                            isFinished: false,
+                                            isDelivered: false,
+                                            isRejected: true,
+                                          },
+                                          ...storyList.slice(index + 1),
+                                        ]);
+                                        e.stopPropagation();
+                                      }}
+                                    >
+                                      Reject
+                                    </button>
+                                  </span>
+                                ) : null}
                               </span>
                             </div>
                           ) : (

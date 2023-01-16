@@ -32,6 +32,8 @@ const Project = () => {
           points: "unestimated",
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -48,6 +50,8 @@ const Project = () => {
           points: 5,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -64,6 +68,8 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -80,6 +86,8 @@ const Project = () => {
           points: 3,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -96,6 +104,8 @@ const Project = () => {
           points: "unestimated",
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -112,6 +122,8 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -128,6 +140,8 @@ const Project = () => {
           points: 3,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -144,6 +158,8 @@ const Project = () => {
           points: 5,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -160,6 +176,8 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -178,6 +196,8 @@ const Project = () => {
           points: 2,
           isFinished: false,
           isDelivered: false,
+          isRejected: false,
+          isAccepted: false,
           mentor: "",
           secondaryAssignee: "",
           secondaryMentor: "",
@@ -196,6 +216,7 @@ const Project = () => {
           points: 1,
           isFinished: true,
           isDelivered: true,
+          isAccepted: true,
           dateCreated: "November 31, 2022",
           dateAccepted: "December 1, 2022",
           type: "feature",
@@ -309,6 +330,8 @@ const Project = () => {
                   }
                   numColumns={numColumns}
                   username={username}
+                  setDoneList={setDoneStories}
+                  doneList={doneStories}
                   columnName="My Stories"
                 />
               ) : null}
@@ -326,6 +349,8 @@ const Project = () => {
                   }
                   numColumns={numColumns}
                   username={username}
+                  setDoneList={setDoneStories}
+                  doneList={doneStories}
                   columnName="Current Iteration"
                 />
               ) : null}
@@ -339,6 +364,8 @@ const Project = () => {
                   }
                   numColumns={numColumns}
                   username={username}
+                  setDoneList={setDoneStories}
+                  doneList={doneStories}
                   columnName="Icebox"
                 />
               ) : null}
@@ -350,6 +377,8 @@ const Project = () => {
                   handleDrop={(e) => handleDrop(e, doneStories, setDoneStories)}
                   numColumns={numColumns}
                   username={username}
+                  setDoneList={setDoneStories}
+                  doneList={doneStories}
                   columnName="Done Stories"
                 />
               ) : null}
