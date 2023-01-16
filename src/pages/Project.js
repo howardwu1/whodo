@@ -12,9 +12,9 @@ const Project = () => {
   const [showMyStories, setShowMyStories] = useState(true);
   const [showCurrentIteration, setShowCurrentIteration] = useState(true);
   const [showIceBox, setShowIceBox] = useState(true);
-  const [showMyCol2, setShowMyCol2] = useState(true);
+  const [showDoneStories, setShowDoneStories] = useState(true);
   const numColumns =
-    showCurrentIteration + showMyStories + showIceBox + showMyCol2;
+    showCurrentIteration + showMyStories + showIceBox + showDoneStories;
 
   const getProjectDetails = (id) => {
     setProject("Sample");
@@ -29,6 +29,7 @@ const Project = () => {
           assignee: "asdf",
           points: "unestimated",
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 27, 2022",
           type: "feature",
         },
@@ -38,6 +39,7 @@ const Project = () => {
           assignee: "asdf",
           points: 5,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 28, 2022",
           type: "bug",
         },
@@ -47,6 +49,7 @@ const Project = () => {
           assignee: "SR",
           points: 2,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -56,6 +59,7 @@ const Project = () => {
           assignee: "asdf",
           points: 3,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 27, 2022",
           type: "feature",
         },
@@ -65,6 +69,7 @@ const Project = () => {
           assignee: "asdf",
           points: "unestimated",
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -74,6 +79,7 @@ const Project = () => {
           assignee: "SR",
           points: 2,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -83,6 +89,7 @@ const Project = () => {
           assignee: "asdf",
           points: 3,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 27, 2022",
           type: "feature",
         },
@@ -92,6 +99,7 @@ const Project = () => {
           assignee: "asdf",
           points: 5,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -101,6 +109,7 @@ const Project = () => {
           assignee: "SR",
           points: 2,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 28, 2022",
           type: "feature",
         },
@@ -112,7 +121,20 @@ const Project = () => {
           assignee: "SR",
           points: 2,
           isFinished: false,
+          isDelivered: false,
           dateCreated: "December 12, 2022",
+          type: "feature",
+        },
+      ],
+      doneStories: [
+        {
+          id: 222,
+          title: "finished story",
+          assignee: "asdf",
+          points: 1,
+          isFinished: true,
+          isDelivered: true,
+          dateCreated: "November 31, 2022",
           type: "feature",
         },
       ],
@@ -121,6 +143,7 @@ const Project = () => {
 
   const [currentIterationStories, setCurrentIterationStories] = useState([]);
   const [iceBoxStories, setIceBoxStories] = useState([]);
+  const [doneStories, setDoneStories] = useState([]);
 
   const handleDrop = (droppedItem, storyList, setStoryList) => {
     // Ignore drop outside droppable container
@@ -139,6 +162,7 @@ const Project = () => {
       getProjectDetails(projectId).currentIterationStories
     );
     setIceBoxStories(getProjectDetails(projectId).iceBoxStories);
+    setDoneStories(getProjectDetails(projectId).doneStories);
   }, []);
 
   if (currentIterationStories !== undefined) {
@@ -189,11 +213,11 @@ const Project = () => {
               <button
                 className="sidebar-btn"
                 onClick={() => {
-                  setShowMyCol2(!showMyCol2);
+                  setShowDoneStories(!showDoneStories);
                 }}
-                style={{ color: showMyCol2 ? "white" : "gray" }}
+                style={{ color: showDoneStories ? "white" : "gray" }}
               >
-                MyCol2
+                Done Stories
               </button>
             </div>
             <div
@@ -252,20 +276,14 @@ const Project = () => {
                   columnName="IceBox"
                 />
               ) : null}
-              {showMyCol2 ? (
+              {showDoneStories ? (
                 <StoriesColumn
-                  storyList={currentIterationStories}
-                  setStorylist={setCurrentIterationStories}
-                  setShowStoryList={setShowMyCol2}
-                  handleDrop={(e) =>
-                    handleDrop(
-                      e,
-                      currentIterationStories,
-                      setCurrentIterationStories
-                    )
-                  }
+                  storyList={doneStories}
+                  setStorylist={setDoneStories}
+                  setShowStoryList={setShowDoneStories}
+                  handleDrop={(e) => handleDrop(e, doneStories, setDoneStories)}
                   numColumns={numColumns}
-                  columnName="My Col 2"
+                  columnName="Done Stories"
                 />
               ) : null}
             </div>

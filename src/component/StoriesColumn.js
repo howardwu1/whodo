@@ -27,8 +27,8 @@ const StoriesColumn = ({
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
-          marginLeft: "4px",
-          marginRight: "4px",
+          marginLeft: "10px",
+          marginRight: "10px",
         }}
       >
         <h3>{columnName}</h3>
@@ -95,7 +95,41 @@ const StoriesColumn = ({
                                 }}
                               >
                                 {story.title} ({story.assignee})
-                                <button>Just A Test</button>
+                                {!story.isFinished ? (
+                                  <button
+                                    onClick={(e) => {
+                                      setStorylist([
+                                        ...storyList.slice(0, index),
+                                        {
+                                          ...story,
+                                          isFinished: true,
+                                        },
+                                        ...storyList.slice(index + 1),
+                                      ]);
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    Finish
+                                  </button>
+                                ) : null}
+                                {story.isFinished && !story.isDelivered ? (
+                                  <button
+                                    onClick={(e) => {
+                                      setStorylist([
+                                        ...storyList.slice(0, index),
+                                        {
+                                          ...story,
+                                          isDelivered: true,
+                                        },
+                                        ...storyList.slice(index + 1),
+                                      ]);
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    Deliver
+                                  </button>
+                                ) : null}
+                                {}
                               </span>
                             </div>
                           ) : (
