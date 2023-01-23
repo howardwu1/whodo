@@ -234,6 +234,10 @@ const StoriesColumn = ({
                                 style={{
                                   display: "flex",
                                   flexDirection: "row",
+                                  alignItems: "center",
+                                  height: "20px",
+                                  marginTop: "10px",
+                                  marginBottom: "10px",
                                 }}
                               >
                                 <h3
@@ -256,10 +260,14 @@ const StoriesColumn = ({
                                 >
                                   ^
                                 </h3>
-                                {story.title}
+                                <h4
+                                  style={{ textAlign: "center", width: "100%" }}
+                                >
+                                  {story.title}
+                                </h4>
                               </span>
                               <form onClick={(e) => e.stopPropagation()}>
-                                <div className="story-group">
+                                <div>
                                   <label htmlFor="story-type">STORY TYPE</label>
                                   <select
                                     id="story-type"
@@ -274,8 +282,7 @@ const StoriesColumn = ({
                                     <option value="release">Release</option>
                                   </select>
                                 </div>
-
-                                <div className="point-system">
+                                <div>
                                   <label htmlFor="point-input">POINTS</label>
                                   <select
                                     id="point-input"
@@ -292,6 +299,18 @@ const StoriesColumn = ({
                                     <option value="2">2 Points</option>
                                     <option vaule="3">3 Points</option>
                                   </select>
+                                </div>
+                                <div>
+                                  <label htmlFor="notes">
+                                    STANDUP MEETING COMMENTS
+                                  </label>
+                                  <input
+                                    id="notes"
+                                    defaultValue={story.standupComments}
+                                    onInput={(e) =>
+                                      (story.standupComments = e.target.value)
+                                    }
+                                  ></input>
                                 </div>
                               </form>
                             </div>
