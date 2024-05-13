@@ -18,7 +18,22 @@ const Login = () => {
   const [isPasswordResetSent, setIsPasswordResetSent] = useState(false);
   const { username, setUsername } = useContext(AppContext);
 
-  const onSubmit = (data) => {
+  const onSubmit = async(data) => {
+
+    let headers = new Headers();
+
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+    headers.append('Origin','https://special-space-spoon-4v59rvvr74r3jrw9-3000.app.github.dev');
+
+    const response = await fetch("https://humble-space-dollop-p54vgr6q6hrjvg-80.app.github.dev/hello", {
+      mode: 'cors',
+      method: 'GET',
+      headers: headers
+        }).then(response => response.text()).then(data => data);
+    
+    console.log("hello???", response);
+
     if (data.name === "asdf" && data.password === "asdfdsamyrandompass") {
       setUsername(data.name);
       navigate("/dashboard");
@@ -27,7 +42,7 @@ const Login = () => {
         type: "custom",
       });
     }
-  };
+  }
 
   const onSubmitForgotPassword = (data) => {
     console.log("this is a placholder");
