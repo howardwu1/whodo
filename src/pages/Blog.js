@@ -1,7 +1,7 @@
 import BlogArticle from "../component/BlogArticle";
 const Blog = () => {
   return (
-    <div>
+    <div style={{ overflowY: "auto", maxHeight: "90vh" }}>
       <h1>WhoDo Blog</h1>
       <h3>All things WhoDo - Updates/News/Random Musings</h3>
       <br />

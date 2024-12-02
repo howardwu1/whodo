@@ -210,7 +210,7 @@ input{
   position: sticky;
   left: 0px;  
   top: 50px;
-  overflow:hidden;
+ /* overflow:hidden; */
 }
 
 .sidebar-btn{
