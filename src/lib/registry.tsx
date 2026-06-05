@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createContext, useContext } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -30,15 +30,40 @@ export const AppContext = createContext<AppContextType>({
 
 export const useAppContext = () => useContext(AppContext);
 
+function getStoredUsername(): string {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem('whodo_username') || '';
+}
+
+function setStoredUsername(value: string): void {
+  if (typeof window === 'undefined') return;
+  if (value) {
+    localStorage.setItem('whodo_username', value);
+  } else {
+    localStorage.removeItem('whodo_username');
+  }
+}
+
 export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
-  const [username, setUsername] = useState('');
+  const [username, setUsernameState] = useState('');
   const [project, setProject] = useState('');
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setUsernameState(getStoredUsername());
+    setIsHydrated(true);
+  }, []);
+
+  const setUsername = (value: string) => {
+    setStoredUsername(value);
+    setUsernameState(value);
+  };
 
   return (
     <NextAppDirEmotionCacheProvider options={{ key: 'mui' }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <AppContext.Provider value={{ username, setUsername, project, setProject }}>
+        <AppContext.Provider value={{ username: isHydrated ? username : '', setUsername, project, setProject }}>
           {children}
         </AppContext.Provider>
       </ThemeProvider>
