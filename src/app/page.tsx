@@ -132,6 +132,7 @@ function Navigation() {
   );
 }
 
+export { Navigation };
 export default function HomePage() {
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
