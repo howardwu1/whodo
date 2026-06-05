@@ -22,11 +22,24 @@ export default function Login() {
   const { username, setUsername } = useAppContext();
 
   const onSubmit = async (data: { name: string; password: string }) => {
-    if (data.name === 'asdf' && data.password === 'asdfdsamyrandompass') {
-      setUsername(data.name);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: data.name, password: data.password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError('signin', { type: 'custom', message: result.error || 'Invalid credentials' });
+        return;
+      }
+
+      setUsername(result.username);
       router.push('/dashboard');
-    } else {
-      setError('signin', { type: 'custom' });
+    } catch (error) {
+      setError('signin', { type: 'custom', message: 'An error occurred' });
     }
   };
 
@@ -73,6 +86,12 @@ export default function Login() {
             >
               Forgot Password?
             </button>
+            <p style={{ marginTop: '-10px', fontSize: '12pt' }}>
+              Don&apos;t have an account?{' '}
+              <Link href="/register" style={{ color: 'blue' }}>
+                Sign up
+              </Link>
+            </p>
           </form>
         ) : (
           <form onSubmit={handleSubmit(onSubmitForgotPassword)} className="sign-in">
