@@ -94,10 +94,43 @@ export default function Dashboard() {
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
       <Navigation />
       <Tabs>
-        <TabList>
-          <div style={{ maxWidth: '800px', margin: 'auto' }}>
-            <Tab>Projects</Tab>
-            <Tab disabled>Workspaces (Paid Feature)</Tab>
+        <TabList
+          style={{
+            display: 'flex',
+            borderBottom: '1px solid #ccc',
+            backgroundColor: '#f5f5f5',
+            padding: 0,
+            margin: 0,
+            listStyle: 'none',
+          }}
+        >
+          <div style={{ maxWidth: '800px', margin: 'auto', display: 'flex', gap: '20px' }}>
+            <Tab
+              style={{
+                padding: '10px 20px',
+                cursor: 'pointer',
+                border: 'none',
+                backgroundColor: 'transparent',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              Projects
+            </Tab>
+            <Tab
+              disabled
+              style={{
+                padding: '10px 20px',
+                cursor: 'not-allowed',
+                color: '#999',
+                border: 'none',
+                backgroundColor: 'transparent',
+                fontSize: '14px',
+                fontWeight: 500,
+              }}
+            >
+              Workspaces (Paid Feature)
+            </Tab>
           </div>
         </TabList>
         <div style={{ maxWidth: '800px', margin: 'auto' }}>
