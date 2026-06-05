@@ -49,7 +49,7 @@ export default function Register() {
 
       // Auto-login after registration
       setUsername(data.username);
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
     } catch (error) {
       setApiError('An error occurred. Please try again.');
     }
