@@ -7,7 +7,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Navigation from '../page';
+import { Navigation } from '@/components/Navigation';
 
 interface Project {
   id: number;
