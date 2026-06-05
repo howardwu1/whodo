@@ -28,9 +28,11 @@ export function Navigation() {
             <li>
               <Link href="/">Blog</Link>
             </li>
-            <li>
-              <Link href="/dashboard">Dashboard</Link>
-            </li>
+            {username !== '' && (
+              <li>
+                <Link href="/dashboard">Dashboard</Link>
+              </li>
+            )}
             <li>
               <Link href="/contact">Contact</Link>
             </li>
