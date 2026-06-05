@@ -1,10 +1,9 @@
 'use client';
 
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { useState, useEffect } from 'react';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
@@ -107,159 +106,132 @@ export default function Dashboard() {
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
       <Navigation />
-      <Tabs>
-        <TabList
-          style={{
-            display: 'flex',
-            borderBottom: '1px solid #ccc',
-            backgroundColor: '#f5f5f5',
-            padding: 0,
-            margin: 0,
-            listStyle: 'none',
-          }}
-        >
-          <div style={{ maxWidth: '800px', margin: 'auto', display: 'flex', gap: '20px' }}>
-            <Tab
-              style={{
-                padding: '10px 20px',
-                cursor: 'pointer',
-                border: 'none',
-                backgroundColor: 'transparent',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              Projects
-            </Tab>
-            <Tab
-              disabled
-              style={{
-                padding: '10px 20px',
-                cursor: 'not-allowed',
-                color: '#999',
-                border: 'none',
-                backgroundColor: 'transparent',
-                fontSize: '14px',
-                fontWeight: 500,
-              }}
-            >
-              Workspaces (Paid Feature)
-            </Tab>
-          </div>
-        </TabList>
-        <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
-          <TabPanel>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2>Your Projects</h2>
-              <button
-                onClick={() => setShowNewProjectForm(true)}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#191970',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                }}
-              >
-                + New Project
-              </button>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-              <button
-                onClick={() => setShowNewProjectForm(true)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  padding: '8px 16px',
-                  backgroundColor: '#191970',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                }}
-              >
-                + New Project
-              </button>
-            </div>
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid #ccc', backgroundColor: '#f5f5f5' }}>
+          <button
+            onClick={() => {}}
+            style={{
+              padding: '10px 20px',
+              cursor: 'pointer',
+              border: 'none',
+              backgroundColor: 'transparent',
+              fontSize: '14px',
+              fontWeight: 500,
+              borderBottom: '2px solid #191970',
+            }}
+          >
+            Projects
+          </button>
+          <button
+            disabled
+            style={{
+              padding: '10px 20px',
+              cursor: 'not-allowed',
+              color: '#999',
+              border: 'none',
+              backgroundColor: 'transparent',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Workspaces (Paid Feature)
+          </button>
+        </div>
 
-            {showNewProjectForm && (
+        <div style={{ marginTop: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2>Your Projects</h2>
+            <button
+              onClick={() => setShowNewProjectForm(true)}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#191970',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+            >
+              + New Project
+            </button>
+          </div>
+
+          {showNewProjectForm && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 100,
+              }}
+            >
               <div
                 style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0,0,0,0.5)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 100,
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  minWidth: '300px',
                 }}
               >
-                <div
+                <h3>Create New Project</h3>
+                <input
+                  type="text"
+                  placeholder="Project name"
+                  value={newProjectName}
+                  onChange={(e) => setNewProjectName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && createProject()}
                   style={{
-                    backgroundColor: 'white',
-                    padding: '20px',
-                    borderRadius: '8px',
-                    minWidth: '300px',
+                    width: '100%',
+                    padding: '10px',
+                    marginBottom: '10px',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
                   }}
-                >
-                  <h3>Create New Project</h3>
-                  <input
-                    type="text"
-                    placeholder="Project name"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && createProject()}
-                    style={{
-                      width: '100%',
-                      padding: '10px',
-                      marginBottom: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
+                  autoFocus
+                />
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => {
+                      setShowNewProjectForm(false);
+                      setNewProjectName('');
                     }}
-                    autoFocus
-                  />
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                    <button
-                      onClick={() => {
-                        setShowNewProjectForm(false);
-                        setNewProjectName('');
-                      }}
-                      style={{ padding: '8px 16px', cursor: 'pointer' }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={createProject}
-                      disabled={isLoading || !newProjectName.trim()}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: isLoading || !newProjectName.trim() ? '#ccc' : '#191970',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: isLoading || !newProjectName.trim() ? 'not-allowed' : 'pointer',
-                      }}
-                    >
-                      {isLoading ? 'Creating...' : 'Create'}
-                    </button>
-                  </div>
+                    style={{ padding: '8px 16px', cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={createProject}
+                    disabled={isLoading || !newProjectName.trim()}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: isLoading || !newProjectName.trim() ? '#ccc' : '#191970',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: isLoading || !newProjectName.trim() ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {isLoading ? 'Creating...' : 'Create'}
+                  </button>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {projects.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-                <p>No projects yet. Create one to get started!</p>
-              </div>
-            ) : (
-              projects.map((project, index) => (
-                <div key={project.id} className="project-card">
+          {projects.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+              <p>No projects yet. Create one to get started!</p>
+            </div>
+          ) : (
+            projects.map((project, index) => (
+              <div key={project.id} className="project-card">
                 <div
                   style={{
                     display: 'flex',
@@ -302,13 +274,10 @@ export default function Dashboard() {
                   </span>
                 </h4>
               </div>
-            )))}
-          </TabPanel>
-          <TabPanel>
-            <h2>Paid only</h2>
-          </TabPanel>
+            ))
+          )}
         </div>
-      </Tabs>
+      </div>
     </div>
   );
 }
