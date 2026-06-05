@@ -37,21 +37,5 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const newUser = await prisma.user.create({
-      data: {
-        username: body.username,
-        email: body.email,
-      },
-    });
-    return NextResponse.json(newUser, { status: 201 });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    return NextResponse.json(
-      { error: 'Failed to create user' },
-      { status: 500 }
-    );
-  }
-}
+// User creation is handled via /api/auth/register
+// This endpoint is for user management only
