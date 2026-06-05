@@ -30,3 +30,5 @@ yarn-error.log*
 # Next.js
 .next/
 out/
+.vercel
+.env*
