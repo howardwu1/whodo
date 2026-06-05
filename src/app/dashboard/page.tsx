@@ -63,6 +63,21 @@ export default function Dashboard() {
     setProjectHealth(projects.map((_, index) => calcProjectHealth(index)));
   }, [projects]);
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/projects');
+        if (response.ok) {
+          const data = await response.json();
+          setProjects(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+      }
+    };
+    fetchProjects();
+  }, []);
+
   const createProject = async () => {
     if (!newProjectName.trim()) return;
 
@@ -132,8 +147,25 @@ export default function Dashboard() {
             </Tab>
           </div>
         </TabList>
-        <div style={{ maxWidth: '800px', margin: 'auto' }}>
+        <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
           <TabPanel>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2>Your Projects</h2>
+              <button
+                onClick={() => setShowNewProjectForm(true)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#191970',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                }}
+              >
+                + New Project
+              </button>
+            </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
               <button
                 onClick={() => setShowNewProjectForm(true)}
