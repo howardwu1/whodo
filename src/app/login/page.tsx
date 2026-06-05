@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppContext } from '@/lib/registry';
-import { Navigation } from '../page';
+import { Navigation } from '@/components/Navigation';
 
 export default function Login() {
   const {

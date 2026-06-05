@@ -4,35 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Link from 'next/link';
 import { useAppContext } from '@/lib/registry';
-
-function RegisterNavigation() {
-  const { username } = useAppContext();
-
-  return (
-    <nav className="navigation">
-      <img
-        src="/whodo.svg"
-        alt="WhoDo Logo"
-        style={{ height: '25px', margin: '0 0.5em 0 1.5em', cursor: 'pointer' }}
-        onClick={() => (window.location.href = username ? '/dashboard' : '/login')}
-      />
-      <h3 style={{ color: 'white' }}>WhoDo</h3>
-      <div className="navigation-menu">
-        <ul>
-          <li>
-            <Link href="/" style={{ color: '#cadce4' }}>Blog</Link>
-          </li>
-          <li>
-            <Link href="/contact" style={{ color: '#cadce4' }}>Contact</Link>
-          </li>
-          <li>
-            <Link href="/login" style={{ color: '#cadce4' }}>Login</Link>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  );
-}
+import { Navigation } from '@/components/Navigation';
 
 export default function Register() {
   const {
@@ -83,7 +55,7 @@ export default function Register() {
 
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
-      <RegisterNavigation />
+      <Navigation />
       <div style={{ paddingLeft: '2em', paddingRight: '2em' }}>
         <form onSubmit={handleSubmit(onSubmit)} className="sign-in">
           <h2>Create Account</h2>
