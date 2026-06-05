@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         velocity: body.velocity || [0],
         target: body.target || [0],
         health: 'green',
-        userId: body.userId || 'default-user', // In production, get from auth
+        userId: body.userId || null,
       },
     });
 
