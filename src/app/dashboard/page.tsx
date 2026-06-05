@@ -5,9 +5,11 @@ import 'react-tabs/style/react-tabs.css';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import AddIcon from '@mui/icons-material/Add';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Navigation } from '@/components/Navigation';
+import { useAppContext } from '@/lib/registry';
 
 interface Project {
   id: number;
@@ -19,21 +21,13 @@ interface Project {
   health: string;
 }
 
-const defaultProjects: Project[] = [
-  {
-    id: 12321,
-    name: 'My Project',
-    isFavorite: false,
-    isPrivate: true,
-    velocity: [2, 1],
-    target: [3, 2],
-    health: 'red',
-  },
-];
-
 export default function Dashboard() {
-  const [projects, setProjects] = useState<Project[]>(defaultProjects);
+  const { username } = useAppContext();
+  const [projects, setProjects] = useState<Project[]>([]);
   const [projectHealth, setProjectHealth] = useState<string[]>([]);
+  const [showNewProjectForm, setShowNewProjectForm] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const pointsGap = (projectIndex: number) => {
     const proj = projects[projectIndex];
@@ -71,6 +65,32 @@ export default function Dashboard() {
     setProjectHealth(projects.map((_, index) => calcProjectHealth(index)));
   }, [projects]);
 
+  const createProject = async () => {
+    if (!newProjectName.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newProjectName,
+          userId: username,
+        }),
+      });
+
+      if (response.ok) {
+        const newProject = await response.json();
+        setProjects([newProject, ...projects]);
+        setNewProjectName('');
+        setShowNewProjectForm(false);
+      }
+    } catch (error) {
+      console.error('Failed to create project:', error);
+    }
+    setIsLoading(false);
+  };
+
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
       <Navigation />
@@ -83,8 +103,100 @@ export default function Dashboard() {
         </TabList>
         <div style={{ maxWidth: '800px', margin: 'auto' }}>
           <TabPanel>
-            {projects.map((project, index) => (
-              <div key={project.id} className="project-card">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+              <button
+                onClick={() => setShowNewProjectForm(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '8px 16px',
+                  backgroundColor: '#191970',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                <AddIcon /> New Project
+              </button>
+            </div>
+
+            {showNewProjectForm && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 100,
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: 'white',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    minWidth: '300px',
+                  }}
+                >
+                  <h3>Create New Project</h3>
+                  <input
+                    type="text"
+                    placeholder="Project name"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && createProject()}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      marginBottom: '10px',
+                      border: '1px solid #ccc',
+                      borderRadius: '4px',
+                    }}
+                    autoFocus
+                  />
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => {
+                        setShowNewProjectForm(false);
+                        setNewProjectName('');
+                      }}
+                      style={{ padding: '8px 16px', cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={createProject}
+                      disabled={isLoading || !newProjectName.trim()}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: isLoading || !newProjectName.trim() ? '#ccc' : '#191970',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: isLoading || !newProjectName.trim() ? 'not-allowed' : 'pointer',
+                      }}
+                    >
+                      {isLoading ? 'Creating...' : 'Create'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {projects.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                <p>No projects yet. Create one to get started!</p>
+              </div>
+            ) : (
+              projects.map((project, index) => (
+                <div key={project.id} className="project-card">
                 <div
                   style={{
                     display: 'flex',
@@ -127,7 +239,7 @@ export default function Dashboard() {
                   </span>
                 </h4>
               </div>
-            ))}
+            )))}
           </TabPanel>
           <TabPanel>
             <h2>Paid only</h2>
