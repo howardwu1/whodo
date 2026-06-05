@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import Navigation from '../../page';
+import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
 
 interface Story {
