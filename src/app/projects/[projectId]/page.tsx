@@ -1,9 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
+import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
 
@@ -337,6 +335,9 @@ export default function ProjectPage() {
   const [currentIterationStories, setCurrentIterationStories] = useState<Story[]>(sampleStories);
   const [iceboxStoriesState, setIceboxStoriesState] = useState<Story[]>(iceboxStories);
   const [doneStoriesState, setDoneStoriesState] = useState<Story[]>(doneStories);
+  const [showCreateStory, setShowCreateStory] = useState(false);
+  const [newStoryTitle, setNewStoryTitle] = useState('');
+  const [newStoryType, setNewStoryType] = useState('feature');
 
   useEffect(() => {
     setProject('Sample');
@@ -345,44 +346,89 @@ export default function ProjectPage() {
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
       <Navigation />
-      <Tabs>
-        <TabList className="navigation-tabs">
-          <Tab>Stories</Tab>
-          <Tab disabled>Analytics (Paid Feature)</Tab>
-          <Tab>Members</Tab>
-        </TabList>
-        <TabPanel style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-          <>
-            <div className="sidebar">
-              <button
-                className="sidebar-btn"
-                onClick={() => setShowMyStories(!showMyStories)}
-                style={{ color: showMyStories ? 'white' : 'gray' }}
-              >
-                My Stories
-              </button>
-              <button
-                className="sidebar-btn"
-                onClick={() => setShowCurrentIteration(!showCurrentIteration)}
-                style={{ color: showCurrentIteration ? 'white' : 'gray' }}
-              >
-                Current Iteration
-              </button>
-              <button
-                className="sidebar-btn"
-                onClick={() => setShowIcebox(!showIcebox)}
-                style={{ color: showIcebox ? 'white' : 'gray' }}
-              >
-                Icebox
-              </button>
-              <button
-                className="sidebar-btn"
-                onClick={() => setShowDoneStories(!showDoneStories)}
-                style={{ color: showDoneStories ? 'white' : 'gray' }}
-              >
-                Done Stories
-              </button>
-            </div>
+      <div style={{ maxWidth: '100%', margin: '0 auto' }}>
+        <div style={{ display: 'flex', borderBottom: '1px solid #ccc', backgroundColor: '#f5f5f5' }}>
+          <button
+            style={{
+              padding: '10px 20px',
+              cursor: 'pointer',
+              border: 'none',
+              backgroundColor: 'transparent',
+              fontSize: '14px',
+              fontWeight: 500,
+              borderBottom: '2px solid #191970',
+            }}
+          >
+            Stories
+          </button>
+          <button
+            disabled
+            style={{
+              padding: '10px 20px',
+              cursor: 'not-allowed',
+              color: '#999',
+              border: 'none',
+              backgroundColor: 'transparent',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Analytics (Paid Feature)
+          </button>
+          <button
+            disabled
+            style={{
+              padding: '10px 20px',
+              cursor: 'not-allowed',
+              color: '#999',
+              border: 'none',
+              backgroundColor: 'transparent',
+              fontSize: '14px',
+              fontWeight: 500,
+            }}
+          >
+            Members
+          </button>
+        </div>
+
+        <div style={{ display: 'flex', height: 'calc(100vh - 90px)', overflow: 'hidden' }}>
+          <div className="sidebar">
+            <button
+              className="sidebar-btn"
+              onClick={() => setShowCreateStory(true)}
+              style={{ backgroundColor: '#191970', color: 'white' }}
+            >
+              + Create Story
+            </button>
+            <button
+              className="sidebar-btn"
+              onClick={() => setShowMyStories(!showMyStories)}
+              style={{ color: showMyStories ? 'white' : 'gray' }}
+            >
+              My Stories
+            </button>
+            <button
+              className="sidebar-btn"
+              onClick={() => setShowCurrentIteration(!showCurrentIteration)}
+              style={{ color: showCurrentIteration ? 'white' : 'gray' }}
+            >
+              Current Iteration
+            </button>
+            <button
+              className="sidebar-btn"
+              onClick={() => setShowIcebox(!showIcebox)}
+              style={{ color: showIcebox ? 'white' : 'gray' }}
+            >
+              Icebox
+            </button>
+            <button
+              className="sidebar-btn"
+              onClick={() => setShowDoneStories(!showDoneStories)}
+              style={{ color: showDoneStories ? 'white' : 'gray' }}
+            >
+              Done Stories
+            </button>
+          </div>
             <div
               style={{
                 display: 'flex',
@@ -443,16 +489,115 @@ export default function ProjectPage() {
                   columnName="Done Stories"
                 />
               )}
-            </div>
-          </>
-        </TabPanel>
-        <TabPanel>
-          <h2>Not yet implemented</h2>
-        </TabPanel>
-        <TabPanel>
-          <h2>Not yet implemented</h2>
-        </TabPanel>
-      </Tabs>
+
+            {showCreateStory && (
+              <div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 100,
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: 'white',
+                    padding: '20px',
+                    borderRadius: '8px',
+                    minWidth: '300px',
+                  }}
+                >
+                  <h3>Create New Story</h3>
+                  <input
+                    type="text"
+                    placeholder="Story title"
+                    value={newStoryTitle}
+                    onChange={(e) => setNewStoryTitle(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      marginBottom: '10px',
+                      border: '1px solid #ccc',
+                      borderRadius: '4px',
+                    }}
+                    autoFocus
+                  />
+                  <select
+                    value={newStoryType}
+                    onChange={(e) => setNewStoryType(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      marginBottom: '10px',
+                      border: '1px solid #ccc',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <option value="feature">Feature</option>
+                    <option value="bug">Bug</option>
+                    <option value="chore">Chore</option>
+                    <option value="release">Release</option>
+                  </select>
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => {
+                        setShowCreateStory(false);
+                        setNewStoryTitle('');
+                      }}
+                      style={{ padding: '8px 16px', cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (newStoryTitle.trim()) {
+                          const newStory: Story = {
+                            id: Date.now(),
+                            title: newStoryTitle,
+                            assignee: 'none',
+                            points: 'unestimated',
+                            isFinished: false,
+                            isDelivered: false,
+                            isRejected: false,
+                            isAccepted: false,
+                            mentor: '',
+                            secondaryAssignee: '',
+                            secondaryMentor: '',
+                            aTeamSupportTime: '',
+                            standupComments: '',
+                            sessionAndPMComments: '',
+                            dateCreated: new Date().toLocaleDateString(),
+                            type: newStoryType,
+                          };
+                          setCurrentIterationStories([...currentIterationStories, newStory]);
+                          setShowCreateStory(false);
+                          setNewStoryTitle('');
+                        }
+                      }}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#191970',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Create
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
