@@ -120,13 +120,15 @@ function StoriesColumn({
       <Droppable droppableId={columnName}>
         {(provided) => (
           <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
             className="stories-column"
             style={{
               marginRight: numColumns < 3 ? undefined : '2px',
               marginLeft: numColumns < 3 ? undefined : '2px',
               minWidth: numColumns < 3 ? `${80 / numColumns - 1}vw` : '30vw',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              overflow: 'hidden',
             }}
           >
             <div
@@ -136,6 +138,8 @@ function StoriesColumn({
                 justifyContent: 'space-between',
                 marginLeft: '10px',
                 marginRight: '10px',
+                padding: '10px 0',
+                backgroundColor: 'darkgrey',
               }}
             >
               <h3>{columnName}</h3>
@@ -143,7 +147,16 @@ function StoriesColumn({
                 <button onClick={() => setShowStoryList(false)}>X</button>
               </span>
             </div>
-            <div style={{ overflowY: 'auto', backgroundColor: '#eee', height: '100%' }}>
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              style={{
+                overflowY: 'auto',
+                backgroundColor: '#eee',
+                flex: 1,
+                minHeight: 0,
+              }}
+            >
               {localStoryList.map((story, index) => {
                 if (filterBy.length > 0 && story.assignee !== filterBy[0]) return null;
                 return (
@@ -373,7 +386,7 @@ function StoriesColumn({
           </>
         )}
         {provided.placeholder}
-        </div>
+      </div>
       </div>
     )}
   </Droppable>

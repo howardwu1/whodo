@@ -197,6 +197,9 @@ input {
   min-width: 30vw;
   border-right: 2px solid black;
   border-left: 2px solid black;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar-track {
@@ -222,7 +225,10 @@ input {
 .item-container {
   background-color: #fff;
   border: 1px solid black;
-  margin: 5px 30px;
+  margin: 8px 30px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
 }
 
 .item-container-details {
