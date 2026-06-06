@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -19,12 +20,24 @@ interface Project {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const { username } = useAppContext();
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectHealth, setProjectHealth] = useState<string[]>([]);
   const [showNewProjectForm, setShowNewProjectForm] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated && username === '') {
+      router.push('/');
+    }
+  }, [isHydrated, username, router]);
 
   const pointsGap = (projectIndex: number) => {
     const proj = projects[projectIndex];
