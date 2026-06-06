@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
 
@@ -68,13 +69,15 @@ function StoriesColumn({
   username: string;
 }) {
   const [showStoryMap, setShowStoryMap] = useState(new Map<number, boolean>());
+  const [editingTitleId, setEditingTitleId] = useState<number | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
   const [localStoryList, setLocalStoryList] = useState(storyList);
 
   useEffect(() => {
     setLocalStoryList(storyList);
   }, [storyList]);
 
-  const handleDragEnd = (result: { source: { index: number }; destination?: { index: number } }) => {
+  const handleDragEnd = (result: any) => {
     if (!result.destination) return;
     const updated = [...localStoryList];
     const [reordered] = updated.splice(result.source.index, 1);
@@ -83,51 +86,110 @@ function StoriesColumn({
     setStorylist(updated);
   };
 
+  const startEditingTitle = (story: Story) => {
+    setEditingTitleId(story.id);
+    setEditingTitle(story.title);
+  };
+
+  const saveTitle = (story: Story) => {
+    if (editingTitle.trim() && editingTitle !== story.title) {
+      const updated = localStoryList.map(s =>
+        s.id === story.id ? { ...s, title: editingTitle.trim() } : s
+      );
+      setLocalStoryList(updated);
+      setStorylist(updated);
+    }
+    setEditingTitleId(null);
+    setEditingTitle('');
+  };
+
   return (
-    <div
-      className="stories-column"
-      style={{
-        marginRight: numColumns < 3 ? undefined : '2px',
-        marginLeft: numColumns < 3 ? undefined : '2px',
-        minWidth: numColumns < 3 ? `${80 / numColumns - 1}vw` : '30vw',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginLeft: '10px',
-          marginRight: '10px',
-        }}
-      >
-        <h3>{columnName}</h3>
-        <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <button onClick={() => setShowStoryList(false)}>X</button>
-        </span>
-      </div>
-      <div style={{ overflowY: 'auto', backgroundColor: '#eee', height: '100%' }}>
-        {localStoryList.map((story, index) => {
-          if (filterBy.length > 0 && story.assignee !== filterBy[0]) return null;
-          return (
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId={columnName}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="stories-column"
+            style={{
+              marginRight: numColumns < 3 ? undefined : '2px',
+              marginLeft: numColumns < 3 ? undefined : '2px',
+              minWidth: numColumns < 3 ? `${80 / numColumns - 1}vw` : '30vw',
+            }}
+          >
             <div
-              key={story.id + '' + index}
-              onClick={() => setShowStoryMap(new Map(showStoryMap.set(story.id, !showStoryMap.get(story.id))))}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginLeft: '10px',
+                marginRight: '10px',
+              }}
             >
-              {!showStoryMap.get(story.id) ? (
-                <div
-                  className={`item-container ${story.assignee === 'none' ? 'none-assigned' : ''}`}
-                  title={draggable ? '' : 'Use Current Iteration to change your story order'}
-                >
-                  <span
-                    style={{
-                      cursor: draggable ? 'all-scroll' : 'default',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      padding: '25px 10px',
-                    }}
-                  >
-                    {story.title}
+              <h3>{columnName}</h3>
+              <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                <button onClick={() => setShowStoryList(false)}>X</button>
+              </span>
+            </div>
+            <div style={{ overflowY: 'auto', backgroundColor: '#eee', height: '100%' }}>
+              {localStoryList.map((story, index) => {
+                if (filterBy.length > 0 && story.assignee !== filterBy[0]) return null;
+                return (
+                  <Draggable key={story.id} draggableId={story.id.toString()} index={index} isDragDisabled={!draggable}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        key={story.id + '' + index}
+                        onClick={() => setShowStoryMap(new Map(showStoryMap.set(story.id, !showStoryMap.get(story.id))))}
+                      >
+                        {!showStoryMap.get(story.id) ? (
+                          <div
+                            className={`item-container ${story.assignee === 'none' ? 'none-assigned' : ''}`}
+                            title={draggable ? '' : 'Use Current Iteration to change your story order'}
+                          >
+                            <span
+                              style={{
+                                cursor: draggable ? 'all-scroll' : 'default',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                padding: '25px 10px',
+                              }}
+                            >
+                              {editingTitleId === story.id ? (
+                                <input
+                                  type="text"
+                                  value={editingTitle}
+                                  onChange={(e) => setEditingTitle(e.target.value)}
+                                  onBlur={() => saveTitle(story)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') saveTitle(story);
+                                    if (e.key === 'Escape') {
+                                      setEditingTitleId(null);
+                                      setEditingTitle('');
+                                    }
+                                  }}
+                                  onClick={(e) => e.stopPropagation()}
+                                  autoFocus
+                                  style={{
+                                    padding: '5px',
+                                    fontSize: '16px',
+                                    width: '150px',
+                                  }}
+                                />
+                              ) : (
+                                <span
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    startEditingTitle(story);
+                                  }}
+                                  style={{ cursor: 'text' }}
+                                  title="Click to edit title"
+                                >
+                                  {story.title}
+                                </span>
+                              )}
                     {story.assignee !== 'none' && ` (${story.assignee})`}
                     {story.assignee === 'none' && (
                       <button
@@ -286,8 +348,10 @@ function StoriesColumn({
                   </form>
                 </div>
               )}
-            </div>
-          );
+              </div>
+            )}
+          </Draggable>
+        );
         })}
         {(localStoryList.length === 0 ||
           (filterBy.length > 0 && !localStoryList.some((s) => s.assignee === filterBy[0]))) && (
@@ -296,8 +360,12 @@ function StoriesColumn({
             <h3 style={{ margin: '10% 10% 0% 10%' }}>Nothing here yet. Add stories to this list!</h3>
           </>
         )}
+        {provided.placeholder}
+        </div>
       </div>
-    </div>
+    )}
+  </Droppable>
+</DragDropContext>
   );
 }
 
