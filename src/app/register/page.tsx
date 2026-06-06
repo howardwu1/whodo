@@ -11,7 +11,7 @@ export default function Register() {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
   const { setUsername } = useAppContext();
@@ -128,7 +128,13 @@ export default function Register() {
 
           {apiError && <span className="login-error">{apiError}</span>}
 
-          <input type="submit" className="submit-btn" value="CREATE ACCOUNT" />
+          <input
+            type="submit"
+            className="submit-btn"
+            value={isSubmitting ? 'CREATING...' : 'CREATE ACCOUNT'}
+            disabled={isSubmitting}
+            style={{ opacity: isSubmitting ? 0.7 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
+          />
 
           <p style={{ marginTop: '-10px', fontSize: '12pt' }}>
             Already have an account?{' '}
