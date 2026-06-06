@@ -186,20 +186,8 @@ function StoriesColumn({
                                 gap: '10px',
                               }}
                             >
-                              <span
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  startEditingTitle(story);
-                                }}
-                                style={{
-                                  cursor: 'text',
-                                  flex: 1,
-                                  wordBreak: 'break-word',
-                                  minWidth: '100px',
-                                }}
-                                title="Click to edit title"
-                              >
-                                {editingTitleId === story.id ? (
+                              {editingTitleId === story.id ? (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', width: '100%' }}>
                                   <input
                                     type="text"
                                     value={editingTitle}
@@ -217,94 +205,43 @@ function StoriesColumn({
                                     style={{
                                       padding: '5px',
                                       fontSize: '16px',
-                                      width: '100%',
+                                      width: 'calc(100% - 20px)',
                                       boxSizing: 'border-box',
                                     }}
                                   />
-                                ) : (
-                                  story.title
-                                )}
-                              </span>
-                    {story.assignee !== 'none' && ` (${story.assignee})`}
-                    {story.assignee === 'none' && (
-                      <button
-                        onClick={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, assignee: username };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
-                          e.stopPropagation();
-                        }}
-                      >
-                        Start
-                      </button>
-                    )}
-                    {story.isRejected && (
-                      <button
-                        onClick={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, isRejected: false };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
-                          e.stopPropagation();
-                        }}
-                      >
-                        Restart
-                      </button>
-                    )}
-                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && (
-                      <button
-                        onClick={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, isFinished: true };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
-                          e.stopPropagation();
-                        }}
-                      >
-                        Finish
-                      </button>
-                    )}
-                    {story.isFinished && !story.isDelivered && (
-                      <button
-                        onClick={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, isDelivered: true };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
-                          e.stopPropagation();
-                        }}
-                      >
-                        Deliver
-                      </button>
-                    )}
-                    {story.isDelivered && !story.isAccepted && (
-                      <span style={{ display: 'flex', flexDirection: 'row' }}>
-                        <button
-                          onClick={(e) => {
-                            const updated = localStoryList.filter((_, i) => i !== index);
-                            setLocalStoryList(updated);
-                            setStorylist(updated);
-                            setDoneList([...doneList, { ...story, isAccepted: true }]);
-                            e.stopPropagation();
-                          }}
-                        >
-                          Accept
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            const updated = [...localStoryList];
-                            updated[index] = { ...story, isFinished: false, isDelivered: false, isRejected: true };
-                            setLocalStoryList(updated);
-                            setStorylist(updated);
-                            e.stopPropagation();
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </span>
-                    )}
-                  </span>
+                                  <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                                    {story.assignee !== 'none' && <span>({story.assignee})</span>}
+                                    {story.assignee === 'none' && (
+                                      <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, assignee: username }; setLocalStoryList(updated); setStorylist(updated); }}>Start</button>
+                                    )}
+                                    {story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isRejected: false }; setLocalStoryList(updated); setStorylist(updated); }}>Restart</button>}
+                                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: true }; setLocalStoryList(updated); setStorylist(updated); }}>Finish</button>}
+                                    {story.isFinished && !story.isDelivered && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isDelivered: true }; setLocalStoryList(updated); setStorylist(updated); }}>Deliver</button>}
+                                    {story.isDelivered && !story.isAccepted && <><button onClick={(e) => { e.stopPropagation(); const updated = localStoryList.filter((_, i) => i !== index); setLocalStoryList(updated); setStorylist(updated); setDoneList([...doneList, { ...story, isAccepted: true }]); }}>Accept</button><button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: false, isDelivered: false, isRejected: true }; setLocalStoryList(updated); setStorylist(updated); }}>Reject</button></>}
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <span
+                                    onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
+                                    style={{ cursor: 'text', wordBreak: 'break-word', flex: 1 }}
+                                    title="Click to edit title"
+                                  >
+                                    {story.title}
+                                  </span>
+                                  <span style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', alignItems: 'center' }}>
+                                    <span>{story.assignee !== 'none' && ` (${story.assignee})`}</span>
+                                    {story.assignee === 'none' && (
+                                      <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, assignee: username }; setLocalStoryList(updated); setStorylist(updated); }}>Start</button>
+                                    )}
+                                    {story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isRejected: false }; setLocalStoryList(updated); setStorylist(updated); }}>Restart</button>}
+                                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: true }; setLocalStoryList(updated); setStorylist(updated); }}>Finish</button>}
+                                    {story.isFinished && !story.isDelivered && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isDelivered: true }; setLocalStoryList(updated); setStorylist(updated); }}>Deliver</button>}
+                                    {story.isDelivered && !story.isAccepted && <><button onClick={(e) => { e.stopPropagation(); const updated = localStoryList.filter((_, i) => i !== index); setLocalStoryList(updated); setStorylist(updated); setDoneList([...doneList, { ...story, isAccepted: true }]); }}>Accept</button><button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: false, isDelivered: false, isRejected: true }; setLocalStoryList(updated); setStorylist(updated); }}>Reject</button></>}
+                                  </span>
+                                </>
+                              )}
+                            </span>
                 </div>
               ) : (
                 <div className="item-container-details">
