@@ -17,6 +17,7 @@ interface Project {
   velocity: number[];
   target: number[];
   health: string;
+  userId: string;
 }
 
 export default function Dashboard() {
@@ -81,14 +82,18 @@ export default function Dashboard() {
         const response = await fetch('/api/projects');
         if (response.ok) {
           const data = await response.json();
-          setProjects(data);
+          // Filter projects by username (using userId which is the username for now)
+          const userProjects = data.filter((p: Project) => p.userId === username);
+          setProjects(userProjects);
         }
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       }
     };
-    fetchProjects();
-  }, []);
+    if (username) {
+      fetchProjects();
+    }
+  }, [username]);
 
   const createProject = async () => {
     if (!newProjectName.trim()) return;
@@ -100,6 +105,7 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: newProjectName,
+          userId: username,
         }),
       });
 
@@ -114,6 +120,11 @@ export default function Dashboard() {
     }
     setIsLoading(false);
   };
+
+  // Don't render anything until auth is verified
+  if (!isHydrated || username === '') {
+    return null;
+  }
 
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>

@@ -43,6 +43,14 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+
+    if (!body.userId) {
+      return NextResponse.json(
+        { error: 'userId is required' },
+        { status: 400 }
+      );
+    }
+
     const newProject = await prisma.project.create({
       data: {
         name: body.name || 'New Project',
@@ -51,7 +59,7 @@ export async function POST(request: Request) {
         velocity: body.velocity || [0],
         target: body.target || [0],
         health: 'green',
-        userId: body.userId || null,
+        userId: body.userId,
       },
     });
 
