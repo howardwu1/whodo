@@ -9,20 +9,11 @@ export async function GET(request: Request) {
     if (username) {
       const user = await prisma.user.findUnique({
         where: { username },
-        include: {
-          projects: {
-            include: { stories: true },
-            orderBy: { createdAt: 'desc' },
-          },
-        },
       });
       return NextResponse.json(user);
     }
 
     const users = await prisma.user.findMany({
-      include: {
-        projects: true,
-      },
       orderBy: {
         createdAt: 'desc',
       },
