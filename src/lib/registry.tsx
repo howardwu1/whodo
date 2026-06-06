@@ -35,12 +35,15 @@ function getStoredUsername(): string {
   return localStorage.getItem('whodo_username') || '';
 }
 
-function setStoredUsername(value: string): void {
+async function setStoredUsername(value: string): Promise<void> {
   if (typeof window === 'undefined') return;
   if (value) {
     localStorage.setItem('whodo_username', value);
+    // Also set a cookie for middleware to read
+    document.cookie = `whodo_username=${value}; path=/; max-age=86400`;
   } else {
     localStorage.removeItem('whodo_username');
+    document.cookie = 'whodo_username=; path=/; max-age=0';
   }
 }
 
