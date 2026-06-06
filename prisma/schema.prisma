@@ -23,7 +23,6 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  projects  Project[]
 }
 
 model Project {
@@ -36,8 +35,7 @@ model Project {
   health      String   @default("green")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   // stores the username, not a foreign key
   stories     Story[]
 }
 
