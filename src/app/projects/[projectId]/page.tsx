@@ -56,6 +56,8 @@ function StoriesColumn({
   doneList,
   draggable = true,
   username,
+  sourceIdentifier = '',
+  onReorder,
 }: {
   filterBy?: string[];
   storyList: Story[];
@@ -67,6 +69,8 @@ function StoriesColumn({
   doneList: Story[];
   draggable?: boolean;
   username: string;
+  sourceIdentifier?: string;
+  onReorder?: (sourceId: string, sourceIndex: number, destIndex: number) => void;
 }) {
   const [showStoryMap, setShowStoryMap] = useState(new Map<number, boolean>());
   const [editingTitleId, setEditingTitleId] = useState<number | null>(null);
@@ -79,6 +83,14 @@ function StoriesColumn({
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
+
+    // If we have a shared reorder handler, use it
+    if (onReorder && sourceIdentifier) {
+      onReorder(sourceIdentifier, result.source.index, result.destination.index);
+      return;
+    }
+
+    // Local reorder fallback
     const updated = [...localStoryList];
     const [reordered] = updated.splice(result.source.index, 1);
     updated.splice(result.destination.index, 0, reordered);
@@ -411,6 +423,16 @@ export default function ProjectPage() {
     setProject('Sample');
   }, [setProject]);
 
+  // Unified reorder handler for stories across all columns
+  const handleStoryReorder = (sourceId: string, sourceIndex: number, destIndex: number) => {
+    // sourceId is which column (My Stories, Current Iteration, Icebox, Done)
+    // They all share currentIterationStories data, so we reorder the same array
+    const updated = [...currentIterationStories];
+    const [reordered] = updated.splice(sourceIndex, 1);
+    updated.splice(destIndex, 0, reordered);
+    setCurrentIterationStories(updated);
+  };
+
   return (
     <div style={{ overflowY: 'hidden', height: '100vh' }}>
       <Navigation />
@@ -509,7 +531,7 @@ export default function ProjectPage() {
             >
               {showMyStories && (
                 <StoriesColumn
-                  draggable={false}
+                  draggable={true}
                   filterBy={[username || 'asdf']}
                   storyList={currentIterationStories}
                   setStorylist={setCurrentIterationStories}
@@ -519,10 +541,13 @@ export default function ProjectPage() {
                   setDoneList={setDoneStoriesState}
                   doneList={doneStoriesState}
                   columnName="My Stories"
+                  sourceIdentifier="current_iteration"
+                  onReorder={handleStoryReorder}
                 />
               )}
               {showCurrentIteration && (
                 <StoriesColumn
+                  draggable={true}
                   storyList={currentIterationStories}
                   setStorylist={setCurrentIterationStories}
                   setShowStoryList={setShowCurrentIteration}
@@ -531,6 +556,8 @@ export default function ProjectPage() {
                   setDoneList={setDoneStoriesState}
                   doneList={doneStoriesState}
                   columnName="Current Iteration"
+                  sourceIdentifier="current_iteration"
+                  onReorder={handleStoryReorder}
                 />
               )}
               {showIcebox && (
