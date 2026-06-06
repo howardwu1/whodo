@@ -438,12 +438,19 @@ export default function ProjectPage() {
 
   // Unified reorder handler for stories across all columns
   const handleStoryReorder = (sourceId: string, sourceIndex: number, destIndex: number) => {
-    // sourceId is which column (My Stories, Current Iteration, Icebox, Done)
-    // They all share currentIterationStories data, so we reorder the same array
-    const updated = [...currentIterationStories];
-    const [reordered] = updated.splice(sourceIndex, 1);
-    updated.splice(destIndex, 0, reordered);
-    setCurrentIterationStories(updated);
+    if (sourceId === 'current_iteration' || sourceId === 'icebox' || sourceId === 'done') {
+      const sourceList = sourceId === 'current_iteration' ? currentIterationStories
+        : sourceId === 'icebox' ? iceboxStoriesState
+        : doneStoriesState;
+      const setSourceList = sourceId === 'current_iteration' ? setCurrentIterationStories
+        : sourceId === 'icebox' ? setIceboxStoriesState
+        : setDoneStoriesState;
+
+      const updated = [...sourceList];
+      const [reordered] = updated.splice(sourceIndex, 1);
+      updated.splice(destIndex, 0, reordered);
+      setSourceList(updated);
+    }
   };
 
   return (
@@ -575,6 +582,7 @@ export default function ProjectPage() {
               )}
               {showIcebox && (
                 <StoriesColumn
+                  draggable={true}
                   storyList={iceboxStoriesState}
                   setStorylist={setIceboxStoriesState}
                   setShowStoryList={setShowIcebox}
@@ -583,10 +591,13 @@ export default function ProjectPage() {
                   setDoneList={setDoneStoriesState}
                   doneList={doneStoriesState}
                   columnName="Icebox"
+                  sourceIdentifier="icebox"
+                  onReorder={handleStoryReorder}
                 />
               )}
               {showDoneStories && (
                 <StoriesColumn
+                  draggable={true}
                   storyList={doneStoriesState}
                   setStorylist={setDoneStoriesState}
                   setShowStoryList={setShowDoneStories}
@@ -595,6 +606,8 @@ export default function ProjectPage() {
                   setDoneList={setDoneStoriesState}
                   doneList={doneStoriesState}
                   columnName="Done Stories"
+                  sourceIdentifier="done"
+                  onReorder={handleStoryReorder}
                 />
               )}
 
