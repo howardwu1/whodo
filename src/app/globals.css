@@ -228,7 +228,13 @@ input {
   margin: 8px 30px;
   min-height: 60px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  padding: 0;
+}
+.item-container > span {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .item-container-details {

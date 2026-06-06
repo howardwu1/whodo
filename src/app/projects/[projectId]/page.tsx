@@ -178,43 +178,53 @@ function StoriesColumn({
                               style={{
                                 cursor: draggable ? 'all-scroll' : 'default',
                                 display: 'flex',
+                                flexWrap: 'wrap',
                                 justifyContent: 'space-between',
-                                padding: '25px 10px',
+                                alignItems: 'flex-start',
+                                padding: '15px 10px',
+                                width: '100%',
+                                gap: '10px',
                               }}
                             >
-                              {editingTitleId === story.id ? (
-                                <input
-                                  type="text"
-                                  value={editingTitle}
-                                  onChange={(e) => setEditingTitle(e.target.value)}
-                                  onBlur={() => saveTitle(story)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') saveTitle(story);
-                                    if (e.key === 'Escape') {
-                                      setEditingTitleId(null);
-                                      setEditingTitle('');
-                                    }
-                                  }}
-                                  onClick={(e) => e.stopPropagation()}
-                                  autoFocus
-                                  style={{
-                                    padding: '5px',
-                                    fontSize: '16px',
-                                    width: '150px',
-                                  }}
-                                />
-                              ) : (
-                                <span
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    startEditingTitle(story);
-                                  }}
-                                  style={{ cursor: 'text' }}
-                                  title="Click to edit title"
-                                >
-                                  {story.title}
-                                </span>
-                              )}
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  startEditingTitle(story);
+                                }}
+                                style={{
+                                  cursor: 'text',
+                                  flex: 1,
+                                  wordBreak: 'break-word',
+                                  minWidth: '100px',
+                                }}
+                                title="Click to edit title"
+                              >
+                                {editingTitleId === story.id ? (
+                                  <input
+                                    type="text"
+                                    value={editingTitle}
+                                    onChange={(e) => setEditingTitle(e.target.value)}
+                                    onBlur={() => saveTitle(story)}
+                                    onKeyDown={(e) => {
+                                      if (e.key === 'Enter') saveTitle(story);
+                                      if (e.key === 'Escape') {
+                                        setEditingTitleId(null);
+                                        setEditingTitle('');
+                                      }
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                    autoFocus
+                                    style={{
+                                      padding: '5px',
+                                      fontSize: '16px',
+                                      width: '100%',
+                                      boxSizing: 'border-box',
+                                    }}
+                                  />
+                                ) : (
+                                  story.title
+                                )}
+                              </span>
                     {story.assignee !== 'none' && ` (${story.assignee})`}
                     {story.assignee === 'none' && (
                       <button
