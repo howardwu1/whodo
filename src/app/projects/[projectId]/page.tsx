@@ -83,6 +83,22 @@ function StoriesColumn({
     setLocalStoryList(storyList);
   }, [storyList]);
 
+  // Handle click outside input to save title
+  useEffect(() => {
+    if (editingTitleId === null) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.title-edit-input') && !target.closest('.edit-btn')) {
+        const story = localStoryList.find(s => s.id === editingTitleId);
+        if (story) saveTitle(story);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [editingTitleId, editingTitle, localStoryList]);
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -304,10 +320,10 @@ function StoriesColumn({
                     </h3>
                     {editingTitleId === story.id ? (
                       <input
+                        className="title-edit-input"
                         type="text"
                         value={editingTitle}
                         onChange={(e) => setEditingTitle(e.target.value)}
-                        onBlur={() => saveTitle(story)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') saveTitle(story);
                           if (e.key === 'Escape') {
@@ -326,6 +342,7 @@ function StoriesColumn({
                       <h4 style={{ textAlign: 'center', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {story.title}
                         <button
+                          className="edit-btn"
                           onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', marginLeft: '8px' }}
                           title="Edit title"
