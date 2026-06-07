@@ -29,6 +29,7 @@ export default function Dashboard() {
   const [newProjectName, setNewProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [isFetchingProjects, setIsFetchingProjects] = useState(true);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -78,6 +79,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setIsFetchingProjects(true);
       try {
         const response = await fetch('/api/projects');
         if (response.ok) {
@@ -89,6 +91,7 @@ export default function Dashboard() {
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       }
+      setIsFetchingProjects(false);
     };
     if (username) {
       fetchProjects();
@@ -250,7 +253,23 @@ export default function Dashboard() {
 
           {projects.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
-              <p>No projects yet. Create one to get started!</p>
+              {isFetchingProjects ? (
+                <>
+                  <div style={{ 
+                    border: '4px solid #f3f3f3', 
+                    borderTop: '4px solid #191970', 
+                    borderRadius: '50%', 
+                    width: '40px', 
+                    height: '40px', 
+                    animation: 'spin 1s linear infinite',
+                    margin: '0 auto 20px'
+                  }} />
+                  <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+                  <p>Loading projects...</p>
+                </>
+              ) : (
+                <p>No projects yet. Create one to get started!</p>
+              )}
             </div>
           ) : (
             projects.map((project, index) => (
