@@ -315,7 +315,7 @@ function StoriesColumn({
                         }}
                         onClick={(e) => e.stopPropagation()}
                         autoFocus
-                        style={{ flex: 1, padding: '4px', fontSize: '14px', marginRight: '8px' }}
+                        style={{ textAlign: 'center', flex: 1, padding: '4px', fontSize: 'inherit', marginRight: '8px' }}
                       />
                     ) : (
                       <h4 style={{ textAlign: 'center', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
