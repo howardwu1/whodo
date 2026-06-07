@@ -8,6 +8,7 @@ import { useAppContext } from '@/lib/registry';
 
 interface Story {
   id: number;
+  dbId?: string;
   title: string;
   assignee: string;
   points: string | number;
@@ -103,16 +104,50 @@ function StoriesColumn({
     setEditingTitle(story.title);
   };
 
-  const saveTitle = (story: Story) => {
+  const saveTitle = async (story: Story) => {
     if (editingTitle.trim() && editingTitle !== story.title) {
       const updated = localStoryList.map(s =>
         s.id === story.id ? { ...s, title: editingTitle.trim() } : s
       );
       setLocalStoryList(updated);
       setStorylist(updated);
+      
+      // Save to database
+      if (story.dbId) {
+        try {
+          await fetch('/api/stories', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: story.dbId, title: editingTitle.trim() }),
+          });
+        } catch (error) {
+          console.error('Error saving title:', error);
+        }
+      }
     }
     setEditingTitleId(null);
     setEditingTitle('');
+  };
+
+  // Helper to update story locally and in database
+  const updateStory = async (story: Story, updates: Partial<Story>) => {
+    const updated = localStoryList.map(s =>
+      s.id === story.id ? { ...s, ...updates } : s
+    );
+    setLocalStoryList(updated);
+    setStorylist(updated);
+
+    if (story.dbId) {
+      try {
+        await fetch('/api/stories', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: story.dbId, ...updates }),
+        });
+      } catch (error) {
+        console.error('Error updating story:', error);
+      }
+    }
   };
 
   return (
@@ -212,12 +247,12 @@ function StoriesColumn({
                                   <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
                                     {story.assignee !== 'none' && <span>({story.assignee})</span>}
                                     {story.assignee === 'none' && (
-                                      <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, assignee: username }; setLocalStoryList(updated); setStorylist(updated); }}>Start</button>
+                                      <button onClick={(e) => { e.stopPropagation(); updateStory(story, { assignee: username }); }}>Start</button>
                                     )}
-                                    {story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isRejected: false }; setLocalStoryList(updated); setStorylist(updated); }}>Restart</button>}
-                                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: true }; setLocalStoryList(updated); setStorylist(updated); }}>Finish</button>}
-                                    {story.isFinished && !story.isDelivered && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isDelivered: true }; setLocalStoryList(updated); setStorylist(updated); }}>Deliver</button>}
-                                    {story.isDelivered && !story.isAccepted && <><button onClick={(e) => { e.stopPropagation(); const updated = localStoryList.filter((_, i) => i !== index); setLocalStoryList(updated); setStorylist(updated); setDoneList([...doneList, { ...story, isAccepted: true }]); }}>Accept</button><button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: false, isDelivered: false, isRejected: true }; setLocalStoryList(updated); setStorylist(updated); }}>Reject</button></>}
+                                    {story.isRejected && <button onClick={(e) => { e.stopPropagation(); updateStory(story, { isRejected: false }); }}>Restart</button>}
+                                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && <button onClick={(e) => { e.stopPropagation(); updateStory(story, { isFinished: true }); }}>Finish</button>}
+                                    {story.isFinished && !story.isDelivered && <button onClick={(e) => { e.stopPropagation(); updateStory(story, { isDelivered: true }); }}>Deliver</button>}
+                                    {story.isDelivered && !story.isAccepted && <><button onClick={(e) => { e.stopPropagation(); const updated = localStoryList.filter((_, i) => i !== index); setLocalStoryList(updated); setStorylist(updated); setDoneList([...doneList, { ...story, isAccepted: true }]); }}>Accept</button><button onClick={(e) => { e.stopPropagation(); updateStory(story, { isFinished: false, isDelivered: false, isRejected: true }); }}>Reject</button></>}
                                   </div>
                                 </div>
                               ) : (
@@ -232,12 +267,12 @@ function StoriesColumn({
                                   <span style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', alignItems: 'center' }}>
                                     <span>{story.assignee !== 'none' && ` (${story.assignee})`}</span>
                                     {story.assignee === 'none' && (
-                                      <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, assignee: username }; setLocalStoryList(updated); setStorylist(updated); }}>Start</button>
+                                      <button onClick={(e) => { e.stopPropagation(); updateStory(story, { assignee: username }); }}>Start</button>
                                     )}
-                                    {story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isRejected: false }; setLocalStoryList(updated); setStorylist(updated); }}>Restart</button>}
-                                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: true }; setLocalStoryList(updated); setStorylist(updated); }}>Finish</button>}
-                                    {story.isFinished && !story.isDelivered && <button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isDelivered: true }; setLocalStoryList(updated); setStorylist(updated); }}>Deliver</button>}
-                                    {story.isDelivered && !story.isAccepted && <><button onClick={(e) => { e.stopPropagation(); const updated = localStoryList.filter((_, i) => i !== index); setLocalStoryList(updated); setStorylist(updated); setDoneList([...doneList, { ...story, isAccepted: true }]); }}>Accept</button><button onClick={(e) => { e.stopPropagation(); const updated = [...localStoryList]; updated[index] = { ...story, isFinished: false, isDelivered: false, isRejected: true }; setLocalStoryList(updated); setStorylist(updated); }}>Reject</button></>}
+                                    {story.isRejected && <button onClick={(e) => { e.stopPropagation(); updateStory(story, { isRejected: false }); }}>Restart</button>}
+                                    {!story.isFinished && story.assignee !== 'none' && !story.isRejected && <button onClick={(e) => { e.stopPropagation(); updateStory(story, { isFinished: true }); }}>Finish</button>}
+                                    {story.isFinished && !story.isDelivered && <button onClick={(e) => { e.stopPropagation(); updateStory(story, { isDelivered: true }); }}>Deliver</button>}
+                                    {story.isDelivered && !story.isAccepted && <><button onClick={(e) => { e.stopPropagation(); const updated = localStoryList.filter((_, i) => i !== index); setLocalStoryList(updated); setStorylist(updated); setDoneList([...doneList, { ...story, isAccepted: true }]); }}>Accept</button><button onClick={(e) => { e.stopPropagation(); updateStory(story, { isFinished: false, isDelivered: false, isRejected: true }); }}>Reject</button></>}
                                   </span>
                                 </>
                               )}
@@ -273,10 +308,7 @@ function StoriesColumn({
                         id={`story-type-${story.id}`}
                         defaultValue={story.type}
                         onChange={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, type: e.target.value };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
+                          updateStory(story, { type: e.target.value });
                         }}
                       >
                         <option value="feature">Feature</option>
@@ -291,10 +323,7 @@ function StoriesColumn({
                         id={`point-input-${story.id}`}
                         defaultValue={String(story.points)}
                         onChange={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, points: e.target.value };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
+                          updateStory(story, { points: e.target.value });
                         }}
                       >
                         <option value="unestimated">unestimated</option>
@@ -422,11 +451,11 @@ export default function ProjectPage() {
             )
           );
 
-          // Convert database stories to frontend format with numeric IDs
+          // Convert database stories to frontend format with numeric IDs, preserving dbId
           let idCounter = 100;
-          setCurrentIterationStories(currentIteration.map(s => ({ ...s, id: idCounter++ })));
-          setIceboxStoriesState(icebox.map(s => ({ ...s, id: idCounter++ })));
-          setDoneStoriesState(done.map(s => ({ ...s, id: idCounter++ })));
+          setCurrentIterationStories(currentIteration.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
+          setIceboxStoriesState(icebox.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
+          setDoneStoriesState(done.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
         } else {
           // Group stories by status
           const current = data.filter((s: any) => s.status === 'current_iteration');
@@ -434,9 +463,9 @@ export default function ProjectPage() {
           const done = data.filter((s: any) => s.status === 'done');
 
           let idCounter = 100;
-          setCurrentIterationStories(current.map((s: any) => ({ ...s, id: idCounter++ })));
-          setIceboxStoriesState(icebox.map((s: any) => ({ ...s, id: idCounter++ })));
-          setDoneStoriesState(done.map((s: any) => ({ ...s, id: idCounter++ })));
+          setCurrentIterationStories(current.map((s: any) => ({ ...s, id: idCounter++, dbId: s.id })));
+          setIceboxStoriesState(icebox.map((s: any) => ({ ...s, id: idCounter++, dbId: s.id })));
+          setDoneStoriesState(done.map((s: any) => ({ ...s, id: idCounter++, dbId: s.id })));
         }
       } catch (error) {
         console.error('Error loading stories:', error);
