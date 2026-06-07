@@ -102,6 +102,8 @@ function StoriesColumn({
   const startEditingTitle = (story: Story) => {
     setEditingTitleId(story.id);
     setEditingTitle(story.title);
+    // Also expand the story when starting to edit
+    setShowStoryMap(new Map(showStoryMap.set(story.id, true)));
   };
 
   const saveTitle = async (story: Story) => {
@@ -257,12 +259,17 @@ function StoriesColumn({
                                 </div>
                               ) : (
                                 <>
-                                  <span
-                                    onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
-                                    style={{ cursor: 'text', wordBreak: 'break-word', flex: 1 }}
-                                    title="Click to edit title"
-                                  >
-                                    {story.title}
+                                  <span style={{ display: 'flex', alignItems: 'center', flex: 1, gap: '8px' }}>
+                                    <span style={{ wordBreak: 'break-word', flex: 1 }}>
+                                      {story.title}
+                                    </span>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
+                                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', fontSize: '14px' }}
+                                      title="Edit title"
+                                    >
+                                      ✏️
+                                    </button>
                                   </span>
                                   <span style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', alignItems: 'center' }}>
                                     <span>{story.assignee !== 'none' && ` (${story.assignee})`}</span>
@@ -299,7 +306,35 @@ function StoriesColumn({
                     >
                       ^
                     </h3>
-                    <h4 style={{ textAlign: 'center', width: '100%' }}>{story.title}</h4>
+                    {editingTitleId === story.id ? (
+                      <input
+                        type="text"
+                        value={editingTitle}
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        onBlur={() => saveTitle(story)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') saveTitle(story);
+                          if (e.key === 'Escape') {
+                            setEditingTitleId(null);
+                            setEditingTitle('');
+                          }
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                        autoFocus
+                        style={{ flex: 1, padding: '4px', fontSize: '14px', marginRight: '8px' }}
+                      />
+                    ) : (
+                      <h4 style={{ textAlign: 'center', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {story.title}
+                        <button
+                          onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', marginLeft: '8px', fontSize: '12px' }}
+                          title="Edit title"
+                        >
+                          ✏️
+                        </button>
+                      </h4>
+                    )}
                   </span>
                   <form onClick={(e) => e.stopPropagation()}>
                     <div>
