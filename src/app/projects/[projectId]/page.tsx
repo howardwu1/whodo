@@ -352,36 +352,100 @@ export default function ProjectPage() {
   const numColumns =
     (showMyStories ? 1 : 0) + (showCurrentIteration ? 1 : 0) + (showIcebox ? 1 : 0) + (showDoneStories ? 1 : 0);
 
-  const sampleStories: Story[] = [
-    { id: 123, title: 'sample story', assignee: username || 'asdf', points: 'unestimated', isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 27, 2022', type: 'feature' },
-    { id: 1234, title: 'sample story 2', assignee: 'none', points: 5, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 28, 2022', type: 'bug' },
-    { id: 12345, title: 'sample story 3', assignee: 'SR', points: 2, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 28, 2022', type: 'feature' },
-    { id: 223, title: 'sample story', assignee: username || 'asdf', points: 3, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 27, 2022', type: 'feature' },
-    { id: 2234, title: 'sample story 2', assignee: username || 'asdf', points: 'unestimated', isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 28, 2022', type: 'feature' },
-    { id: 22345, title: 'sample story 3', assignee: 'SR', points: 2, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 28, 2022', type: 'feature' },
-    { id: 323, title: 'sample story', assignee: username || 'asdf', points: 3, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 27, 2022', type: 'feature' },
-    { id: 3234, title: 'sample story 2', assignee: username || 'asdf', points: 5, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 28, 2022', type: 'feature' },
-    { id: 32345, title: 'sample story 3', assignee: 'SR', points: 2, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 28, 2022', type: 'feature' },
-  ];
-
-  const iceboxStories: Story[] = [
-    { id: 998, title: 'forgotten story', assignee: 'SR', points: 2, isFinished: false, isDelivered: false, isRejected: false, isAccepted: false, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'December 12, 2022', type: 'feature' },
-  ];
-
-  const doneStories: Story[] = [
-    { id: 222, title: 'finished story', assignee: username || 'asdf', points: 1, isFinished: true, isDelivered: true, isRejected: false, isAccepted: true, mentor: '', secondaryAssignee: '', secondaryMentor: '', aTeamSupportTime: '', standupComments: '', sessionAndPMComments: '', dateCreated: 'November 31, 2022', type: 'feature' },
-  ];
-
-  const [currentIterationStories, setCurrentIterationStories] = useState<Story[]>(sampleStories);
-  const [iceboxStoriesState, setIceboxStoriesState] = useState<Story[]>(iceboxStories);
-  const [doneStoriesState, setDoneStoriesState] = useState<Story[]>(doneStories);
+  const [currentIterationStories, setCurrentIterationStories] = useState<Story[]>([]);
+  const [iceboxStoriesState, setIceboxStoriesState] = useState<Story[]>([]);
+  const [doneStoriesState, setDoneStoriesState] = useState<Story[]>([]);
   const [showCreateStory, setShowCreateStory] = useState(false);
   const [newStoryTitle, setNewStoryTitle] = useState('');
   const [newStoryType, setNewStoryType] = useState('feature');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Default stories to seed
+  const defaultStories = [
+    { title: 'sample story', assignee: username || 'asdf', points: 'unestimated', type: 'feature', dateCreated: 'December 27, 2022' },
+    { title: 'sample story 2', assignee: 'none', points: 5, type: 'bug', dateCreated: 'December 28, 2022' },
+    { title: 'sample story 3', assignee: 'SR', points: 2, type: 'feature', dateCreated: 'December 28, 2022' },
+    { title: 'sample story', assignee: username || 'asdf', points: 3, type: 'feature', dateCreated: 'December 27, 2022' },
+    { title: 'sample story 2', assignee: username || 'asdf', points: 'unestimated', type: 'feature', dateCreated: 'December 28, 2022' },
+    { title: 'sample story 3', assignee: 'SR', points: 2, type: 'feature', dateCreated: 'December 28, 2022' },
+    { title: 'sample story', assignee: username || 'asdf', points: 3, type: 'feature', dateCreated: 'December 27, 2022' },
+    { title: 'sample story 2', assignee: username || 'asdf', points: 5, type: 'feature', dateCreated: 'December 28, 2022' },
+    { title: 'sample story 3', assignee: 'SR', points: 2, type: 'feature', dateCreated: 'December 28, 2022' },
+  ];
+
+  const iceboxDefaultStories = [
+    { title: 'forgotten story', assignee: 'SR', points: 2, type: 'feature', dateCreated: 'December 12, 2022' },
+  ];
+
+  const doneDefaultStories = [
+    { title: 'finished story', assignee: username || 'asdf', points: 1, type: 'feature', dateCreated: 'November 31, 2022', isFinished: true, isDelivered: true, isAccepted: true },
+  ];
 
   useEffect(() => {
     setProject('Sample');
   }, [setProject]);
+
+  // Fetch or seed stories from database
+  useEffect(() => {
+    async function loadStories() {
+      try {
+        const res = await fetch(`/api/stories?projectId=${projectId}`);
+        const data = await res.json();
+
+        if (data.length === 0) {
+          // Seed default stories
+          const currentIteration = await Promise.all(
+            defaultStories.map(s => 
+              fetch('/api/stories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...s, projectId, status: 'current_iteration' }),
+              }).then(r => r.json())
+            )
+          );
+          const icebox = await Promise.all(
+            iceboxDefaultStories.map(s =>
+              fetch('/api/stories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...s, projectId, status: 'icebox' }),
+              }).then(r => r.json())
+            )
+          );
+          const done = await Promise.all(
+            doneDefaultStories.map(s =>
+              fetch('/api/stories', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...s, projectId, status: 'done' }),
+              }).then(r => r.json())
+            )
+          );
+
+          // Convert database stories to frontend format with numeric IDs
+          let idCounter = 100;
+          setCurrentIterationStories(currentIteration.map(s => ({ ...s, id: idCounter++ })));
+          setIceboxStoriesState(icebox.map(s => ({ ...s, id: idCounter++ })));
+          setDoneStoriesState(done.map(s => ({ ...s, id: idCounter++ })));
+        } else {
+          // Group stories by status
+          const current = data.filter((s: any) => s.status === 'current_iteration');
+          const icebox = data.filter((s: any) => s.status === 'icebox');
+          const done = data.filter((s: any) => s.status === 'done');
+
+          let idCounter = 100;
+          setCurrentIterationStories(current.map((s: any) => ({ ...s, id: idCounter++ })));
+          setIceboxStoriesState(icebox.map((s: any) => ({ ...s, id: idCounter++ })));
+          setDoneStoriesState(done.map((s: any) => ({ ...s, id: idCounter++ })));
+        }
+      } catch (error) {
+        console.error('Error loading stories:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadStories();
+  }, [projectId]);
 
   // Unified reorder handler for stories across all columns
   const handleStoryReorder = (sourceId: string, sourceIndex: number, destIndex: number) => {
