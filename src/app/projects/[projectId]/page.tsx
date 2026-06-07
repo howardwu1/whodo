@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import EditIcon from '@mui/icons-material/Edit';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
 
@@ -263,13 +264,6 @@ function StoriesColumn({
                                     <span style={{ wordBreak: 'break-word', flex: 1 }}>
                                       {story.title}
                                     </span>
-                                    <button
-                                      onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
-                                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', fontSize: '14px' }}
-                                      title="Edit title"
-                                    >
-                                      ✏️
-                                    </button>
                                   </span>
                                   <span style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', alignItems: 'center' }}>
                                     <span>{story.assignee !== 'none' && ` (${story.assignee})`}</span>
@@ -328,10 +322,10 @@ function StoriesColumn({
                         {story.title}
                         <button
                           onClick={(e) => { e.stopPropagation(); startEditingTitle(story); }}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', marginLeft: '8px', fontSize: '12px' }}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', marginLeft: '8px' }}
                           title="Edit title"
                         >
-                          ✏️
+                          <EditIcon style={{ fontSize: '16px' }} />
                         </button>
                       </h4>
                     )}
