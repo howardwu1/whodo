@@ -286,14 +286,16 @@ function StoriesColumn({
                       display: 'flex',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      height: '20px',
+                      minHeight: '20px',
                       marginTop: '10px',
                       marginBottom: '10px',
                     }}
                   >
                     <h3
                       onClick={(e) => {
-                        setShowStoryMap(new Map(showStoryMap.set(story.id, false)));
+                        if (!editingTitleId) {
+                          setShowStoryMap(new Map(showStoryMap.set(story.id, false)));
+                        }
                         e.stopPropagation();
                       }}
                       className="text-button"
@@ -314,8 +316,11 @@ function StoriesColumn({
                           }
                         }}
                         onClick={(e) => e.stopPropagation()}
+                        onFocus={() => {
+                          setShowStoryMap(new Map(showStoryMap.set(story.id, true)));
+                        }}
                         autoFocus
-                        style={{ textAlign: 'center', flex: 1, padding: '4px', fontSize: 'inherit', marginRight: '8px' }}
+                        style={{ textAlign: 'center', flex: 1, padding: '2px 4px', fontSize: '16px' }}
                       />
                     ) : (
                       <h4 style={{ textAlign: 'center', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
