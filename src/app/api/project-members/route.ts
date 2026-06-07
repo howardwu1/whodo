@@ -1,0 +1,108 @@
+import { NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+
+// GET - Get project members
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const projectId = searchParams.get('projectId');
+
+  try {
+    if (!projectId) {
+      return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
+    }
+
+    const members = await prisma.projectMember.findMany({
+      where: { projectId },
+      include: {
+        user: {
+          select: { id: true, username: true, email: true }
+        }
+      },
+      orderBy: { createdAt: 'asc' }
+    });
+
+    return NextResponse.json(members);
+  } catch (error) {
+    console.error('Error fetching project members:', error);
+    return NextResponse.json({ error: 'Failed to fetch members' }, { status: 500 });
+  }
+}
+
+// POST - Add member to project
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+
+    if (!body.projectId || !body.username) {
+      return NextResponse.json({ error: 'projectId and username are required' }, { status: 400 });
+    }
+
+    // Find user by username
+    const user = await prisma.user.findUnique({
+      where: { username: body.username }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Check if already a member
+    const existing = await prisma.projectMember.findUnique({
+      where: {
+        userId_projectId: {
+          userId: user.id,
+          projectId: body.projectId
+        }
+      }
+    });
+
+    if (existing) {
+      return NextResponse.json({ error: 'User is already a member' }, { status: 400 });
+    }
+
+    const member = await prisma.projectMember.create({
+      data: {
+        userId: user.id,
+        projectId: body.projectId,
+        role: body.role || 'member'
+      },
+      include: {
+        user: {
+          select: { id: true, username: true, email: true }
+        }
+      }
+    });
+
+    return NextResponse.json(member, { status: 201 });
+  } catch (error) {
+    console.error('Error adding project member:', error);
+    return NextResponse.json({ error: 'Failed to add member' }, { status: 500 });
+  }
+}
+
+// DELETE - Remove member from project
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const projectId = searchParams.get('projectId');
+  const userId = searchParams.get('userId');
+
+  try {
+    if (!projectId || !userId) {
+      return NextResponse.json({ error: 'projectId and userId are required' }, { status: 400 });
+    }
+
+    await prisma.projectMember.delete({
+      where: {
+        userId_projectId: {
+          userId,
+          projectId
+        }
+      }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error removing project member:', error);
+    return NextResponse.json({ error: 'Failed to remove member' }, { status: 500 });
+  }
+}
