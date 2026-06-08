@@ -439,6 +439,8 @@ export default function ProjectPage() {
   const [newStoryTitle, setNewStoryTitle] = useState('');
   const [newStoryType, setNewStoryType] = useState('feature');
   const [isLoading, setIsLoading] = useState(true);
+  const [projectMembers, setProjectMembers] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'stories' | 'members'>('stories');
 
   // Default stories to seed
   const defaultStories = [
@@ -527,6 +529,22 @@ export default function ProjectPage() {
     loadStories();
   }, [projectId]);
 
+  // Fetch project members
+  useEffect(() => {
+    async function loadMembers() {
+      try {
+        const res = await fetch(`/api/project-members?projectId=${projectId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setProjectMembers(data.map((m: any) => m.user.username));
+        }
+      } catch (error) {
+        console.error('Error loading members:', error);
+      }
+    }
+    loadMembers();
+  }, [projectId]);
+
   // Unified reorder handler for stories across all columns
   const handleStoryReorder = (sourceId: string, sourceIndex: number, destIndex: number) => {
     if (sourceId === 'current_iteration' || sourceId === 'icebox' || sourceId === 'done') {
@@ -600,18 +618,19 @@ export default function ProjectPage() {
             Analytics (Paid Feature)
           </button>
           <button
-            disabled
+            onClick={() => setActiveTab('members')}
             style={{
               padding: '10px 20px',
-              cursor: 'not-allowed',
-              color: '#999',
+              cursor: 'pointer',
               border: 'none',
               backgroundColor: 'transparent',
               fontSize: '14px',
               fontWeight: 500,
+              borderBottom: activeTab === 'members' ? '2px solid #191970' : '2px solid transparent',
+              color: activeTab === 'members' ? '#191970' : '#666',
             }}
           >
-            Members
+            Members ({projectMembers.length})
           </button>
         </div>
 
@@ -663,7 +682,7 @@ export default function ProjectPage() {
                 justifyContent: numColumns < 3 ? 'space-evenly' : undefined,
               }}
             >
-              {showMyStories && (
+              {activeTab === 'stories' && showMyStories && (
                 <StoriesColumn
                   draggable={true}
                   filterBy={[username || 'asdf']}
@@ -679,7 +698,7 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-              {showCurrentIteration && (
+              {activeTab === 'stories' && showCurrentIteration && (
                 <StoriesColumn
                   draggable={true}
                   storyList={currentIterationStories}
@@ -694,7 +713,7 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-              {showIcebox && (
+              {activeTab === 'stories' && showIcebox && (
                 <StoriesColumn
                   draggable={true}
                   storyList={iceboxStoriesState}
@@ -709,7 +728,7 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-              {showDoneStories && (
+              {activeTab === 'stories' && showDoneStories && (
                 <StoriesColumn
                   draggable={true}
                   storyList={doneStoriesState}
@@ -724,6 +743,17 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
+
+            {activeTab === 'members' && (
+              <div style={{ padding: '20px', width: '100%', height: '100%' }}>
+                <h2>Project Members</h2>
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                  {projectMembers.map((member, index) => (
+                    <li key={index} style={{ padding: '10px', borderBottom: '1px solid #eee' }}><span>{member}</span></li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {showCreateStory && (
               <div
