@@ -840,7 +840,7 @@ export default function ProjectPage() {
                                   setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
                                 }
                               }}
-                              style={{ marginRight: '6px' }}
+                              style={{ marginRight: '6px', width: '14px', height: '14px', accentColor: '#191970' }}
                             />
                             <span style={{ fontSize: '12px' }}>{user.username}</span>
                           </label>
