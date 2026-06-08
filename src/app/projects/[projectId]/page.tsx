@@ -739,7 +739,7 @@ export default function ProjectPage() {
                 overflowY: 'hidden',
                 height: '91vh',
                 width: '100%',
-                justifyContent: numColumns < 3 ? 'space-evenly' : undefined,
+                justifyContent: activeTab === 'members' ? 'flex-start' : (numColumns < 3 ? 'space-evenly' : undefined),
               }}
             >
               {activeTab === 'stories' && showMyStories && (
