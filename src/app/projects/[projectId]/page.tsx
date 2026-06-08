@@ -824,12 +824,12 @@ export default function ProjectPage() {
                 </div>
                 
                 {showAddMember && (
-                  <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
-                    <div style={{ marginBottom: '8px', maxHeight: '120px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: 'white', paddingLeft: '0' }}>
+                  <div style={{ marginBottom: '15px', padding: '10px', backgroundColor: '#f5f5f5', borderRadius: '8px', maxWidth: '300px' }}>
+                    <div style={{ marginBottom: '8px', maxHeight: '120px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: 'white' }}>
                       {allUsers
                         .filter((user: any) => !projectMembers.includes(user.username))
                         .map((user: any) => (
-                          <label key={user.id} style={{ display: 'flex', alignItems: 'center', padding: '2px 0', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
+                          <div key={user.id} style={{ display: 'flex', alignItems: 'center', padding: '2px 8px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
                             <input
                               type="checkbox"
                               checked={selectedUsersToAdd.includes(user.id)}
@@ -840,10 +840,10 @@ export default function ProjectPage() {
                                   setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
                                 }
                               }}
-                              style={{ marginRight: '6px', marginLeft: '0', width: '12px', height: '12px' }}
+                              style={{ marginRight: '8px', flexShrink: 0 }}
                             />
                             <span style={{ fontSize: '12px' }}>{user.username}</span>
-                          </label>
+                          </div>
                         ))}
                     </div>
                     {selectedUsersToAdd.length > 0 && (
