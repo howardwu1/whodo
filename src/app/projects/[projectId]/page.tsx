@@ -444,6 +444,10 @@ export default function ProjectPage() {
   const [activeTab, setActiveTab] = useState<'stories' | 'members'>('stories');
   const [showAddMember, setShowAddMember] = useState(false);
   const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [selectedUsersToAdd, setSelectedUsersToAdd] = useState<string[]>([]);
+  const [confirmAddModal, setConfirmAddModal] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<any>(null);
+  const [confirmRemoveModal, setConfirmRemoveModal] = useState(false);
 
   // Default stories to seed
   const defaultStories = [
@@ -549,21 +553,43 @@ export default function ProjectPage() {
     loadMembers();
   }, [projectId]);
 
-  const handleAddMember = async (userId: string) => {
+  const handleAddMembers = async () => {
+    if (selectedUsersToAdd.length === 0) return;
     try {
-      const res = await fetch('/api/project-members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectId, userId }),
+      for (const userId of selectedUsersToAdd) {
+        const res = await fetch('/api/project-members', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ projectId, userId }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setProjectMembers([...projectMembers, data.user.username]);
+          setProjectMembersFull([...projectMembersFull, data]);
+        }
+      }
+      setSelectedUsersToAdd([]);
+      setShowAddMember(false);
+      setConfirmAddModal(false);
+    } catch (error) {
+      console.error('Error adding members:', error);
+    }
+  };
+
+  const handleRemoveMember = async () => {
+    if (!memberToRemove) return;
+    try {
+      const res = await fetch(`/api/project-members?projectId=${projectId}&userId=${memberToRemove.user.id}`, {
+        method: 'DELETE',
       });
       if (res.ok) {
-        const data = await res.json();
-        setProjectMembers([...projectMembers, data.user.username]);
-        setProjectMembersFull([...projectMembersFull, data]);
-        setShowAddMember(false);
+        setProjectMembers(projectMembers.filter(m => m !== memberToRemove.user.username));
+        setProjectMembersFull(projectMembersFull.filter(m => m.user.id !== memberToRemove.user.id));
+        setMemberToRemove(null);
+        setConfirmRemoveModal(false);
       }
     } catch (error) {
-      console.error('Error adding member:', error);
+      console.error('Error removing member:', error);
     }
   };
 
@@ -799,27 +825,170 @@ export default function ProjectPage() {
                 
                 {showAddMember && (
                   <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
-                    <select
-                      onChange={(e) => {
-                        if (e.target.value) handleAddMember(e.target.value);
-                      }}
-                      style={{ padding: '8px', width: '100%', borderRadius: '4px', border: '1px solid #ccc' }}
-                    >
-                      <option value="">Select a user to add...</option>
+                    <div style={{ marginBottom: '10px', maxHeight: '200px', overflowY: 'auto' }}>
                       {allUsers
                         .filter((user: any) => !projectMembers.includes(user.username))
                         .map((user: any) => (
-                          <option key={user.id} value={user.id}>{user.username}</option>
+                          <label key={user.id} style={{ display: 'flex', alignItems: 'center', padding: '5px', cursor: 'pointer' }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedUsersToAdd.includes(user.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelectedUsersToAdd([...selectedUsersToAdd, user.id]);
+                                } else {
+                                  setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
+                                }
+                              }}
+                              style={{ marginRight: '8px' }}
+                            />
+                            {user.username}
+                          </label>
                         ))}
-                    </select>
+                    </div>
+                    {selectedUsersToAdd.length > 0 && (
+                      <button
+                        onClick={() => setConfirmAddModal(true)}
+                        style={{
+                          padding: '8px 16px',
+                          backgroundColor: '#191970',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Add Selected ({selectedUsersToAdd.length})
+                      </button>
+                    )}
                   </div>
                 )}
                 
                 <ul style={{ listStyle: 'none', padding: 0 }}>
-                  {projectMembers.map((member, index) => (
-                    <li key={index} style={{ padding: '10px', borderBottom: '1px solid #eee' }}><span>{member}</span></li>
+                  {projectMembersFull.map((member, index) => (
+                    <li key={index} style={{ padding: '10px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span>{member.user.username}</span>
+                      <button
+                        onClick={() => { setMemberToRemove(member); setConfirmRemoveModal(true); }}
+                        style={{
+                          padding: '4px 8px',
+                          backgroundColor: '#dc3545',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '12px',
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {confirmAddModal && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+              }}>
+                <div style={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  minWidth: '300px',
+                }}>
+                  <h3>Add Members</h3>
+                  <p>Are you sure you want to add {selectedUsersToAdd.length} member(s)?</p>
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+                    <button
+                      onClick={() => { setConfirmAddModal(false); }}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#ccc',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAddMembers}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#191970',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {confirmRemoveModal && memberToRemove && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+              }}>
+                <div style={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  minWidth: '300px',
+                }}>
+                  <h3>Remove Member</h3>
+                  <p>Are you sure you want to remove "{memberToRemove.user.username}" from this project?</p>
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+                    <button
+                      onClick={() => { setConfirmRemoveModal(false); setMemberToRemove(null); }}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#ccc',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleRemoveMember}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#dc3545',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
