@@ -1,254 +1,177 @@
-/* Global styles migrated from CRA */
-.App {
-  text-align: center;
-}
+@import "tailwindcss";
 
-.columnContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
+/* Tailwind v4 - Utility classes for all custom styles */
 
-.column {
-  flex: 2;
-  margin: 1em 3em;
-  flex-wrap: wrap;
-  text-align: left;
-}
-
-.blog-links-column {
-  flex: 1;
-  margin: 1em 3em;
-  flex-wrap: wrap;
-  border-left: 1px solid black;
-}
-
-.blog-title {
-  display: flex;
-}
-
-.profile-pic {
-  max-height: 100px;
-  width: 100px;
-  margin: 1em 0.5em 0em 0.5em;
-}
-
-.whodo-links {
-  text-align: left;
-}
-
-h1.column {
-  text-align: center;
-}
-
+/* Navigation */
 .navigation {
-  display: flex;
-  align-items: center;
-  background-color: midnightblue;
-  height: 50px;
-  width: 100%;
+  @apply flex items-center bg-[#191970] h-[50px] w-full;
 }
 
 .navigation-menu {
-  margin-left: auto;
+  @apply ml-auto;
 }
 
 .navigation-menu ul {
-  list-style-type: none;
-  display: flex;
-  flex-direction: row;
+  @apply list-none flex flex-row;
 }
 
 .navigation-menu a {
-  margin: 0 1.5em;
-  text-decoration: none;
-  color: #cadce4;
-  display: flex;
-  max-height: 19px;
-  transition: color 0.5s ease-out;
+  @apply mx-6 no-underline text-[#cadce4] flex max-h-[19px] transition-colors duration-500;
 }
 
 .navigation a:hover {
-  color: #fff;
+  @apply text-white;
 }
 
-a.profile-menu {
-  width: 100%;
-  text-decoration: none;
-  color: black;
-  display: block;
+/* Profile menu */
+.profile-menu {
+  @apply w-full no-underline text-black block;
 }
 
 .profile-menu:hover {
-  background-color: lightgray;
+  @apply bg-gray-300;
 }
 
+/* Sign in form */
 .sign-in {
-  border: 1pt solid darkgray;
-  margin: 5em auto;
-  max-width: 700px;
-  min-width: 400px;
-  display: flex;
-  flex-direction: column;
-  padding: 1em 1em;
+  @apply border border-[darkgray] my-20 mx-auto max-w-[700px] min-w-[400px] flex flex-col p-4;
 }
 
-label,
-input {
-  height: 30px;
-  max-width: 500px;
-  min-width: 300px;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: 14pt;
+.sign-in label,
+.sign-in input {
+  @apply h-[30px] max-w-[500px] min-w-[300px] mx-auto text-[14pt];
 }
 
-input {
-  margin-bottom: 2em;
+.sign-in input {
+  @apply mb-8;
 }
 
 .submit-btn {
-  font-size: 14pt;
-  font-weight: bold;
-  height: 40px;
-  align-items: center;
+  @apply text-[14pt] font-bold h-10 items-center;
 }
 
 .login-error {
-  color: red;
+  @apply text-red-600;
 }
 
+/* React tabs overrides */
 .react-tabs__tab-list {
-  height: 40px !important;
-  line-height: 40px !important;
-  padding-bottom: 4px !important;
-  text-align: initial !important;
+  @apply !h-10 !leading-10 !pb-1 !text-left;
 }
 
 .react-tabs__tab {
-  padding: 0px 12px !important;
+  @apply !px-3;
 }
+
 .react-tabs__tab--selected {
-  height: inherit !important;
-  border: none !important;
-  background-color: inherit !important;
-  color: inherit !important;
-  border-bottom: 4px solid !important;
-  position: static !important;
+  @apply !h-auto !border-0 !bg-transparent !text-inherit !border-b-4 !static;
 }
 
+/* Project card */
 .project-card {
-  margin-top: 30px;
-  width: 300px;
-  border: 1px solid grey;
-  background-color: whitesmoke;
+  @apply mt-8 w-[300px] border border-gray-400 bg-[#f5f5f5];
 }
 
+/* Hidden links */
 .hiddenLink {
-  text-decoration: none;
-  color: black;
+  @apply no-underline text-black;
 }
 
 .hiddenLink:hover {
-  text-decoration: underline;
+  @apply underline;
 }
 
+/* Navigation tabs */
 .navigation-tabs {
-  background-color: midnightblue !important;
-  position: sticky;
-  top: 50px;
-  color: white !important;
-  height: 40px !important;
-  line-height: 40px !important;
-  padding-bottom: 4px !important;
-  text-align: initial !important;
-  margin: 0 !important;
+  @apply bg-[#191970] sticky top-[50px] text-white h-10 leading-10 pb-1 text-left m-0;
 }
 
+/* Sidebar */
 .sidebar {
-  background-color: dimgray;
-  position: initial;
-  display: flex;
-  flex-flow: flex-start;
-  min-width: 20vw;
-  flex-direction: column;
-  position: sticky;
-  left: 0px;
-  top: 50px;
+  @apply bg-[#696969] flex flex-col sticky left-0 top-[50px] min-w-[20vw];
 }
 
 .sidebar-btn {
-  background-color: dimgray;
-  flex: 1;
-  max-height: 50px;
-  border-bottom: 2px solid black;
-  font-size: 12pt;
-  font-weight: bold;
+  @apply bg-[#696969] flex-1 max-h-[50px] border-b-2 border-black text-[12pt] font-bold;
 }
 
 .sidebar-btn:hover {
-  background-color: #505050;
+  @apply bg-[#505050];
 }
 
+/* Stories column */
 .stories-column {
-  background-color: darkgrey;
-  display: flex;
-  flex-direction: column;
-  min-width: 30vw;
-  border-right: 2px solid black;
-  border-left: 2px solid black;
-  flex: 1;
-  height: 100%;
-  overflow: hidden;
+  @apply bg-[#a9a9a9] flex flex-col min-w-[30vw] border-r-2 border-l-2 border-black flex-1 h-full overflow-hidden;
 }
 
+/* Scrollbar styles */
 ::-webkit-scrollbar-track {
-  border-radius: 0.125rem;
-  background-color: lightgray;
-}
-::-webkit-scrollbar {
-  border-radius: 0.125rem;
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 0.125rem;
-  background-color: gray;
+  @apply rounded-sm bg-gray-300;
 }
 
+::-webkit-scrollbar {
+  @apply rounded-sm;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-sm bg-gray-500;
+}
+
+/* List container */
 .list-container {
-  display: flex;
-  font-size: 18px;
-  background-color: #eee;
-  flex-direction: column;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  @apply flex text-[18px] bg-gray-200 flex-col my-8;
 }
+
 .item-container {
-  background-color: #fff;
-  border: 1px solid black;
-  margin: 8px 30px;
-  min-height: 60px;
-  display: flex;
-  align-items: flex-start;
-  padding: 0;
+  @apply bg-white border border-black mx-8 my-2 min-h-[60px] flex items-start p-0;
 }
+
 .item-container > span {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
+  @apply flex flex-wrap w-full;
 }
 
 .item-container-details {
-  background-color: #fff;
-  border: 1px solid black;
-  margin: 5px 30px;
-  padding: 2px 10px;
-  height: 500px;
+  @apply bg-white border border-black mx-8 my-1 px-3 h-[500px];
 }
 
-.text-button:hover {
-  cursor: pointer;
+/* Text button */
+.text-button {
+  @apply hover:cursor-pointer;
 }
 
+/* None assigned */
 .none-assigned {
-  background-color: yellow;
+  @apply bg-yellow-400;
+}
+
+/* Blog styles */
+.blog-title {
+  @apply flex;
+}
+
+.blog-links-column {
+  @apply flex-1 mx-8 my-4 flex-wrap border-l border-black;
+}
+
+/* Profile pic */
+.profile-pic {
+  @apply max-h-[100px] w-[100px] m-4 mt-4 mb-0;
+}
+
+/* Column layout */
+.columnContainer {
+  @apply flex flex-row justify-center;
+}
+
+.column {
+  @apply flex-2 mx-8 my-4 flex-wrap text-left;
+}
+
+/* General typography */
+h1.column {
+  @apply text-center;
+}
+
+.whodo-links {
+  @apply text-left;
 }
