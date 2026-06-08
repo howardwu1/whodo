@@ -3,6 +3,7 @@
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import Link from 'next/link';
 import EditIcon from '@mui/icons-material/Edit';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
@@ -439,15 +440,6 @@ export default function ProjectPage() {
   const [newStoryTitle, setNewStoryTitle] = useState('');
   const [newStoryType, setNewStoryType] = useState('feature');
   const [isLoading, setIsLoading] = useState(true);
-  const [projectMembers, setProjectMembers] = useState<any[]>([]);
-  const [projectMembersFull, setProjectMembersFull] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'stories' | 'members'>('stories');
-  const [showAddMember, setShowAddMember] = useState(false);
-  const [allUsers, setAllUsers] = useState<any[]>([]);
-  const [selectedUsersToAdd, setSelectedUsersToAdd] = useState<string[]>([]);
-  const [confirmAddModal, setConfirmAddModal] = useState(false);
-  const [memberToRemove, setMemberToRemove] = useState<any>(null);
-  const [confirmRemoveModal, setConfirmRemoveModal] = useState(false);
 
   // Default stories to seed
   const defaultStories = [
@@ -536,75 +528,6 @@ export default function ProjectPage() {
     loadStories();
   }, [projectId]);
 
-  // Fetch project members
-  useEffect(() => {
-    async function loadMembers() {
-      try {
-        const res = await fetch(`/api/project-members?projectId=${projectId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProjectMembers(data.map((m: any) => m.user.username));
-          setProjectMembersFull(data);
-        }
-      } catch (error) {
-        console.error('Error loading members:', error);
-      }
-    }
-    loadMembers();
-  }, [projectId]);
-
-  const handleAddMembers = async () => {
-    if (selectedUsersToAdd.length === 0) return;
-    try {
-      for (const userId of selectedUsersToAdd) {
-        const res = await fetch('/api/project-members', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ projectId, userId }),
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setProjectMembers([...projectMembers, data.user.username]);
-          setProjectMembersFull([...projectMembersFull, data]);
-        }
-      }
-      setSelectedUsersToAdd([]);
-      setShowAddMember(false);
-      setConfirmAddModal(false);
-    } catch (error) {
-      console.error('Error adding members:', error);
-    }
-  };
-
-  const handleRemoveMember = async () => {
-    if (!memberToRemove) return;
-    try {
-      const res = await fetch(`/api/project-members?projectId=${projectId}&userId=${memberToRemove.user.id}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        setProjectMembers(projectMembers.filter(m => m !== memberToRemove.user.username));
-        setProjectMembersFull(projectMembersFull.filter(m => m.user.id !== memberToRemove.user.id));
-        setMemberToRemove(null);
-        setConfirmRemoveModal(false);
-      }
-    } catch (error) {
-      console.error('Error removing member:', error);
-    }
-  };
-
-  const fetchAllUsers = async () => {
-    try {
-      const res = await fetch('/api/users');
-      if (res.ok) {
-        const users = await res.json();
-        setAllUsers(users);
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error);
-    }
-  };
-
   // Unified reorder handler for stories across all columns
   const handleStoryReorder = (sourceId: string, sourceIndex: number, destIndex: number) => {
     if (sourceId === 'current_iteration' || sourceId === 'icebox' || sourceId === 'done') {
@@ -677,8 +600,8 @@ export default function ProjectPage() {
           >
             Analytics (Paid Feature)
           </button>
-          <button
-            onClick={() => setActiveTab('members')}
+          <Link
+            href={`/projects/${projectId}/members`}
             style={{
               padding: '10px 20px',
               cursor: 'pointer',
@@ -686,12 +609,12 @@ export default function ProjectPage() {
               backgroundColor: 'transparent',
               fontSize: '14px',
               fontWeight: 500,
-              borderBottom: activeTab === 'members' ? '2px solid #191970' : '2px solid transparent',
-              color: activeTab === 'members' ? '#191970' : '#666',
+              textDecoration: 'none',
+              color: '#666',
             }}
           >
-            Members ({projectMembers.length})
-          </button>
+            Members
+          </Link>
         </div>
 
         <div style={{ display: 'flex', height: 'calc(100vh - 90px)', overflow: 'hidden' }}>
@@ -739,10 +662,10 @@ export default function ProjectPage() {
                 overflowY: 'hidden',
                 height: '91vh',
                 width: '100%',
-                justifyContent: activeTab === 'members' ? 'flex-start' : (numColumns < 3 ? 'space-evenly' : undefined),
+                justifyContent: numColumns < 3 ? 'space-evenly' : undefined,
               }}
             >
-              {activeTab === 'stories' && showMyStories && (
+              {showMyStories && (
                 <StoriesColumn
                   draggable={true}
                   filterBy={[username || 'asdf']}
@@ -758,7 +681,7 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-              {activeTab === 'stories' && showCurrentIteration && (
+              {showCurrentIteration && (
                 <StoriesColumn
                   draggable={true}
                   storyList={currentIterationStories}
@@ -773,7 +696,7 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-              {activeTab === 'stories' && showIcebox && (
+              {showIcebox && (
                 <StoriesColumn
                   draggable={true}
                   storyList={iceboxStoriesState}
@@ -788,7 +711,7 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-              {activeTab === 'stories' && showDoneStories && (
+              {showDoneStories && (
                 <StoriesColumn
                   draggable={true}
                   storyList={doneStoriesState}
@@ -803,195 +726,6 @@ export default function ProjectPage() {
                   onReorder={handleStoryReorder}
                 />
               )}
-
-            {activeTab === 'members' && (
-              <div style={{ padding: '20px', width: '100%', height: '100%', overflowY: 'auto' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                  <h2>Project Members</h2>
-                  <button
-                    onClick={() => { setShowAddMember(!showAddMember); if (!showAddMember) fetchAllUsers(); }}
-                    style={{
-                      padding: '8px 16px',
-                      backgroundColor: '#191970',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    + Add Member
-                  </button>
-                </div>
-                
-                {showAddMember && (
-                  <div style={{ marginBottom: '15px', padding: '8px', backgroundColor: '#f5f5f5', borderRadius: '8px', maxWidth: '600px' }}>
-                    <div style={{ marginBottom: '8px', maxHeight: '120px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: 'white' }}>
-                      {allUsers
-                        .filter((user: any) => !projectMembers.includes(user.username))
-                        .map((user: any) => (
-                          <div key={user.id} style={{ display: 'flex', alignItems: 'flex-start', padding: '2px 4px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
-                            <input
-                              type="checkbox"
-                              checked={selectedUsersToAdd.includes(user.id)}
-                              onChange={(e) => {
-                                if (e.target.checked) {
-                                  setSelectedUsersToAdd([...selectedUsersToAdd, user.id]);
-                                } else {
-                                  setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
-                                }
-                              }}
-                              style={{ marginRight: '6px', marginLeft: 0, flexShrink: 0, width: '10px', height: '10px', marginTop: '2px', minWidth: 0 }}
-                            />
-                            <span style={{ fontSize: '12px', minWidth: 0 }}>{user.username}</span>
-                          </div>
-                        ))}
-                    </div>
-                    {selectedUsersToAdd.length > 0 && (
-                      <button
-                        onClick={() => setConfirmAddModal(true)}
-                        style={{
-                          padding: '5px 10px',
-                          backgroundColor: '#191970',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                        }}
-                      >
-                        Add ({selectedUsersToAdd.length})
-                      </button>
-                    )}
-                  </div>
-                )}
-                
-                <ul style={{ listStyle: 'none', padding: 0 }}>
-                  {projectMembersFull.map((member, index) => (
-                    <li key={index} style={{ padding: '10px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span>{member.user.username}</span>
-                      <button
-                        onClick={() => { setMemberToRemove(member); setConfirmRemoveModal(true); }}
-                        style={{
-                          padding: '4px 8px',
-                          backgroundColor: '#dc3545',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                        }}
-                      >
-                        Remove
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {confirmAddModal && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 1000,
-              }}>
-                <div style={{
-                  backgroundColor: 'white',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  minWidth: '300px',
-                }}>
-                  <h3>Add Members</h3>
-                  <p>Are you sure you want to add {selectedUsersToAdd.length} member(s)?</p>
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-                    <button
-                      onClick={() => { setConfirmAddModal(false); }}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#ccc',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleAddMembers}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#191970',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {confirmRemoveModal && memberToRemove && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                zIndex: 1000,
-              }}>
-                <div style={{
-                  backgroundColor: 'white',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  minWidth: '300px',
-                }}>
-                  <h3>Remove Member</h3>
-                  <p>Are you sure you want to remove "{memberToRemove.user.username}" from this project?</p>
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-                    <button
-                      onClick={() => { setConfirmRemoveModal(false); setMemberToRemove(null); }}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#ccc',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleRemoveMember}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {showCreateStory && (
               <div
