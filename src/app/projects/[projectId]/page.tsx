@@ -440,7 +440,10 @@ export default function ProjectPage() {
   const [newStoryType, setNewStoryType] = useState('feature');
   const [isLoading, setIsLoading] = useState(true);
   const [projectMembers, setProjectMembers] = useState<any[]>([]);
+  const [projectMembersFull, setProjectMembersFull] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'stories' | 'members'>('stories');
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
 
   // Default stories to seed
   const defaultStories = [
@@ -537,6 +540,7 @@ export default function ProjectPage() {
         if (res.ok) {
           const data = await res.json();
           setProjectMembers(data.map((m: any) => m.user.username));
+          setProjectMembersFull(data);
         }
       } catch (error) {
         console.error('Error loading members:', error);
@@ -544,6 +548,36 @@ export default function ProjectPage() {
     }
     loadMembers();
   }, [projectId]);
+
+  const handleAddMember = async (userId: string) => {
+    try {
+      const res = await fetch('/api/project-members', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId, userId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProjectMembers([...projectMembers, data.user.username]);
+        setProjectMembersFull([...projectMembersFull, data]);
+        setShowAddMember(false);
+      }
+    } catch (error) {
+      console.error('Error adding member:', error);
+    }
+  };
+
+  const fetchAllUsers = async () => {
+    try {
+      const res = await fetch('/api/users');
+      if (res.ok) {
+        const users = await res.json();
+        setAllUsers(users);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   // Unified reorder handler for stories across all columns
   const handleStoryReorder = (sourceId: string, sourceIndex: number, destIndex: number) => {
@@ -745,8 +779,42 @@ export default function ProjectPage() {
               )}
 
             {activeTab === 'members' && (
-              <div style={{ padding: '20px', width: '100%', height: '100%' }}>
-                <h2>Project Members</h2>
+              <div style={{ padding: '20px', width: '100%', height: '100%', overflowY: 'auto' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <h2>Project Members</h2>
+                  <button
+                    onClick={() => { setShowAddMember(!showAddMember); if (!showAddMember) fetchAllUsers(); }}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#191970',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    + Add Member
+                  </button>
+                </div>
+                
+                {showAddMember && (
+                  <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) handleAddMember(e.target.value);
+                      }}
+                      style={{ padding: '8px', width: '100%', borderRadius: '4px', border: '1px solid #ccc' }}
+                    >
+                      <option value="">Select a user to add...</option>
+                      {allUsers
+                        .filter((user: any) => !projectMembers.includes(user.username))
+                        .map((user: any) => (
+                          <option key={user.id} value={user.id}>{user.username}</option>
+                        ))}
+                    </select>
+                  </div>
+                )}
+                
                 <ul style={{ listStyle: 'none', padding: 0 }}>
                   {projectMembers.map((member, index) => (
                     <li key={index} style={{ padding: '10px', borderBottom: '1px solid #eee' }}><span>{member}</span></li>
