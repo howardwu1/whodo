@@ -31,6 +31,8 @@ export default function MembersPage() {
         }
       } catch (error) {
         console.error('Error loading members:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
     loadMembers();
