@@ -829,7 +829,7 @@ export default function ProjectPage() {
                       {allUsers
                         .filter((user: any) => !projectMembers.includes(user.username))
                         .map((user: any) => (
-                          <label key={user.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '4px 8px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
+                          <label key={user.id} style={{ display: 'flex', alignItems: 'center', padding: '3px 8px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
                             <input
                               type="checkbox"
                               checked={selectedUsersToAdd.includes(user.id)}
@@ -840,9 +840,9 @@ export default function ProjectPage() {
                                   setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
                                 }
                               }}
-                              style={{ marginRight: '6px', width: '14px', height: '14px', accentColor: '#191970' }}
+                              style={{ marginRight: '8px', width: '12px', height: '12px', verticalAlign: 'middle' }}
                             />
-                            <span style={{ fontSize: '12px' }}>{user.username}</span>
+                            <span style={{ fontSize: '12px', lineHeight: '12px' }}>{user.username}</span>
                           </label>
                         ))}
                     </div>
