@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import Link from 'next/link';
 import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
+import Paper from '@mui/material/Paper';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
 
@@ -187,30 +190,21 @@ function StoriesColumn({
             }}
           >
             <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginLeft: '10px',
-                marginRight: '10px',
-                padding: '10px 0',
-                backgroundColor: 'darkgrey',
-              }}
+              className="flex flex-row justify-between items-center px-4 py-3 bg-slate-600 text-white rounded-t-lg"
             >
-              <h3>{columnName}</h3>
-              <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <button onClick={() => setShowStoryList(false)}>X</button>
-              </span>
+              <h3 className="m-0 text-base font-semibold">{columnName}</h3>
+              <IconButton 
+                size="small" 
+                onClick={() => setShowStoryList(false)}
+                sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
             </div>
             <div
               ref={provided.innerRef}
               {...provided.droppableProps}
-              style={{
-                overflowY: 'auto',
-                backgroundColor: '#eee',
-                flex: 1,
-                minHeight: 0,
-              }}
+              className="overflow-y-auto bg-slate-100 flex-1 min-h-0 p-2"
             >
               {localStoryList.map((story, index) => {
                 if (filterBy.length > 0 && story.assignee !== filterBy[0]) return null;
@@ -617,40 +611,39 @@ export default function ProjectPage() {
           </Link>
         </div>
 
-        <div style={{ display: 'flex', height: 'calc(100vh - 90px)', overflow: 'hidden' }}>
+        <div className="flex h-[calc(100vh-90px)] overflow-hidden">
           <div className="sidebar">
             <button
-              className="sidebar-btn"
+              className="sidebar-btn !bg-indigo-600 !text-white hover:!bg-indigo-700"
               onClick={() => setShowCreateStory(true)}
-              style={{ backgroundColor: '#191970', color: 'white' }}
             >
               + Create Story
             </button>
             <button
               className="sidebar-btn"
               onClick={() => setShowMyStories(!showMyStories)}
-              style={{ color: showMyStories ? 'white' : 'gray' }}
+              style={{ color: showMyStories ? '#191970' : '#6b7280', fontWeight: showMyStories ? 600 : 400 }}
             >
               My Stories
             </button>
             <button
               className="sidebar-btn"
               onClick={() => setShowCurrentIteration(!showCurrentIteration)}
-              style={{ color: showCurrentIteration ? 'white' : 'gray' }}
+              style={{ color: showCurrentIteration ? '#191970' : '#6b7280', fontWeight: showCurrentIteration ? 600 : 400 }}
             >
               Current Iteration
             </button>
             <button
               className="sidebar-btn"
               onClick={() => setShowIcebox(!showIcebox)}
-              style={{ color: showIcebox ? 'white' : 'gray' }}
+              style={{ color: showIcebox ? '#191970' : '#6b7280', fontWeight: showIcebox ? 600 : 400 }}
             >
               Icebox
             </button>
             <button
               className="sidebar-btn"
               onClick={() => setShowDoneStories(!showDoneStories)}
-              style={{ color: showDoneStories ? 'white' : 'gray' }}
+              style={{ color: showDoneStories ? '#191970' : '#6b7280', fontWeight: showDoneStories ? 600 : 400 }}
             >
               Done Stories
             </button>
@@ -729,65 +722,40 @@ export default function ProjectPage() {
 
             {showCreateStory && (
               <div
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  backgroundColor: 'rgba(0,0,0,0.5)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 100,
-                }}
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100]"
               >
-                <div
-                  style={{
-                    backgroundColor: 'white',
-                    padding: '20px',
-                    borderRadius: '8px',
-                    minWidth: '300px',
-                  }}
-                >
-                  <h3>Create New Story</h3>
+                <Paper className="!p-6 !rounded-xl !min-w-[360px] shadow-2xl">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="m-0 text-lg font-semibold text-gray-800">Create New Story</h3>
+                    <IconButton size="small" onClick={() => { setShowCreateStory(false); setNewStoryTitle(''); }}>
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </div>
                   <input
                     type="text"
                     placeholder="Story title"
                     value={newStoryTitle}
                     onChange={(e) => setNewStoryTitle(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px',
-                      marginBottom: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                    }}
+                    className="w-full px-3 py-2 mb-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     autoFocus
                   />
                   <select
                     value={newStoryType}
                     onChange={(e) => setNewStoryType(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '10px',
-                      marginBottom: '10px',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                    }}
+                    className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="feature">Feature</option>
                     <option value="bug">Bug</option>
                     <option value="chore">Chore</option>
                     <option value="release">Release</option>
                   </select>
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                  <div className="flex gap-3 justify-end">
                     <button
                       onClick={() => {
                         setShowCreateStory(false);
                         setNewStoryTitle('');
                       }}
-                      style={{ padding: '8px 16px', cursor: 'pointer' }}
+                      className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                       Cancel
                     </button>
@@ -817,19 +785,12 @@ export default function ProjectPage() {
                           setNewStoryTitle('');
                         }
                       }}
-                      style={{
-                        padding: '8px 16px',
-                        backgroundColor: '#191970',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                      }}
+                      className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Create
                     </button>
                   </div>
-                </div>
+                </Paper>
               </div>
             )}
           </div>
