@@ -33,14 +33,22 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    if (!body.projectId || !body.username) {
-      return NextResponse.json({ error: 'projectId and username are required' }, { status: 400 });
+    if (!body.projectId) {
+      return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
     }
 
-    // Find user by username
-    const user = await prisma.user.findUnique({
-      where: { username: body.username }
-    });
+    let user;
+    
+    // Find user by username or userId
+    if (body.username) {
+      user = await prisma.user.findUnique({
+        where: { username: body.username }
+      });
+    } else if (body.userId) {
+      user = await prisma.user.findUnique({
+        where: { id: body.userId }
+      });
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
