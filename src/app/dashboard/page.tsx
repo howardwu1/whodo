@@ -81,12 +81,10 @@ export default function Dashboard() {
     const fetchProjects = async () => {
       setIsFetchingProjects(true);
       try {
-        const response = await fetch('/api/projects');
+        const response = await fetch(`/api/projects?username=${encodeURIComponent(username)}`);
         if (response.ok) {
           const data = await response.json();
-          // Filter projects by username (using userId which is the username for now)
-          const userProjects = data.filter((p: Project) => p.userId === username);
-          setProjects(userProjects);
+          setProjects(data);
         }
       } catch (error) {
         console.error('Failed to fetch projects:', error);
