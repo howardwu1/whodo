@@ -161,7 +161,7 @@ export default function MembersPage() {
                           setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
                         }
                       }}
-                      style={{ marginRight: '8px', marginLeft: 0, flexShrink: 0, width: '12px', height: '12px' }}
+                      style={{ marginRight: '8px', marginLeft: 0, flexShrink: 0, width: '12px', height: '12px', minWidth: 0 }}
                     />
                     <span style={{ fontSize: '13px' }}>{user.username}</span>
                   </div>
