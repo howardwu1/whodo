@@ -840,9 +840,9 @@ export default function ProjectPage() {
                                   setSelectedUsersToAdd(selectedUsersToAdd.filter(id => id !== user.id));
                                 }
                               }}
-                              style={{ marginRight: '6px', flexShrink: 0, width: '10px', height: '10px', marginTop: '2px' }}
+                              style={{ marginRight: '6px', flexShrink: 0, width: '10px', height: '10px', marginTop: '2px', minWidth: 0 }}
                             />
-                            <span style={{ fontSize: '12px' }}>{user.username}</span>
+                            <span style={{ fontSize: '12px', minWidth: 0 }}>{user.username}</span>
                           </div>
                         ))}
                     </div>
