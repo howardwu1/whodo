@@ -183,7 +183,7 @@ function StoriesColumn({
             style={{
               marginRight: numColumns < 3 ? undefined : '2px',
               marginLeft: numColumns < 3 ? undefined : '2px',
-              minWidth: numColumns < 3 ? `${80 / numColumns - 1}vw` : '30vw',
+              minWidth: numColumns < 3 ? `${64 / numColumns - 0.8}vw` : '24vw',
               display: 'flex',
               flexDirection: 'column',
               flex: 1,
