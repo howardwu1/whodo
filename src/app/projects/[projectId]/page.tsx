@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
 import { Navigation } from '@/components/Navigation';
 import { useAppContext } from '@/lib/registry';
 
@@ -379,19 +380,23 @@ function StoriesColumn({
                         <option value="3">3 Points</option>
                       </select>
                     </div>
-                    <div>
-                      <label htmlFor={`notes-${story.id}`}>STANDUP MEETING COMMENTS</label>
-                      <input
-                        id={`notes-${story.id}`}
-                        defaultValue={story.standupComments}
-                        onChange={(e) => {
-                          const updated = [...localStoryList];
-                          updated[index] = { ...story, standupComments: e.target.value };
-                          setLocalStoryList(updated);
-                          setStorylist(updated);
-                        }}
-                      />
-                    </div>
+                    <TextField
+                      id={`notes-${story.id}`}
+                      label="Standup Meeting Comments"
+                      multiline
+                      rows={2}
+                      defaultValue={story.standupComments}
+                      onChange={(e) => {
+                        const updated = [...localStoryList];
+                        updated[index] = { ...story, standupComments: e.target.value };
+                        setLocalStoryList(updated);
+                        setStorylist(updated);
+                      }}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      sx={{ mb: 1 }}
+                    />
                   </form>
                 </div>
               )}
