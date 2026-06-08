@@ -829,7 +829,7 @@ export default function ProjectPage() {
                       {allUsers
                         .filter((user: any) => !projectMembers.includes(user.username))
                         .map((user: any) => (
-                          <label key={user.id} style={{ display: 'flex', alignItems: 'center', padding: '4px 8px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
+                          <label key={user.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', padding: '4px 8px', cursor: 'pointer', borderBottom: '1px solid #f0f0f0' }}>
                             <input
                               type="checkbox"
                               checked={selectedUsersToAdd.includes(user.id)}
