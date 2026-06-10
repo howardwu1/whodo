@@ -99,31 +99,31 @@ export function Navigation() {
         }
       `}</style>
 
-      {/* Toggle button */}
+      {/* Toggle button - attached to sidebar edge */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="sidebar-toggle"
         style={{
           position: 'fixed',
           top: '16px',
-          left: isExpanded ? expandedWidth + 16 : '80px',
+          left: isExpanded ? expandedWidth - 18 : collapsedWidth - 18,
           zIndex: 1001,
           background: 'white',
           border: 'none',
-          borderRadius: '10px',
-          width: '44px',
-          height: '44px',
+          borderRadius: '8px',
+          width: '36px',
+          height: '36px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
           transition: 'left 0.3s ease',
           color: '#191970',
           padding: 0,
         }}
       >
-        {isExpanded ? <CloseIcon /> : <MenuIcon />}
+        {isExpanded ? <CloseIcon style={{ fontSize: '18px' }} /> : <MenuIcon style={{ fontSize: '18px' }} />}
       </button>
 
       {/* User icon - top right (authenticated) */}
