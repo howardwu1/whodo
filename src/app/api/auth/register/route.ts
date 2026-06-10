@@ -64,8 +64,10 @@ export async function POST(request: Request) {
       { status: 201 }
     );
 
-    // Set session cookie (HttpOnly, Secure, SameSite=Strict)
-    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${24 * 60 * 60}`;
+    // Set session cookie (HttpOnly, SameSite=Strict) - no Secure flag in dev (localhost uses HTTP)
+    const isProduction = process.env.NODE_ENV === 'production';
+    const secureFlag = isProduction ? '; Secure' : '';
+    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly${secureFlag}; SameSite=Strict; Max-Age=${24 * 60 * 60}`;
     response.headers.set('Set-Cookie', sessionCookie);
 
     // Set CSRF cookie (not HttpOnly so JS can read it)
