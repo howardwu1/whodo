@@ -18,20 +18,6 @@ export async function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get('whodo_session')?.value;
   const hasSession = !!sessionToken;
 
-  if (pathname.startsWith('/api/')) {
-    // API routes: return 401 if no session cookie
-    if (!hasSession) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    // Set X-User-Id header if cookie present (actual validation happens in route handler)
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', 'cookie-present');
-    return NextResponse.next({ request: { headers: requestHeaders } });
-  }
-
   if (pathname === '/dashboard') {
     // Dashboard: redirect to / if no session cookie (no DB call in Edge runtime)
     if (!hasSession) {
@@ -47,5 +33,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard', '/api/*'],
+  matcher: ['/dashboard'],
 };
