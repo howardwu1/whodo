@@ -66,10 +66,9 @@ export async function POST(request: Request) {
       email: user.email,
     });
 
-    // Set session cookie (HttpOnly, SameSite=Strict)
-    // Note: Not using Secure flag because it causes issues with cookie domain matching
-    // SameSite=Strict already provides CSRF protection
-    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; SameSite=Strict; Max-Age=${24 * 60 * 60}`;
+    // Set session cookie (HttpOnly, Secure, SameSite=Strict)
+    // On Vercel (HTTPS), Secure flag is required for cookies to be sent
+    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${24 * 60 * 60}`;
     response.headers.set('Set-Cookie', sessionCookie);
 
     // Set CSRF cookie (not HttpOnly so JS can read it)
