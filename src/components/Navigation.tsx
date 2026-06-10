@@ -323,28 +323,6 @@ export function Navigation() {
             );
           })}
         </nav>
-
-        {/* Login button when not authenticated */}
-        {isHydrated && username === '' && (
-          <div style={{ padding: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-            <Link
-              href="/login"
-              className="sidebar-item"
-              onClick={() => setIsExpanded(false)}
-              style={{
-                justifyContent: isExpanded ? 'flex-start' : 'center',
-                background: 'rgba(255, 255, 255, 0.1)',
-              }}
-            >
-              <span style={{ fontSize: '22px' }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-              </span>
-              {isExpanded && <span>Login</span>}
-            </Link>
-          </div>
-        )}
       </div>
 
       {/* Update CSS variable for content margin */}
