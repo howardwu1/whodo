@@ -6,7 +6,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ArticleIcon from '@mui/icons-material/Article';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useAppContext } from '@/lib/registry';
 import { useState, useEffect } from 'react';
 
@@ -20,9 +21,14 @@ const heartLogoSvg =
   );
 
 export function Navigation() {
-  const { username } = useAppContext();
+  const { username, setUsername } = useAppContext();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isHydrated] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   useEffect(() => {
     if (isExpanded) {
@@ -77,6 +83,13 @@ export function Navigation() {
         .sidebar-item svg {
           flex-shrink: 0;
         }
+        .user-menu-item:hover {
+          background-color: #f5f5f5;
+        }
+        @keyframes dropdownFadeIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
       {/* Toggle button */}
@@ -108,16 +121,9 @@ export function Navigation() {
 
       {/* User icon - top right (authenticated) */}
       {isHydrated && username !== '' && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '16px',
-            right: '16px',
-            zIndex: 1000,
-          }}
-        >
+        <div style={{ position: 'fixed', top: '16px', right: '16px', zIndex: 1000 }}>
           <div
-            onClick={() => setIsExpanded(!isExpanded)}
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
             style={{
               width: '44px',
               height: '44px',
@@ -125,7 +131,7 @@ export function Navigation() {
               overflow: 'hidden',
               cursor: 'pointer',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              border: '2px solid white',
+              border: userMenuOpen ? '3px solid #FF69B4' : '2px solid white',
             }}
           >
             <img
@@ -134,6 +140,81 @@ export function Navigation() {
               style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
           </div>
+
+          {/* User dropdown menu */}
+          {userMenuOpen && (
+            <>
+              <div
+                onClick={() => setUserMenuOpen(false)}
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: -1,
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '52px',
+                  right: 0,
+                  background: 'white',
+                  borderRadius: '12px',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                  minWidth: '180px',
+                  overflow: 'hidden',
+                  animation: 'dropdownFadeIn 0.15s ease-out',
+                }}
+              >
+                <Link
+                  href="/profile"
+                  className="user-menu-item"
+                  onClick={() => setUserMenuOpen(false)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '14px 16px',
+                    textDecoration: 'none',
+                    color: '#333',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                  }}
+                >
+                  <PersonIcon style={{ color: '#191970', fontSize: '20px' }} />
+                  Profile
+                </Link>
+                <div style={{ height: '1px', backgroundColor: '#eee' }} />
+                <button
+                  onClick={() => {
+                    setUsername('');
+                    setUserMenuOpen(false);
+                    window.location.href = '/login';
+                  }}
+                  className="user-menu-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '14px 16px',
+                    width: '100%',
+                    border: 'none',
+                    background: 'none',
+                    textAlign: 'left',
+                    color: '#d32f2f',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <LogoutIcon style={{ fontSize: '20px' }} />
+                  Sign Out
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
 
@@ -155,9 +236,12 @@ export function Navigation() {
             justifyContent: 'center',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
             color: '#191970',
+            textDecoration: 'none',
           }}
         >
-          <AccountCircleIcon style={{ fontSize: '28px' }} />
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
         </Link>
       )}
 
