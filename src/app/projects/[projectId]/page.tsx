@@ -514,49 +514,75 @@ export default function ProjectPage() {
           };
           // Log defaultStories array before sending to API
           console.log('[loadStories] defaultStories array before POST:', JSON.stringify(defaultStories, null, 2));
-          // Seed default stories
-          const currentIteration = await Promise.all(
+          // Seed default stories - check response status and filter out errors
+          const currentIterationResponses = await Promise.all(
             defaultStories.map(s => 
               fetch('/api/stories', {
                 method: 'POST',
                 headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'current_iteration' }),
               }).then(async r => {
+                if (!r.ok) {
+                  const errorResponse = await r.json().catch(() => ({ error: 'Failed to create story' }));
+                  console.log('[loadStories] POST error for currentIteration:', JSON.stringify(errorResponse, null, 2));
+                  return { error: errorResponse.error || 'Failed to create story' };
+                }
                 const response = await r.json();
                 console.log('[loadStories] POST response for currentIteration:', JSON.stringify(response, null, 2));
                 return response;
               })
             )
           );
-          console.log('[loadStories] All currentIteration POST responses:', JSON.stringify(currentIteration, null, 2));
-          const icebox = await Promise.all(
+          console.log('[loadStories] All currentIteration POST responses:', JSON.stringify(currentIterationResponses, null, 2));
+          // Filter out error responses before mapping to state
+          const currentIteration = currentIterationResponses.filter(s => !s.error);
+          console.log('[loadStories] Filtered currentIteration (no errors):', JSON.stringify(currentIteration, null, 2));
+
+          const iceboxResponses = await Promise.all(
             iceboxDefaultStories.map(s =>
               fetch('/api/stories', {
                 method: 'POST',
                 headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'icebox' }),
               }).then(async r => {
+                if (!r.ok) {
+                  const errorResponse = await r.json().catch(() => ({ error: 'Failed to create story' }));
+                  console.log('[loadStories] POST error for icebox:', JSON.stringify(errorResponse, null, 2));
+                  return { error: errorResponse.error || 'Failed to create story' };
+                }
                 const response = await r.json();
                 console.log('[loadStories] POST response for icebox:', JSON.stringify(response, null, 2));
                 return response;
               })
             )
           );
-          console.log('[loadStories] All icebox POST responses:', JSON.stringify(icebox, null, 2));
-          const done = await Promise.all(
+          console.log('[loadStories] All icebox POST responses:', JSON.stringify(iceboxResponses, null, 2));
+          // Filter out error responses before mapping to state
+          const icebox = iceboxResponses.filter(s => !s.error);
+          console.log('[loadStories] Filtered icebox (no errors):', JSON.stringify(icebox, null, 2));
+
+          const doneResponses = await Promise.all(
             doneDefaultStories.map(s =>
               fetch('/api/stories', {
                 method: 'POST',
                 headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'done' }),
               }).then(async r => {
+                if (!r.ok) {
+                  const errorResponse = await r.json().catch(() => ({ error: 'Failed to create story' }));
+                  console.log('[loadStories] POST error for done:', JSON.stringify(errorResponse, null, 2));
+                  return { error: errorResponse.error || 'Failed to create story' };
+                }
                 const response = await r.json();
                 console.log('[loadStories] POST response for done:', JSON.stringify(response, null, 2));
                 return response;
               })
             )
           );
-          console.log('[loadStories] All done POST responses:', JSON.stringify(done, null, 2));
+          console.log('[loadStories] All done POST responses:', JSON.stringify(doneResponses, null, 2));
+          // Filter out error responses before mapping to state
+          const done = doneResponses.filter(s => !s.error);
+          console.log('[loadStories] Filtered done (no errors):', JSON.stringify(done, null, 2));
 
           // Convert database stories to frontend format with numeric IDs, preserving dbId
           let idCounter = 100;
