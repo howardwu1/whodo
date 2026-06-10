@@ -546,6 +546,7 @@ export default function ProjectPage() {
           setCurrentIterationStories(currentIteration.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
           setIceboxStoriesState(icebox.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
           setDoneStoriesState(done.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
+          setIsLoading(false);
         } else {
           // Group stories by status
           const current = data.filter((s: any) => s.status === 'current_iteration');
@@ -556,11 +557,10 @@ export default function ProjectPage() {
           setCurrentIterationStories(current.map((s: any) => ({ ...s, id: idCounter++, dbId: s.id })));
           setIceboxStoriesState(icebox.map((s: any) => ({ ...s, id: idCounter++, dbId: s.id })));
           setDoneStoriesState(done.map((s: any) => ({ ...s, id: idCounter++, dbId: s.id })));
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Error loading stories:', error);
-      } finally {
-        setIsLoading(false);
       }
     }
     loadStories();
