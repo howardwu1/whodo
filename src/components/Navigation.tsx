@@ -8,6 +8,20 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useAppContext } from '@/lib/registry';
 import { useState, useRef } from 'react';
 
+const heartLogoSvg =
+  'data:image/svg+xml,' +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">' +
+      '<defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+        '<stop offset="0%" style="stop-color:%23191970;stop-opacity:1"/>' +
+        '<stop offset="100%" style="stop-color:%23E91E63;stop-opacity:1"/>' +
+      '</linearGradient></defs>' +
+      '<path d="M50 85 C20 55, 10 35, 25 20 C40 5, 50 15, 50 25 C50 15, 60 5, 75 20 C90 35, 80 55, 50 85Z" fill="url(#grad)"/>' +
+      '<text x="35" y="58" font-family="Arial,sans-serif" font-size="28" font-weight="bold" fill="white">$</text>' +
+      '<text x="55" y="58" font-family="Arial,sans-serif" font-size="24" font-weight="bold" fill="white">?</text>' +
+    '</svg>'
+  );
+
 export function Navigation() {
   const { username, setUsername, project } = useAppContext();
   const [userDropdown, setUserDropdown] = useState(false);
@@ -16,14 +30,27 @@ export function Navigation() {
 
   return (
     <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap');
+        .brand-text {
+          font-family: 'Outfit', sans-serif;
+          font-weight: 700;
+          font-size: 22px;
+          letter-spacing: 0.5px;
+          background: linear-gradient(90deg, #191970, #E91E63);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+      `}</style>
       <nav className="navigation">
         <img
-          src="/whodo.svg"
+          src={heartLogoSvg}
           alt="WhoDo Logo"
-          style={{ height: '25px', margin: '0 0.5em 0 1.5em', cursor: 'pointer' }}
+          style={{ height: '32px', width: '32px', margin: '0 0.5em 0 1.5em', cursor: 'pointer', borderRadius: '8px' }}
           onClick={() => (window.location.href = username ? '/dashboard' : '/login')}
         />
-        <h3 style={{ color: 'white' }}>WhoDo</h3>
+        <span className="brand-text">WhoDo</span>
         {project ? (
           <h2 style={{ color: 'white' }}>&nbsp;- {project}</h2>
         ) : null}
