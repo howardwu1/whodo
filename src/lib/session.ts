@@ -3,24 +3,26 @@ import { prisma } from './prisma';
 
 /**
  * Creates a new session for the given user.
- * Generates a UUID v4 token, creates a DB record with 24h expiry, and returns the token.
+ * Generates a UUID v4 token and csrfSecret, creates a DB record with 24h expiry.
  * 
  * @param userId - The ID of the user to create a session for
- * @returns The generated session token (UUID v4)
+ * @returns Object with session token and csrfSecret
  */
-export async function createSession(userId: string): Promise<string> {
+export async function createSession(userId: string): Promise<{ token: string; csrfSecret: string }> {
   const token = uuidv4();
+  const csrfSecret = uuidv4();
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
 
   await prisma.session.create({
     data: {
       userId,
       token,
+      csrfSecret,
       expiresAt,
     },
   });
 
-  return token;
+  return { token, csrfSecret };
 }
 
 /**

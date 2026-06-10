@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { createSession } from '@/lib/session';
-import { generateCsrfToken, createCsrfCookie } from '@/lib/csrf';
+import { createCsrfCookie } from '@/lib/csrf';
 
 export async function POST(request: Request) {
   try {
@@ -42,11 +42,8 @@ export async function POST(request: Request) {
       },
     });
 
-    // Create session and get token
-    const sessionToken = await createSession(user.id);
-
-    // Generate CSRF token
-    const csrfToken = generateCsrfToken();
+    // Create session and get token and csrfSecret
+    const { token: sessionToken, csrfSecret } = await createSession(user.id);
 
     // Create response with user data
     const response = NextResponse.json(
@@ -59,7 +56,7 @@ export async function POST(request: Request) {
     response.headers.set('Set-Cookie', sessionCookie);
 
     // Set CSRF cookie (not HttpOnly so JS can read it)
-    response.headers.append('Set-Cookie', createCsrfCookie(csrfToken));
+    response.headers.append('Set-Cookie', createCsrfCookie(csrfSecret));
 
     return response;
   } catch (error) {
