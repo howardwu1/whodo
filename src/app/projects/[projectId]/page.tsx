@@ -6,6 +6,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import Link from 'next/link';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
+import SettingsIcon from '@mui/icons-material/Settings';
 import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
@@ -701,6 +702,25 @@ export default function ProjectPage() {
             }}
           >
             Members
+          </Link>
+          <Link
+            href={`/projects/${projectId}/settings`}
+            style={{
+              padding: '10px 20px',
+              cursor: 'pointer',
+              border: 'none',
+              backgroundColor: 'transparent',
+              fontSize: '14px',
+              fontWeight: 500,
+              textDecoration: 'none',
+              color: '#666',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <SettingsIcon style={{ fontSize: '18px' }} />
+            Settings
           </Link>
         </div>
 
