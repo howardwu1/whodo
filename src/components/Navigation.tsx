@@ -1,12 +1,17 @@
 'use client';
 
 import Link from 'next/link';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ArticleIcon from '@mui/icons-material/Article';
+import ContactPageIcon from '@mui/icons-material/ContactPage';
 import PersonIcon from '@mui/icons-material/Person';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAppContext } from '@/lib/registry';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 const heartLogoSvg =
   'data:image/svg+xml,' +
@@ -18,231 +23,326 @@ const heartLogoSvg =
   );
 
 export function Navigation() {
-  const { username, setUsername, project } = useAppContext();
-  const [userDropdown, setUserDropdown] = useState(false);
+  const { username, setUsername } = useAppContext();
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isHydrated] = useState(true);
-  const loginButtonRef = useRef(null);
+
+  const navItems = [
+    { href: '/', label: 'Blog', icon: <ArticleIcon /> },
+    { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon />, requiresAuth: true },
+    { href: '/contact', label: 'Contact', icon: <ContactPageIcon /> },
+  ];
+
+  const userItems = [
+    { href: '/profile', label: 'Profile', icon: <PersonIcon /> },
+    { href: '/reports', label: 'Reports', icon: <AssessmentIcon /> },
+  ];
 
   return (
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700&display=swap');
-        .brand-text {
+        .sidebar-brand {
           font-family: 'Outfit', sans-serif;
           font-weight: 700;
-          font-size: 22px;
+          font-size: 20px;
           letter-spacing: 0.5px;
           background: linear-gradient(90deg, white, #FF69B4);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+          white-space: nowrap;
+        }
+        .sidebar-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 16px;
+          border-radius: 12px;
+          text-decoration: none;
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 14px;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+        .sidebar-item:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: white;
+        }
+        .sidebar-item.active {
+          background: rgba(255, 255, 255, 0.15);
+          color: white;
+        }
+        .sidebar-item svg {
+          flex-shrink: 0;
         }
       `}</style>
-      <nav className="navigation">
-        <img
-          src={heartLogoSvg}
-          alt="WhoDo Logo"
-          style={{ height: '32px', width: '32px', margin: '0 0.5em 0 1.5em', cursor: 'pointer', borderRadius: '8px' }}
-          onClick={() => (window.location.href = username ? '/dashboard' : '/login')}
-        />
-        <span className="brand-text">WhoDo</span>
-        {project ? (
-          <h2 style={{ color: 'white' }}>&nbsp;- {project}</h2>
-        ) : null}
-        <div className="navigation-menu">
-          <ul>
-            <li>
-              <Link href="/">Blog</Link>
-            </li>
-            {isHydrated && username !== '' && (
-              <li>
-                <Link href="/dashboard">Dashboard</Link>
-              </li>
-            )}
-            <li>
-              <Link href="/contact">Contact</Link>
-            </li>
-            <li>
-              {!isHydrated ? null : username === '' ? (
-                <Link href="/login">Login</Link>
-              ) : (
-                <Link
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setUserDropdown(true);
-                  }}
-                  ref={loginButtonRef}
-                >
-                  <span style={{ display: 'flex', alignItems: 'center' }}>
-                    {username} <ArrowDropDownIcon />
-                  </span>
-                </Link>
-              )}
-            </li>
-          </ul>
-        </div>
-      </nav>
-      {userDropdown && (
-        <>
-          <style>{`
-            @keyframes dropdownFadeIn {
-              from { opacity: 0; transform: translateY(-10px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-            .profile-menu-item:hover {
-              background-color: #f5f5f5;
-              border-radius: 8px;
-            }
-          `}</style>
+
+      {/* Toggle button */}
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="sidebar-toggle"
+        style={{
+          position: 'fixed',
+          top: '16px',
+          left: isExpanded ? '276px' : '80px',
+          zIndex: 1001,
+          background: 'white',
+          border: 'none',
+          borderRadius: '10px',
+          width: '44px',
+          height: '44px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          transition: 'left 0.3s ease',
+          color: '#191970',
+          padding: 0,
+        }}
+      >
+        {isExpanded ? <CloseIcon /> : <MenuIcon />}
+      </button>
+
+      {/* User icon - top right (authenticated) */}
+      {isHydrated && username !== '' && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '16px',
+            right: '16px',
+            zIndex: 1000,
+          }}
+        >
           <div
-            onClick={() => setUserDropdown(false)}
+            onClick={() => setIsExpanded(!isExpanded)}
             style={{
-              width: '100%',
-              height: '100vh',
-              zIndex: '2',
-              position: 'fixed',
-              top: '0px',
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            }}
-          />
-          <div
-            style={{
-              position: 'fixed',
-              top: '60px',
-              right: '20px',
-              zIndex: '3',
-              animation: 'dropdownFadeIn 0.2s ease-out',
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              border: '2px solid white',
             }}
           >
+            <img
+              src="/blank-profile-picture-973460_1280.webp"
+              alt="User profile"
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Login icon - top right (not authenticated) */}
+      {isHydrated && username === '' && (
+        <Link
+          href="/login"
+          style={{
+            position: 'fixed',
+            top: '16px',
+            right: '16px',
+            zIndex: 1000,
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            color: '#191970',
+          }}
+        >
+          <AccountCircleIcon style={{ fontSize: '28px' }} />
+        </Link>
+      )}
+
+      {/* Sidebar overlay when collapsed */}
+      {!isExpanded && (
+        <div
+          onClick={() => setIsExpanded(true)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '64px',
+            height: '100vh',
+            background: 'linear-gradient(180deg, #191970 0%, #0f0f4a 100%)',
+            zIndex: 999,
+            cursor: 'pointer',
+          }}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: isExpanded ? '260px' : '64px',
+          height: '100vh',
+          background: 'linear-gradient(180deg, #191970 0%, #0f0f4a 100%)',
+          zIndex: 1000,
+          transition: 'width 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '4px 0 20px rgba(0, 0, 0, 0.15)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Brand header */}
+        <div
+          style={{
+            padding: isExpanded ? '20px 16px' : '20px 0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            justifyContent: isExpanded ? 'flex-start' : 'center',
+          }}
+        >
+          <img
+            src={heartLogoSvg}
+            alt="WhoDo Logo"
+            style={{
+              height: '36px',
+              width: '36px',
+              cursor: 'pointer',
+              borderRadius: '8px',
+              flexShrink: 0,
+            }}
+            onClick={() => (window.location.href = username ? '/dashboard' : '/login')}
+          />
+          {isExpanded && <span className="sidebar-brand">WhoDo</span>}
+        </div>
+
+        {/* Nav items */}
+        <nav style={{ flex: 1, padding: '16px 8px', overflowY: 'auto' }}>
+          {navItems.map((item) => {
+            if (item.requiresAuth && (!isHydrated || username === '')) return null;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="sidebar-item"
+                onClick={() => setIsExpanded(false)}
+                style={{ justifyContent: isExpanded ? 'flex-start' : 'center' }}
+              >
+                <span style={{ fontSize: '22px' }}>{item.icon}</span>
+                {isExpanded && <span>{item.label}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* User section */}
+        {isHydrated && username !== '' && (
+          <>
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', padding: '8px' }}>
+              {userItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="sidebar-item"
+                  onClick={() => setIsExpanded(false)}
+                  style={{ justifyContent: isExpanded ? 'flex-start' : 'center' }}
+                >
+                  <span style={{ fontSize: '22px' }}>{item.icon}</span>
+                  {isExpanded && <span>{item.label}</span>}
+                </Link>
+              ))}
+            </div>
+
+            {/* User profile at bottom */}
             <div
               style={{
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
-                borderRadius: '16px',
-                backgroundColor: 'white',
-                minWidth: '220px',
-                overflow: 'hidden',
+                padding: '16px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                justifyContent: isExpanded ? 'flex-start' : 'center',
               }}
             >
-              {/* Header with profile */}
-              <div
+              <img
+                src="/blank-profile-picture-973460_1280.webp"
+                alt="profile-pic"
                 style={{
-                  padding: '20px',
-                  backgroundColor: '#191970',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  border: '2px solid rgba(255, 255, 255, 0.3)',
+                  objectFit: 'cover',
+                  flexShrink: 0,
                 }}
-              >
-                <img
-                  src="/blank-profile-picture-973460_1280.webp"
-                  alt="profile-pic"
-                  style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    border: '3px solid white',
-                    objectFit: 'cover',
-                  }}
-                />
-                <div>
-                  <p
-                    style={{
-                      color: 'white',
-                      fontWeight: 'bold',
-                      fontSize: '16px',
-                      margin: 0,
+              />
+              {isExpanded && (
+                <div style={{ overflow: 'hidden' }}>
+                  <p style={{ color: 'white', fontWeight: 600, fontSize: '14px', margin: 0 }}>{username}</p>
+                  <button
+                    onClick={() => {
+                      setUsername('');
+                      window.location.href = '/login';
                     }}
-                  >
-                    {username}
-                  </p>
-                  <p
                     style={{
-                      color: 'rgba(255, 255, 255, 0.7)',
+                      background: 'none',
+                      border: 'none',
+                      color: 'rgba(255, 255, 255, 0.5)',
                       fontSize: '12px',
-                      margin: '4px 0 0 0',
+                      cursor: 'pointer',
+                      padding: 0,
+                      marginTop: '2px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
                     }}
                   >
-                    Welcome back
-                  </p>
+                    <ExitToAppIcon style={{ fontSize: '14px' }} /> Sign Out
+                  </button>
                 </div>
-              </div>
-
-              {/* Menu items */}
-              <div style={{ padding: '8px' }}>
-                <Link
-                  href="/profile"
-                  className="profile-menu-item"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '14px',
-                    transition: 'background-color 0.15s',
-                  }}
-                  onClick={() => setUserDropdown(false)}
-                >
-                  <PersonIcon style={{ color: '#191970', fontSize: '20px' }} />
-                  Profile
-                </Link>
-                <Link
-                  href="/reports"
-                  className="profile-menu-item"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '14px',
-                    transition: 'background-color 0.15s',
-                  }}
-                  onClick={() => setUserDropdown(false)}
-                >
-                  <AssessmentIcon style={{ color: '#191970', fontSize: '20px' }} />
-                  Reports
-                </Link>
-              </div>
-
-              {/* Divider */}
-              <div style={{ height: '1px', backgroundColor: '#eee', margin: '0 16px' }} />
-
-              {/* Sign out */}
-              <div style={{ padding: '8px' }}>
-                <Link
-                  href="/login"
-                  className="profile-menu-item"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    color: '#d32f2f',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    transition: 'background-color 0.15s',
-                  }}
-                  onClick={() => {
-                    setUsername('');
-                    setUserDropdown(false);
-                  }}
-                >
-                  <ExitToAppIcon style={{ fontSize: '20px' }} />
-                  Sign Out
-                </Link>
-              </div>
+              )}
             </div>
+          </>
+        )}
+
+        {/* Login button when not authenticated */}
+        {isHydrated && username === '' && (
+          <div style={{ padding: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <Link
+              href="/login"
+              className="sidebar-item"
+              onClick={() => setIsExpanded(false)}
+              style={{
+                justifyContent: isExpanded ? 'flex-start' : 'center',
+                background: 'rgba(255, 255, 255, 0.1)',
+              }}
+            >
+              <span style={{ fontSize: '22px' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+              </span>
+              {isExpanded && <span>Login</span>}
+            </Link>
           </div>
-        </>
-      )}
+        )}
+      </div>
+
+      {/* Main content wrapper - adjusts left margin based on sidebar state */}
+      <div
+        style={{
+          marginLeft: isExpanded ? '260px' : '64px',
+          transition: 'margin-left 0.3s ease',
+          minHeight: '100vh',
+        }}
+      >
+        {/* Content will be rendered here */}
+      </div>
     </>
   );
 }
