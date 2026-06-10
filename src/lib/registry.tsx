@@ -30,35 +30,35 @@ export const AppContext = createContext<AppContextType>({
 
 export const useAppContext = () => useContext(AppContext);
 
-function getStoredUsername(): string {
-  if (typeof window === 'undefined') return '';
-  return localStorage.getItem('whodo_username') || '';
-}
-
-async function setStoredUsername(value: string): Promise<void> {
-  if (typeof window === 'undefined') return;
-  if (value) {
-    localStorage.setItem('whodo_username', value);
-    // Also set a cookie for middleware to read
-    document.cookie = `whodo_username=${value}; path=/; max-age=86400`;
-  } else {
-    localStorage.removeItem('whodo_username');
-    document.cookie = 'whodo_username=; path=/; max-age=0';
-  }
-}
-
 export default function ThemeRegistry({ children }: { children: React.ReactNode }) {
   const [username, setUsernameState] = useState('');
   const [project, setProject] = useState('');
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    setUsernameState(getStoredUsername());
-    setIsHydrated(true);
+    // Fetch user info from server-side session instead of localStorage
+    async function fetchUserFromSession() {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const user = await response.json();
+          setUsernameState(user.username || '');
+        } else {
+          // Not authenticated or session expired
+          setUsernameState('');
+        }
+      } catch (error) {
+        console.error('Failed to fetch user from session:', error);
+        setUsernameState('');
+      }
+      setIsHydrated(true);
+    }
+
+    fetchUserFromSession();
   }, []);
 
+  // setUsername now just updates local state - session is server-side
   const setUsername = (value: string) => {
-    setStoredUsername(value);
     setUsernameState(value);
   };
 

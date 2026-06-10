@@ -9,6 +9,7 @@ import ContactPageIcon from '@mui/icons-material/ContactPage';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAppContext } from '@/lib/registry';
+import { logout } from '@/app/actions/auth';
 import { useState, useEffect } from 'react';
 
 const heartLogoSvg =
@@ -192,10 +193,9 @@ export function Navigation() {
                 </Link>
                 <div style={{ height: '1px', backgroundColor: '#eee' }} />
                 <button
-                  onClick={() => {
-                    setUsername('');
+                  onClick={async () => {
                     setUserMenuOpen(false);
-                    window.location.href = '/login';
+                    await logout();
                   }}
                   className="user-menu-item"
                   style={{
