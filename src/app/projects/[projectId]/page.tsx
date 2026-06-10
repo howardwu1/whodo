@@ -458,7 +458,7 @@ export default function ProjectPage() {
   ];
 
   const doneDefaultStories = [
-    { title: 'finished story', assignee: username || 'asdf', points: 1, type: 'feature', dateCreated: 'November 31, 2022', isFinished: true, isDelivered: true, isAccepted: true },
+    { title: 'finished story', assignee: username || 'asdf', points: 1, type: 'feature', dateCreated: 'November 30, 2022', isFinished: true, isDelivered: true, isAccepted: true },
   ];
 
   useEffect(() => {

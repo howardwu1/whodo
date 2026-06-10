@@ -63,11 +63,20 @@ export async function GET(request: Request) {
     let projects;
 
     if (username) {
+      // Get the user's ID from username
+      const user = await prisma.user.findUnique({
+        where: { username: username }
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+
       // Get projects where user is a member or owner
       projects = await prisma.project.findMany({
         where: {
           OR: [
-            { userId: username },
+            { userId: user.id },
             { members: { some: { user: { username } } } }
           ]
         },
@@ -152,7 +161,7 @@ export async function POST(request: Request) {
         velocity: body.velocity || [0],
         target: body.target || [0],
         health: 'green',
-        userId: body.userId,
+        userId: user.id,  // Store the actual user ID, not username
         members: {
           create: {
             userId: user.id,

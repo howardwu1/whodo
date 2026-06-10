@@ -47,7 +47,7 @@ model Project {
   health      String   @default("green")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  userId      String   // stores the username, not a foreign key
+  userId      String   // foreign key ID referencing User.id
   stories     Story[]
   members     ProjectMember[]
 }
