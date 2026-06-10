@@ -25,7 +25,8 @@ export function Navigation() {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const collapsedWidth = 64;
-  const expandedWidth = typeof window !== 'undefined' ? Math.floor(window.innerWidth * (2/3)) : 520;
+  const originalWidth = 260;
+  const expandedWidth = Math.floor(originalWidth * (2/3));
   const [isHydrated, setIsHydrated] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
