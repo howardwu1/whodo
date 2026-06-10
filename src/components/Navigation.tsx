@@ -8,6 +8,7 @@ import { useState, useRef } from 'react';
 export function Navigation() {
   const { username, setUsername, project } = useAppContext();
   const [userDropdown, setUserDropdown] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(true);
   const loginButtonRef = useRef(null);
 
   return (
@@ -28,7 +29,7 @@ export function Navigation() {
             <li>
               <Link href="/">Blog</Link>
             </li>
-            {username !== '' && (
+            {isHydrated && username !== '' && (
               <li>
                 <Link href="/dashboard">Dashboard</Link>
               </li>
@@ -37,7 +38,7 @@ export function Navigation() {
               <Link href="/contact">Contact</Link>
             </li>
             <li>
-              {username === '' ? (
+              {!isHydrated ? null : username === '' ? (
                 <Link href="/login">Login</Link>
               ) : (
                 <Link
