@@ -53,8 +53,8 @@ export default function MembersPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          setProjectMembers([...projectMembers, data.user.username]);
-          setProjectMembersFull([...projectMembersFull, data]);
+          setProjectMembers(prev => [...prev, data.user.username]);
+          setProjectMembersFull(prev => [...prev, data]);
         }
       }
       setSelectedUsersToAdd([]);
@@ -72,8 +72,8 @@ export default function MembersPage() {
         method: 'DELETE',
       });
       if (res.ok) {
-        setProjectMembers(projectMembers.filter(m => m !== memberToRemove.user.username));
-        setProjectMembersFull(projectMembersFull.filter(m => m.user.id !== memberToRemove.user.id));
+        setProjectMembers(prev => prev.filter(m => m !== memberToRemove.user.username));
+        setProjectMembersFull(prev => prev.filter(m => m.user.id !== memberToRemove.user.id));
         setMemberToRemove(null);
         setConfirmRemoveModal(false);
       }
