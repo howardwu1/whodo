@@ -2,13 +2,16 @@
 
 import Link from 'next/link';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PersonIcon from '@mui/icons-material/Person';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { useAppContext } from '@/lib/registry';
 import { useState, useRef } from 'react';
 
 export function Navigation() {
   const { username, setUsername, project } = useAppContext();
   const [userDropdown, setUserDropdown] = useState(false);
-  const [isHydrated, setIsHydrated] = useState(true);
+  const [isHydrated] = useState(true);
   const loginButtonRef = useRef(null);
 
   return (
@@ -59,78 +62,164 @@ export function Navigation() {
         </div>
       </nav>
       {userDropdown && (
-        <div
-          onClick={() => setUserDropdown(false)}
-          style={{
-            width: '100%',
-            height: '100vh',
-            zIndex: '2',
-            position: 'fixed',
-            top: '0px',
-          }}
-        >
+        <>
+          <style>{`
+            @keyframes dropdownFadeIn {
+              from { opacity: 0; transform: translateY(-10px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .profile-menu-item:hover {
+              background-color: #f5f5f5;
+              border-radius: 8px;
+            }
+          `}</style>
+          <div
+            onClick={() => setUserDropdown(false)}
+            style={{
+              width: '100%',
+              height: '100vh',
+              zIndex: '2',
+              position: 'fixed',
+              top: '0px',
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            }}
+          />
           <div
             style={{
-              boxShadow:
-                '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
-              position: 'relative',
-              marginLeft: 'auto',
-              right: loginButtonRef.current?.getBoundingClientRect().y + 'px' || '0px',
-              width: '130px',
+              position: 'fixed',
+              top: '60px',
+              right: '20px',
               zIndex: '3',
-              opacity: '100%',
-              backgroundColor: 'white',
-              top: '50px',
+              animation: 'dropdownFadeIn 0.2s ease-out',
             }}
           >
-            <img
-              src="/blank-profile-picture-973460_1280.webp"
-              className="profile-pic"
-              alt="profile-pic"
-            />
-            <p
-              style={{
-                borderBottom: '1.5px solid lightgray',
-                fontWeight: 'bold',
-                paddingBottom: '1em',
-                marginTop: '0',
-                marginBottom: '0',
-              }}
-            >
-              {username}
-            </p>
             <div
               style={{
-                paddingTop: '0.5em',
-                paddingBottom: '0.5em',
-                fontSize: '10pt',
-                borderBottom: '1.5px solid lightgray',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                borderRadius: '16px',
+                backgroundColor: 'white',
+                minWidth: '220px',
+                overflow: 'hidden',
               }}
             >
-              <Link href="/profile" className="profile-menu">
-                Profile
-              </Link>
-              <Link href="/reports" className="profile-menu">
-                Reports
-              </Link>
-            </div>
-            <div
-              style={{
-                paddingTop: '0.5em',
-                paddingBottom: '0.5em',
-                fontSize: '10pt',
-              }}
-            >
-              <Link
-                href="/login"
-                className="profile-menu"
-                onClick={() => setUsername('')}
+              {/* Header with profile */}
+              <div
+                style={{
+                  padding: '20px',
+                  backgroundColor: '#191970',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                }}
               >
-                Sign Out
-              </Link>
+                <img
+                  src="/blank-profile-picture-973460_1280.webp"
+                  alt="profile-pic"
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    border: '3px solid white',
+                    objectFit: 'cover',
+                  }}
+                />
+                <div>
+                  <p
+                    style={{
+                      color: 'white',
+                      fontWeight: 'bold',
+                      fontSize: '16px',
+                      margin: 0,
+                    }}
+                  >
+                    {username}
+                  </p>
+                  <p
+                    style={{
+                      color: 'rgba(255, 255, 255, 0.7)',
+                      fontSize: '12px',
+                      margin: '4px 0 0 0',
+                    }}
+                  >
+                    Welcome back
+                  </p>
+                </div>
+              </div>
+
+              {/* Menu items */}
+              <div style={{ padding: '8px' }}>
+                <Link
+                  href="/profile"
+                  className="profile-menu-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    color: '#333',
+                    fontSize: '14px',
+                    transition: 'background-color 0.15s',
+                  }}
+                  onClick={() => setUserDropdown(false)}
+                >
+                  <PersonIcon style={{ color: '#191970', fontSize: '20px' }} />
+                  Profile
+                </Link>
+                <Link
+                  href="/reports"
+                  className="profile-menu-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    color: '#333',
+                    fontSize: '14px',
+                    transition: 'background-color 0.15s',
+                  }}
+                  onClick={() => setUserDropdown(false)}
+                >
+                  <AssessmentIcon style={{ color: '#191970', fontSize: '20px' }} />
+                  Reports
+                </Link>
+              </div>
+
+              {/* Divider */}
+              <div style={{ height: '1px', backgroundColor: '#eee', margin: '0 16px' }} />
+
+              {/* Sign out */}
+              <div style={{ padding: '8px' }}>
+                <Link
+                  href="/login"
+                  className="profile-menu-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    color: '#d32f2f',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    transition: 'background-color 0.15s',
+                  }}
+                  onClick={() => {
+                    setUsername('');
+                    setUserDropdown(false);
+                  }}
+                >
+                  <ExitToAppIcon style={{ fontSize: '20px' }} />
+                  Sign Out
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
