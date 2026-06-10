@@ -197,7 +197,12 @@ export function Navigation() {
                 <button
                   onClick={async () => {
                     setUserMenuOpen(false);
-                    await logout();
+                    try {
+                      await logout();
+                    } catch {
+                      // If logout() fails or redirect doesn't work, do hard redirect
+                      window.location.href = '/login';
+                    }
                   }}
                   className="user-menu-item"
                   style={{
