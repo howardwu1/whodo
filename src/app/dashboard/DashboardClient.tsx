@@ -30,6 +30,7 @@ export default function DashboardClient({ username }: DashboardClientProps) {
   const [newProjectName, setNewProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isFetchingProjects, setIsFetchingProjects] = useState(true);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const pointsGap = (projectIndex: number) => {
     const proj = projects[projectIndex];
@@ -90,6 +91,7 @@ export default function DashboardClient({ username }: DashboardClientProps) {
     if (!newProjectName.trim()) return;
 
     setIsLoading(true);
+    setCreateError(null);
     try {
       const response = await fetch('/api/projects', {
         method: 'POST',
@@ -102,12 +104,16 @@ export default function DashboardClient({ username }: DashboardClientProps) {
 
       if (response.ok) {
         const newProject = await response.json();
-        setProjects([newProject, ...projects]);
+        setProjects(prev => [newProject, ...prev]);
         setNewProjectName('');
         setShowNewProjectForm(false);
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to create project' }));
+        setCreateError(errorData.error || 'Failed to create project');
       }
     } catch (error) {
       console.error('Failed to create project:', error);
+      setCreateError('Network error. Please try again.');
     }
     setIsLoading(false);
   };
@@ -194,7 +200,10 @@ export default function DashboardClient({ username }: DashboardClientProps) {
                   type="text"
                   placeholder="Project name"
                   value={newProjectName}
-                  onChange={(e) => setNewProjectName(e.target.value)}
+                  onChange={(e) => {
+                    setNewProjectName(e.target.value);
+                    setCreateError(null);
+                  }}
                   onKeyDown={(e) => e.key === 'Enter' && createProject()}
                   style={{
                     width: '100%',
@@ -205,11 +214,26 @@ export default function DashboardClient({ username }: DashboardClientProps) {
                   }}
                   autoFocus
                 />
+                {createError && (
+                  <div
+                    style={{
+                      color: '#d32f2f',
+                      backgroundColor: '#ffebee',
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      marginBottom: '10px',
+                      fontSize: '14px',
+                    }}
+                  >
+                    {createError}
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
                   <button
                     onClick={() => {
                       setShowNewProjectForm(false);
                       setNewProjectName('');
+                      setCreateError(null);
                     }}
                     style={{ padding: '8px 16px', cursor: 'pointer' }}
                   >
