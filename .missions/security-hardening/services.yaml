@@ -1,0 +1,28 @@
+commands:
+  install: npm install
+  typecheck: npm run typecheck
+  build: npm run build
+  lint: npm run lint
+  test: npm run test
+  prisma-generate: npx prisma generate
+  prisma-migrate: npx prisma migrate dev
+
+services:
+  postgres:
+    start: docker compose up -d postgres
+    stop: docker compose stop postgres
+    healthcheck: pg_isready -h localhost -p 5432
+    port: 5432
+    depends_on: []
+
+  app:
+    start: PORT=3000 npm run dev
+    stop: lsof -ti :3000 | xargs kill
+    healthcheck: curl -sf http://localhost:3000
+    port: 3000
+    depends_on: [postgres]
+
+  prisma:
+    setup: npx prisma generate && npx prisma migrate dev --skip-seed
+    port: 5432
+    depends_on: [postgres]

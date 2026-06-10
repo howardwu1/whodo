@@ -1,0 +1,25 @@
+{
+  "assertions": {
+    "VAL-SESSION-001": { "status": "pending" },
+    "VAL-SESSION-002": { "status": "pending" },
+    "VAL-SESSION-003": { "status": "pending" },
+    "VAL-SESSION-004": { "status": "pending" },
+    "VAL-SESSION-005": { "status": "pending" },
+    "VAL-CSRF-001": { "status": "pending" },
+    "VAL-CSRF-002": { "status": "pending" },
+    "VAL-CSRF-003": { "status": "pending" },
+    "VAL-RATELIMIT-001": { "status": "pending" },
+    "VAL-RATELIMIT-002": { "status": "pending" },
+    "VAL-API-001": { "status": "pending" },
+    "VAL-API-002": { "status": "pending" },
+    "VAL-API-003": { "status": "pending" },
+    "VAL-BUG-001": { "status": "pending" },
+    "VAL-BUG-002": { "status": "pending" },
+    "VAL-BUG-003": { "status": "pending" },
+    "VAL-BUG-004": { "status": "pending" },
+    "VAL-BUG-005": { "status": "pending" },
+    "VAL-BUG-006": { "status": "pending" },
+    "VAL-BUG-007": { "status": "pending" },
+    "VAL-CROSS-001": { "status": "pending" }
+  }
+}

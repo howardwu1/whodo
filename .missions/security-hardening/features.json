@@ -1,0 +1,243 @@
+{
+  "features": [
+    {
+      "id": "prisma-session-model",
+      "description": "Add Session model to Prisma schema with id, userId, token (unique), expiresAt, createdAt. Create migration and generate Prisma client.",
+      "skillName": "backend-worker",
+      "milestone": "session",
+      "preconditions": [
+        "Prisma schema exists at prisma/schema.prisma",
+        "Postgres database accessible"
+      ],
+      "expectedBehavior": [
+        "Session model added with UUID id, userId relation, unique token, expiresAt DateTime",
+        "Migration creates session table",
+        "prisma generate succeeds"
+      ],
+      "fulfills": [],
+      "status": "pending"
+    },
+    {
+      "id": "session-utilities",
+      "description": "Create src/lib/session.ts with createSession(userId), validateSession(token), deleteSession(token), cleanupExpiredSessions(). Uses UUID v4 for tokens. Sets HttpOnly; Secure; SameSite=Strict; Max-Age=86400 cookies.",
+      "skillName": "backend-worker",
+      "milestone": "session",
+      "preconditions": [
+        "Session model in Prisma schema",
+        "Prisma client generated"
+      ],
+      "expectedBehavior": [
+        "createSession creates DB record with UUID token, 24h expiry, returns token",
+        "validateSession returns userId if valid/unexpired, null otherwise",
+        "deleteSession removes session from DB",
+        "cleanupExpiredSessions deletes all past expiresAt records"
+      ],
+      "fulfills": [],
+      "status": "pending"
+    },
+    {
+      "id": "login-endpoint-session",
+      "description": "Modify POST /api/auth/login to create session after successful bcrypt validation. Return session and CSRF cookies. Keep rate limiting placeholder.",
+      "skillName": "backend-worker",
+      "milestone": "session",
+      "preconditions": [
+        "src/lib/session.ts exists with createSession",
+        "src/lib/rateLimit.ts has limitLogin function"
+      ],
+      "expectedBehavior": [
+        "Valid credentials -> createSession(userId) -> Set-Cookie with session token",
+        "Invalid credentials -> 401, rate limit check runs first"
+      ],
+      "fulfills": ["VAL-SESSION-001", "VAL-CSRF-001"],
+      "status": "pending"
+    },
+    {
+      "id": "register-endpoint-session",
+      "description": "Modify POST /api/auth/register to create session after successful user creation. Return session and CSRF cookies.",
+      "skillName": "backend-worker",
+      "milestone": "session",
+      "preconditions": [
+        "src/lib/session.ts exists with createSession",
+        "User creation logic exists in register endpoint"
+      ],
+      "expectedBehavior": [
+        "Valid registration -> createSession(userId) -> Set-Cookie with session token",
+        "Duplicate username -> 409 without session"
+      ],
+      "fulfills": ["VAL-SESSION-002"],
+      "status": "pending"
+    },
+    {
+      "id": "middleware-session-validation",
+      "description": "Update src/middleware.ts to read whodo_session cookie, call validateSession(), set X-User-Id header if valid. Redirect to / if invalid/missing for /dashboard routes.",
+      "skillName": "backend-worker",
+      "milestone": "session",
+      "preconditions": [
+        "src/lib/session.ts exists with validateSession"
+      ],
+      "expectedBehavior": [
+        "Valid session cookie -> request proceeds with X-User-Id header",
+        "Missing/invalid cookie on /dashboard -> redirect to /",
+        "API routes (/api/*) -> 401 on missing/invalid session"
+      ],
+      "fulfills": ["VAL-SESSION-003", "VAL-SESSION-004", "VAL-SESSION-005", "VAL-API-001", "VAL-API-002", "VAL-API-003"],
+      "status": "pending"
+    },
+    {
+      "id": "registry-session-read",
+      "description": "Update src/lib/registry.tsx to read session from server-side cookies instead of localStorage. Use context to get userId from headers (passed via middleware).",
+      "skillName": "frontend-worker",
+      "milestone": "session",
+      "preconditions": [
+        "Middleware sets X-User-Id header on valid sessions"
+      ],
+      "expectedBehavior": [
+        "setUsername reads from cookie/header instead of localStorage",
+        "Logout clears session cookie (not just localStorage)"
+      ],
+      "fulfills": [],
+      "status": "pending"
+    },
+    {
+      "id": "rate-limit-utility",
+      "description": "Create src/lib/rateLimit.ts with in-memory Map. limitLogin(ip, username) returns { allowed, remaining } and blocks after 5 attempts in 15 min. limitRegister(ip) similarly.",
+      "skillName": "backend-worker",
+      "milestone": "rate-limiting",
+      "preconditions": [],
+      "expectedBehavior": [
+        "limitLogin tracks (ip, username) key",
+        "After 5 attempts in 15 min, returns { allowed: false, remaining: 0 }",
+        "limitRegister tracks ip key only"
+      ],
+      "fulfills": [],
+      "status": "pending"
+    },
+    {
+      "id": "login-rate-limit",
+      "description": "Integrate rate limiting into login endpoint. Check limitLogin before credential validation. Return 429 if rate limited.",
+      "skillName": "backend-worker",
+      "milestone": "rate-limiting",
+      "preconditions": [
+        "src/lib/rateLimit.ts has limitLogin function"
+      ],
+      "expectedBehavior": [
+        "Rate limited request returns 429 with body { error: 'Too many attempts' }",
+        "Non-rate-limited request proceeds to credential validation"
+      ],
+      "fulfills": ["VAL-RATELIMIT-001"],
+      "status": "pending"
+    },
+    {
+      "id": "register-rate-limit",
+      "description": "Integrate rate limiting into register endpoint. Check limitRegister before user creation.",
+      "skillName": "backend-worker",
+      "milestone": "rate-limiting",
+      "preconditions": [
+        "src/lib/rateLimit.ts has limitRegister function"
+      ],
+      "expectedBehavior": [
+        "Rate limited request returns 429",
+        "Non-rate-limited request proceeds to user creation"
+      ],
+      "fulfills": ["VAL-RATELIMIT-002"],
+      "status": "pending"
+    },
+    {
+      "id": "csrf-validation",
+      "description": "Add CSRF validation to all mutating endpoints (POST/PUT/DELETE on /api/*). Validate x-csrf-token header against session's stored CSRF secret. Return 403 on mismatch.",
+      "skillName": "backend-worker",
+      "milestone": "csrf",
+      "preconditions": [
+        "Session stores CSRF secret",
+        "Login/register set CSRF cookie (not HttpOnly)"
+      ],
+      "expectedBehavior": [
+        "Missing x-csrf-token header -> 403",
+        "Mismatched token -> 403",
+        "Valid token -> proceeds to handler"
+      ],
+      "fulfills": ["VAL-CSRF-002", "VAL-CSRF-003"],
+      "status": "pending"
+    },
+    {
+      "id": "members-page-race-conditions",
+      "description": "Fix race conditions in src/app/projects/[projectId]/members/page.tsx. handleAddMembers and handleRemoveMember must use functional state updates: setMembers(prev => [...prev, new]) pattern.",
+      "skillName": "frontend-worker",
+      "milestone": "bugs",
+      "preconditions": [],
+      "expectedBehavior": [
+        "Rapidly adding 3+ members -> all 3 appear in list",
+        "Rapidly removing 2+ members -> correct ones removed"
+      ],
+      "fulfills": ["VAL-BUG-001", "VAL-BUG-002"],
+      "status": "pending"
+    },
+    {
+      "id": "api-error-handling",
+      "description": "Fix src/app/projects/[projectId]/page.tsx loadStories to check res.ok before res.json(). Fix PUT/DELETE on non-existent resources to return 404 instead of 500.",
+      "skillName": "backend-worker",
+      "milestone": "bugs",
+      "preconditions": [],
+      "expectedBehavior": [
+        "Non-2xx response -> throw Error with response text, not JSON parse crash",
+        "Non-existent resource -> 404, not 500"
+      ],
+      "fulfills": ["VAL-BUG-003", "VAL-BUG-004"],
+      "status": "pending"
+    },
+    {
+      "id": "data-correctness",
+      "description": "Fix invalid date 'November 31, 2022' -> 'November 30, 2022' in story dates. Fix Project model userId to use String (foreign key ID) not username.",
+      "skillName": "backend-worker",
+      "milestone": "bugs",
+      "preconditions": [],
+      "expectedBehavior": [
+        "Date rendering shows November 30 for last day",
+        "Project.userId stores numeric ID, not username string"
+      ],
+      "fulfills": [],
+      "status": "pending"
+    },
+    {
+      "id": "members-page-auth-check",
+      "description": "Add auth check to members page. Redirect to / if no valid session. Import and use session validation from lib/session.ts.",
+      "skillName": "frontend-worker",
+      "milestone": "bugs",
+      "preconditions": [
+        "Session validation utility exists"
+      ],
+      "expectedBehavior": [
+        "Access /projects/1/members without session -> redirect to /",
+        "Access with valid session -> page renders"
+      ],
+      "fulfills": ["VAL-BUG-005"],
+      "status": "pending"
+    },
+    {
+      "id": "create-project-error-feedback",
+      "description": "Update dashboard createProject to show error message to user when API call fails. Handle error state in form submission.",
+      "skillName": "frontend-worker",
+      "milestone": "bugs",
+      "preconditions": [],
+      "expectedBehavior": [
+        "Failed createProject -> error message shown in UI",
+        "User can retry after seeing error"
+      ],
+      "fulfills": ["VAL-BUG-006"],
+      "status": "pending"
+    },
+    {
+      "id": "empty-velocity-health",
+      "description": "Fix src/app/dashboard/page.tsx: when velocity array is empty, return 'green' health instead of falling through to 'red'.",
+      "skillName": "frontend-worker",
+      "milestone": "bugs",
+      "preconditions": [],
+      "expectedBehavior": [
+        "Project with empty velocity -> shows GREEN health",
+        "Project with negative velocity -> shows RED health"
+      ],
+      "fulfills": ["VAL-BUG-007"],
+      "status": "pending"
+    }
+  ]
+}
