@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import prisma from '@/lib/prisma';
 import { validateSession } from '@/lib/session';
 import { validateCsrfToken } from '@/lib/csrf';
@@ -196,6 +197,12 @@ export async function PUT(request: Request) {
     return NextResponse.json(updatedStory);
   } catch (error) {
     console.error('Error updating story:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Story not found' },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to update story' },
       { status: 500 }
@@ -240,6 +247,12 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting story:', error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      return NextResponse.json(
+        { error: 'Story not found' },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
       { error: 'Failed to delete story' },
       { status: 500 }

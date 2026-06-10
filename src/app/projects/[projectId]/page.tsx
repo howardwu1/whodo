@@ -470,6 +470,9 @@ export default function ProjectPage() {
     async function loadStories() {
       try {
         const res = await fetch(`/api/stories?projectId=${projectId}`);
+        if (!res.ok) {
+          throw new Error(await res.text());
+        }
         const data = await res.json();
 
         if (data.length === 0) {
