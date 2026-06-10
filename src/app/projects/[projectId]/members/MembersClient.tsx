@@ -26,6 +26,18 @@ export default function MembersClient({ username }: MembersClientProps) {
   const [confirmRemoveModal, setConfirmRemoveModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Helper to get CSRF token from cookies
+  const getCsrfToken = (): string => {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'whodo_csrf') {
+        return value;
+      }
+    }
+    return '';
+  };
+
   useEffect(() => {
     async function loadMembers() {
       try {
@@ -46,11 +58,15 @@ export default function MembersClient({ username }: MembersClientProps) {
 
   const handleAddMembers = async () => {
     if (selectedUsersToAdd.length === 0) return;
+    const csrfToken = getCsrfToken();
     try {
       for (const userId of selectedUsersToAdd) {
         const res = await fetch('/api/project-members', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken,
+          },
           body: JSON.stringify({ projectId, userId }),
         });
         if (res.ok) {
@@ -69,9 +85,13 @@ export default function MembersClient({ username }: MembersClientProps) {
 
   const handleRemoveMember = async () => {
     if (!memberToRemove) return;
+    const csrfToken = getCsrfToken();
     try {
       const res = await fetch(`/api/project-members?projectId=${projectId}&userId=${memberToRemove.user.id}`, {
         method: 'DELETE',
+        headers: {
+          'x-csrf-token': csrfToken,
+        },
       });
       if (res.ok) {
         setProjectMembers(prev => prev.filter(m => m !== memberToRemove.user.username));
