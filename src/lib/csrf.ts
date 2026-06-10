@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { timingSafeEqual } from 'crypto';
 import { prisma } from './prisma';
 
 /**
@@ -48,5 +49,12 @@ export async function validateCsrfToken(sessionToken: string, providedToken: str
   }
 
   // Use timing-safe comparison to prevent timing attacks
-  return session.csrfSecret === providedToken;
+  // timingSafeEqual requires same-length buffers; if lengths differ, reject in constant time
+  if (session.csrfSecret.length !== providedToken.length) {
+    return false;
+  }
+  return timingSafeEqual(
+    Buffer.from(session.csrfSecret),
+    Buffer.from(providedToken)
+  );
 }
