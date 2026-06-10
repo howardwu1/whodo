@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { createSession } from '@/lib/session';
 import { createCsrfCookie } from '@/lib/csrf';
+import { checkRegisterLimit, recordFailedRegister } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
   try {
@@ -13,6 +14,18 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Username and password are required' },
         { status: 400 }
+      );
+    }
+
+    // Get client IP for rate limiting
+    const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
+
+    // Check rate limit before proceeding with registration
+    const { allowed } = checkRegisterLimit(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: 'Too many registration attempts. Please try again later.' },
+        { status: 429 }
       );
     }
 

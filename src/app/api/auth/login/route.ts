@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { createSession } from '@/lib/session';
-import { limitLogin } from '@/lib/rateLimit';
+import { checkLoginLimit, recordFailedLogin } from '@/lib/rateLimit';
 import { createCsrfCookie } from '@/lib/csrf';
 
 export async function POST(request: Request) {
@@ -20,8 +20,8 @@ export async function POST(request: Request) {
     // Get client IP for rate limiting
     const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
 
-    // Check rate limit (placeholder - always allows in current implementation)
-    const { allowed } = limitLogin(ip, username);
+    // Check rate limit before credential validation
+    const { allowed } = checkLoginLimit(ip, username);
     if (!allowed) {
       return NextResponse.json(
         { error: 'Too many login attempts. Please try again later.' },
@@ -36,6 +36,8 @@ export async function POST(request: Request) {
     });
 
     if (!user) {
+      // Record failed attempt for non-existent user
+      recordFailedLogin(ip, username);
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
@@ -46,6 +48,8 @@ export async function POST(request: Request) {
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
+      // Record failed attempt for wrong password
+      recordFailedLogin(ip, username);
       return NextResponse.json(
         { error: 'Invalid credentials' },
         { status: 401 }
