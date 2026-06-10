@@ -512,6 +512,8 @@ export default function ProjectPage() {
             'Content-Type': 'application/json',
             'x-csrf-token': csrfToken,
           };
+          // Log defaultStories array before sending to API
+          console.log('[loadStories] defaultStories array before POST:', JSON.stringify(defaultStories, null, 2));
           // Seed default stories
           const currentIteration = await Promise.all(
             defaultStories.map(s => 
@@ -519,33 +521,54 @@ export default function ProjectPage() {
                 method: 'POST',
                 headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'current_iteration' }),
-              }).then(r => r.json())
+              }).then(async r => {
+                const response = await r.json();
+                console.log('[loadStories] POST response for currentIteration:', JSON.stringify(response, null, 2));
+                return response;
+              })
             )
           );
+          console.log('[loadStories] All currentIteration POST responses:', JSON.stringify(currentIteration, null, 2));
           const icebox = await Promise.all(
             iceboxDefaultStories.map(s =>
               fetch('/api/stories', {
                 method: 'POST',
                 headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'icebox' }),
-              }).then(r => r.json())
+              }).then(async r => {
+                const response = await r.json();
+                console.log('[loadStories] POST response for icebox:', JSON.stringify(response, null, 2));
+                return response;
+              })
             )
           );
+          console.log('[loadStories] All icebox POST responses:', JSON.stringify(icebox, null, 2));
           const done = await Promise.all(
             doneDefaultStories.map(s =>
               fetch('/api/stories', {
                 method: 'POST',
                 headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'done' }),
-              }).then(r => r.json())
+              }).then(async r => {
+                const response = await r.json();
+                console.log('[loadStories] POST response for done:', JSON.stringify(response, null, 2));
+                return response;
+              })
             )
           );
+          console.log('[loadStories] All done POST responses:', JSON.stringify(done, null, 2));
 
           // Convert database stories to frontend format with numeric IDs, preserving dbId
           let idCounter = 100;
-          setCurrentIterationStories(currentIteration.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
-          setIceboxStoriesState(icebox.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
-          setDoneStoriesState(done.map(s => ({ ...s, id: idCounter++, dbId: s.id })));
+          const mappedCurrentIteration = currentIteration.map(s => ({ ...s, id: idCounter++, dbId: s.id }));
+          const mappedIcebox = icebox.map(s => ({ ...s, id: idCounter++, dbId: s.id }));
+          const mappedDone = done.map(s => ({ ...s, id: idCounter++, dbId: s.id }));
+          console.log('[loadStories] Final mapped currentIteration array before setState:', JSON.stringify(mappedCurrentIteration, null, 2));
+          console.log('[loadStories] Final mapped icebox array before setState:', JSON.stringify(mappedIcebox, null, 2));
+          console.log('[loadStories] Final mapped done array before setState:', JSON.stringify(mappedDone, null, 2));
+          setCurrentIterationStories(mappedCurrentIteration);
+          setIceboxStoriesState(mappedIcebox);
+          setDoneStoriesState(mappedDone);
           setIsLoading(false);
         } else {
           // Group stories by status
