@@ -64,9 +64,9 @@ export async function POST(request: Request) {
       { status: 201 }
     );
 
-    // Set session cookie (HttpOnly, SameSite=Strict)
-    // Testing without Secure flag since whodo_csrf (without Secure) works
-    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; SameSite=Strict; Max-Age=${24 * 60 * 60}`;
+    // Set session cookie (HttpOnly, SameSite=Lax)
+    // SameSite=Lax is less restrictive than Strict - allows cookie on normal navigation
+    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=${24 * 60 * 60}`;
     response.headers.set('Set-Cookie', sessionCookie);
 
     // Set CSRF cookie (not HttpOnly so JS can read it)
