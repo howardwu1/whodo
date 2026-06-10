@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { createSession } from '@/lib/session';
+import { generateCsrfToken, createCsrfCookie } from '@/lib/csrf';
 
 export async function POST(request: Request) {
   try {
@@ -40,10 +42,26 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json(
+    // Create session and get token
+    const sessionToken = await createSession(user.id);
+
+    // Generate CSRF token
+    const csrfToken = generateCsrfToken();
+
+    // Create response with user data
+    const response = NextResponse.json(
       { id: user.id, username: user.username, email: user.email },
       { status: 201 }
     );
+
+    // Set session cookie (HttpOnly, Secure, SameSite=Strict)
+    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; Secure; SameSite=Strict; Max-Age=${24 * 60 * 60}`;
+    response.headers.set('Set-Cookie', sessionCookie);
+
+    // Set CSRF cookie (not HttpOnly so JS can read it)
+    response.headers.append('Set-Cookie', createCsrfCookie(csrfToken));
+
+    return response;
   } catch (error) {
     console.error('Error registering user:', error);
     return NextResponse.json(
