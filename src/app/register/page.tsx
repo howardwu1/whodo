@@ -32,9 +32,18 @@ export default function Register() {
     setApiError('');
 
     try {
+      // Get CSRF token from cookie (not HttpOnly, so JS can read it)
+      const csrfToken = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('whodo_csrf='))
+        ?.split('=')[1] ?? '';
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
+        },
         body: JSON.stringify({
           username: data.username,
           email: data.email || undefined,

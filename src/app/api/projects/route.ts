@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateSession } from '@/lib/session';
+import { validateCsrfToken } from '@/lib/csrf';
 
 /**
  * Get and validate session from request cookies.
@@ -16,6 +17,33 @@ async function getSessionUserId(request: Request): Promise<string | null> {
   );
   const sessionToken = cookies['whodo_session'];
   return validateSession(sessionToken ?? '');
+}
+
+/**
+ * Extracts the session token from request cookies.
+ */
+function getSessionToken(request: Request): string {
+  const cookieHeader = request.headers.get('cookie') ?? '';
+  const cookies = Object.fromEntries(
+    cookieHeader.split('; ').map(c => {
+      const [key, ...val] = c.split('=');
+      return [key, val.join('=')];
+    })
+  );
+  return cookies['whodo_session'] ?? '';
+}
+
+/**
+ * Validates CSRF token for mutating requests.
+ * Returns true if valid, false if missing or mismatched.
+ */
+async function validateCsrf(request: Request): Promise<boolean> {
+  const csrfToken = request.headers.get('x-csrf-token');
+  if (!csrfToken) {
+    return false;
+  }
+  const sessionToken = getSessionToken(request);
+  return validateCsrfToken(sessionToken, csrfToken);
 }
 
 export async function GET(request: Request) {
@@ -88,6 +116,15 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }
+    );
+  }
+
+  // Validate CSRF token
+  const isValidCsrf = await validateCsrf(request);
+  if (!isValidCsrf) {
+    return NextResponse.json(
+      { error: 'CSRF token missing or invalid' },
+      { status: 403 }
     );
   }
 
