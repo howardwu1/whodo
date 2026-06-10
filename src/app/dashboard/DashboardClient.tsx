@@ -88,15 +88,31 @@ export default function DashboardClient({ username }: DashboardClientProps) {
     }
   }, [username]);
 
+  // Helper to get CSRF token from cookies
+  const getCsrfToken = (): string => {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'whodo_csrf') {
+        return value;
+      }
+    }
+    return '';
+  };
+
   const createProject = async () => {
     if (!newProjectName.trim()) return;
 
     setIsLoading(true);
     setCreateError(null);
+    const csrfToken = getCsrfToken();
     try {
       const response = await fetch('/api/projects', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken,
+        },
         body: JSON.stringify({
           name: newProjectName,
           userId: username,
