@@ -58,13 +58,13 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const username = searchParams.get('username');
-  const projectId = searchParams.get('projectId');
+  const id = searchParams.get('id');
 
   try {
-    // If projectId is provided, fetch a single project
-    if (projectId) {
+    // If id is provided, fetch a single project
+    if (id) {
       const project = await prisma.project.findUnique({
-        where: { id: projectId },
+        where: { id: id },
         include: {
           stories: true,
           members: {

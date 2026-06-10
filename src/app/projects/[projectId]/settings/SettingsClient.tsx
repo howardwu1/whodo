@@ -46,7 +46,7 @@ export default function SettingsClient({ userId }: SettingsClientProps) {
   useEffect(() => {
     async function loadProject() {
       try {
-        const res = await fetch(`/api/projects?projectId=${projectId}`);
+        const res = await fetch(`/api/projects?id=${projectId}`);
         if (res.ok) {
           const data = await res.json();
           if (data && data.project) {
@@ -75,7 +75,7 @@ export default function SettingsClient({ userId }: SettingsClientProps) {
     setIsDeleting(true);
     const csrfToken = getCsrfToken();
     try {
-      const res = await fetch(`/api/projects?projectId=${projectId}`, {
+      const res = await fetch(`/api/projects?id=${projectId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
