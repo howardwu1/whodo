@@ -32,7 +32,10 @@ export function Navigation() {
           font-weight: 700;
           font-size: 22px;
           letter-spacing: 0.5px;
-          color: white;
+          background: linear-gradient(90deg, white, #FF69B4);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
       `}</style>
       <nav className="navigation">
