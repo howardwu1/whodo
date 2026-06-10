@@ -8,10 +8,9 @@ import ArticleIcon from '@mui/icons-material/Article';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import PersonIcon from '@mui/icons-material/Person';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAppContext } from '@/lib/registry';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const heartLogoSvg =
   'data:image/svg+xml,' +
@@ -23,9 +22,17 @@ const heartLogoSvg =
   );
 
 export function Navigation() {
-  const { username, setUsername } = useAppContext();
+  const { username } = useAppContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHydrated] = useState(true);
+
+  useEffect(() => {
+    if (isExpanded) {
+      document.body.classList.add('sidebar-expanded');
+    } else {
+      document.body.classList.remove('sidebar-expanded');
+    }
+  }, [isExpanded]);
 
   const navItems = [
     { href: '/', label: 'Blog', icon: <ArticleIcon /> },
@@ -242,72 +249,20 @@ export function Navigation() {
 
         {/* User section */}
         {isHydrated && username !== '' && (
-          <>
-            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', padding: '8px' }}>
-              {userItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="sidebar-item"
-                  onClick={() => setIsExpanded(false)}
-                  style={{ justifyContent: isExpanded ? 'flex-start' : 'center' }}
-                >
-                  <span style={{ fontSize: '22px' }}>{item.icon}</span>
-                  {isExpanded && <span>{item.label}</span>}
-                </Link>
-              ))}
-            </div>
-
-            {/* User profile at bottom */}
-            <div
-              style={{
-                padding: '16px',
-                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                justifyContent: isExpanded ? 'flex-start' : 'center',
-              }}
-            >
-              <img
-                src="/blank-profile-picture-973460_1280.webp"
-                alt="profile-pic"
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  border: '2px solid rgba(255, 255, 255, 0.3)',
-                  objectFit: 'cover',
-                  flexShrink: 0,
-                }}
-              />
-              {isExpanded && (
-                <div style={{ overflow: 'hidden' }}>
-                  <p style={{ color: 'white', fontWeight: 600, fontSize: '14px', margin: 0 }}>{username}</p>
-                  <button
-                    onClick={() => {
-                      setUsername('');
-                      window.location.href = '/login';
-                    }}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      padding: 0,
-                      marginTop: '2px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <ExitToAppIcon style={{ fontSize: '14px' }} /> Sign Out
-                  </button>
-                </div>
-              )}
-            </div>
-          </>
+          <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', padding: '8px' }}>
+            {userItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="sidebar-item"
+                onClick={() => setIsExpanded(false)}
+                style={{ justifyContent: isExpanded ? 'flex-start' : 'center' }}
+              >
+                <span style={{ fontSize: '22px' }}>{item.icon}</span>
+                {isExpanded && <span>{item.label}</span>}
+              </Link>
+            ))}
+          </div>
         )}
 
         {/* Login button when not authenticated */}
@@ -333,16 +288,17 @@ export function Navigation() {
         )}
       </div>
 
-      {/* Main content wrapper - adjusts left margin based on sidebar state */}
+      {/* Update CSS variable for content margin */}
       <div
         style={{
-          marginLeft: isExpanded ? '260px' : '64px',
-          transition: 'margin-left 0.3s ease',
-          minHeight: '100vh',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: isExpanded ? '260px' : '64px',
+          height: '1px',
+          pointerEvents: 'none',
         }}
-      >
-        {/* Content will be rendered here */}
-      </div>
+      />
     </>
   );
 }
