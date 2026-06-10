@@ -39,16 +39,18 @@ describe('session utilities', () => {
 
       (mockPrisma.session.create as jest.Mock).mockResolvedValue(mockSession);
 
-      const token = await createSession(userId);
+      const result = await createSession(userId);
 
       expect(mockPrisma.session.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           userId,
           token: 'mock-uuid-token',
+          csrfSecret: 'mock-uuid-token',
           expiresAt: expect.any(Date),
         }),
       });
-      expect(token).toBe('mock-uuid-token');
+      expect(result.token).toBe('mock-uuid-token');
+      expect(result.csrfSecret).toBe('mock-uuid-token');
     });
 
     it('should set expiry to 24 hours from now', async () => {
