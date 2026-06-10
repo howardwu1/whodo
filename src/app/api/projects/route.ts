@@ -1,7 +1,33 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { validateSession } from '@/lib/session';
+
+/**
+ * Get and validate session from request cookies.
+ * Returns userId if valid, null otherwise.
+ */
+async function getSessionUserId(request: Request): Promise<string | null> {
+  const cookieHeader = request.headers.get('cookie') ?? '';
+  const cookies = Object.fromEntries(
+    cookieHeader.split('; ').map(c => {
+      const [key, ...val] = c.split('=');
+      return [key, val.join('=')];
+    })
+  );
+  const sessionToken = cookies['whodo_session'];
+  return validateSession(sessionToken ?? '');
+}
 
 export async function GET(request: Request) {
+  // Check session - require auth for this protected route
+  const userId = await getSessionUserId(request);
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
   const username = searchParams.get('username');
 
@@ -56,6 +82,15 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  // Check session - require auth for this protected route
+  const userId = await getSessionUserId(request);
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await request.json();
 
