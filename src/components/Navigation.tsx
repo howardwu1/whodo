@@ -313,7 +313,7 @@ export function Navigation() {
         <nav style={{ flex: 1, padding: '16px 8px', overflowY: 'auto' }}>
           {navItems.map((item) => {
             return (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 className="sidebar-item"
@@ -321,7 +321,7 @@ export function Navigation() {
               >
                 <span style={{ fontSize: '22px' }}>{item.icon}</span>
                 {isExpanded && <span>{item.label}</span>}
-              </a>
+              </Link>
             );
           })}
         </nav>
