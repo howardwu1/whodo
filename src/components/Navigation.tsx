@@ -311,16 +311,15 @@ export function Navigation() {
         <nav style={{ flex: 1, padding: '16px 8px', overflowY: 'auto' }}>
           {navItems.map((item) => {
             return (
-              <Link
+              <a
                 key={item.href}
                 href={item.href}
                 className="sidebar-item"
-                onClick={() => setIsExpanded(false)}
-                style={{ justifyContent: isExpanded ? 'flex-start' : 'center' }}
+                style={{ justifyContent: isExpanded ? 'flex-start' : 'center', display: 'flex', cursor: 'pointer' }}
               >
                 <span style={{ fontSize: '22px' }}>{item.icon}</span>
                 {isExpanded && <span>{item.label}</span>}
-              </Link>
+              </a>
             );
           })}
         </nav>
