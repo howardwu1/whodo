@@ -1,10 +1,11 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import DashboardClient from './DashboardClient';
+import prisma from '@/lib/prisma';
 
 /**
  * Dashboard page server component.
- * Validates the session via /api/auth/me before rendering.
+ * Validates the session directly using Prisma before rendering.
  * This runs in Node.js runtime (not Edge) so Prisma is available.
  */
 export default async function DashboardPage() {
@@ -16,24 +17,19 @@ export default async function DashboardPage() {
     redirect('/');
   }
 
-  // Validate session by calling /api/auth/me
-  // This uses the actual session validation with Prisma
+  // Validate session directly using Prisma (no HTTP call needed in server component)
   let username: string | null = null;
   try {
-    // We need to call the API internally - create a request to /api/auth/me
-    // Since we're in a server component, we can use absolute URL or call directly
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const host = process.env.VERCEL_URL || process.env.AUTH_TRUST_HOST || 'localhost:3000';
-    const response = await fetch(`${protocol}://${host}/api/auth/me`, {
-      headers: {
-        Cookie: `whodo_session=${sessionToken}`,
-      },
-      cache: 'no-store',
+    const session = await prisma.session.findUnique({
+      where: { token: sessionToken },
     });
 
-    if (response.ok) {
-      const user = await response.json();
-      username = user.username;
+    if (session && session.expiresAt > new Date()) {
+      const user = await prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { username: true },
+      });
+      username = user?.username ?? null;
     }
   } catch (error) {
     console.error('Failed to validate session:', error);
