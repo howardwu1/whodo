@@ -12,13 +12,8 @@ const heartLogoSvg =
   'data:image/svg+xml,' +
   encodeURIComponent(
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">' +
-      '<defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">' +
-        '<stop offset="0%" style="stop-color:%23191970;stop-opacity:1"/>' +
-        '<stop offset="100%" style="stop-color:%23E91E63;stop-opacity:1"/>' +
-      '</linearGradient></defs>' +
-      '<path d="M50 85 C20 55, 10 35, 25 20 C40 5, 50 15, 50 25 C50 15, 60 5, 75 20 C90 35, 80 55, 50 85Z" fill="url(#grad)"/>' +
-      '<text x="35" y="58" font-family="Arial,sans-serif" font-size="28" font-weight="bold" fill="white">$</text>' +
-      '<text x="55" y="58" font-family="Arial,sans-serif" font-size="24" font-weight="bold" fill="white">?</text>' +
+      '<text x="18" y="72" font-family="Georgia,serif" font-size="65" font-weight="bold" fill="white" transform="rotate(-10 50 50)">$</text>' +
+      '<text x="48" y="72" font-family="Georgia,serif" font-size="65" font-weight="bold" fill="#FF69B4" transform="rotate(10 50 50)">?</text>' +
     '</svg>'
   );
 
@@ -37,10 +32,7 @@ export function Navigation() {
           font-weight: 700;
           font-size: 22px;
           letter-spacing: 0.5px;
-          background: linear-gradient(90deg, #191970, #E91E63);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          color: white;
         }
       `}</style>
       <nav className="navigation">
