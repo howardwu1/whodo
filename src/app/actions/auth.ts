@@ -17,19 +17,19 @@ export async function logout() {
     await deleteSession(sessionToken);
   }
 
-  // Clear the session cookie
+  // Clear the session cookie (matching attributes with login/register: sameSite=lax, no secure flag)
   cookieStore.set('whodo_session', '', {
     expires: new Date(0),
     path: '/',
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
   });
 
-  // Clear the CSRF cookie as well
+  // Clear the CSRF cookie as well (matching attributes with login/register: sameSite=lax)
   cookieStore.set('whodo_csrf', '', {
     expires: new Date(0),
     path: '/',
+    sameSite: 'lax',
   });
 
   // Redirect to login page
@@ -49,18 +49,18 @@ export async function clearSession() {
     await deleteSession(sessionToken);
   }
 
-  // Clear the session cookie
+  // Clear the session cookie (matching attributes with login/register: sameSite=lax, no secure flag)
   cookieStore.set('whodo_session', '', {
     expires: new Date(0),
     path: '/',
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict',
+    sameSite: 'lax',
   });
 
-  // Clear the CSRF cookie as well
+  // Clear the CSRF cookie as well (matching attributes with login/register: sameSite=lax)
   cookieStore.set('whodo_csrf', '', {
     expires: new Date(0),
     path: '/',
+    sameSite: 'lax',
   });
 }

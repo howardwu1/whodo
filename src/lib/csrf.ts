@@ -19,13 +19,14 @@ export function generateCsrfToken(): string {
 /**
  * Creates a CSRF cookie string for Set-Cookie header.
  * Not HttpOnly so JavaScript can read it for header inclusion.
+ * SameSite=Lax to match session cookie attributes.
  * 
  * @param token - The CSRF token to set
  * @returns Formatted Set-Cookie string
  */
 export function createCsrfCookie(token: string): string {
   const maxAge = 24 * 60 * 60; // 24 hours in seconds
-  return `whodo_csrf=${token}; Path=/; Max-Age=${maxAge}`;
+  return `whodo_csrf=${token}; Path=/; SameSite=Lax; Max-Age=${maxAge}`;
 }
 
 /**

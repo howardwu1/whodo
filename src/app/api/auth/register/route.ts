@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import { createSession } from '@/lib/session';
-import { createCsrfCookie } from '@/lib/csrf';
 import { checkRegisterLimit, recordFailedRegister } from '@/lib/rateLimit';
 
 export async function POST(request: Request) {
@@ -58,19 +58,29 @@ export async function POST(request: Request) {
     // Create session and get token and csrfSecret
     const { token: sessionToken, csrfSecret } = await createSession(user.id);
 
+    // Set cookies using Next.js cookies() API for consistent attributes
+    const cookieStore = await cookies();
+
+    // Set session cookie (HttpOnly, SameSite=Lax, Path=/, MaxAge=86400)
+    cookieStore.set('whodo_session', sessionToken, {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 86400,
+    });
+
+    // Set CSRF cookie (not HttpOnly so JS can read it, SameSite=Lax, Path=/, MaxAge=86400)
+    cookieStore.set('whodo_csrf', csrfSecret, {
+      path: '/',
+      sameSite: 'lax',
+      maxAge: 86400,
+    });
+
     // Create response with user data
     const response = NextResponse.json(
       { id: user.id, username: user.username, email: user.email },
       { status: 201 }
     );
-
-    // Set session cookie (HttpOnly, SameSite=Lax)
-    // SameSite=Lax is less restrictive than Strict - allows cookie on normal navigation
-    const sessionCookie = `whodo_session=${sessionToken}; HttpOnly; SameSite=Lax; Max-Age=${24 * 60 * 60}`;
-    response.headers.set('Set-Cookie', sessionCookie);
-
-    // Set CSRF cookie (not HttpOnly so JS can read it)
-    response.headers.append('Set-Cookie', createCsrfCookie(csrfSecret));
 
     return response;
   } catch (error) {
