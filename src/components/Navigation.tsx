@@ -218,7 +218,7 @@ export function Navigation() {
         </div>
       )}
 
-      {/* Login icon - top right (not authenticated) */}
+      {/* Login button - top right (not authenticated) */}
       {isHydrated && username === '' && (
         <Link
           href="/login"
@@ -227,21 +227,18 @@ export function Navigation() {
             top: '16px',
             right: '16px',
             zIndex: 1000,
-            width: '44px',
-            height: '44px',
-            borderRadius: '50%',
-            background: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            color: '#191970',
+            padding: '10px 20px',
+            background: 'linear-gradient(90deg, #191970, #FF69B4)',
+            borderRadius: '10px',
+            color: 'white',
             textDecoration: 'none',
+            fontWeight: 600,
+            fontSize: '14px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            fontFamily: "'Outfit', sans-serif",
           }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-          </svg>
+          Sign In
         </Link>
       )}
 
