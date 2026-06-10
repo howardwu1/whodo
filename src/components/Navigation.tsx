@@ -45,7 +45,7 @@ export function Navigation() {
 
   const navItems = [
     { href: '/', label: 'Blog', icon: <ArticleIcon /> },
-    { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon />, requiresAuth: true },
+    { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
     { href: '/contact', label: 'Contact', icon: <ContactPageIcon /> },
   ];
 
@@ -310,7 +310,6 @@ export function Navigation() {
         {/* Nav items */}
         <nav style={{ flex: 1, padding: '16px 8px', overflowY: 'auto' }}>
           {navItems.map((item) => {
-            if (item.requiresAuth && (!isHydrated || username === '')) return null;
             return (
               <Link
                 key={item.href}

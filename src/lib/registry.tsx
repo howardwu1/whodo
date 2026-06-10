@@ -57,6 +57,13 @@ export default function ThemeRegistry({ children }: { children: React.ReactNode 
     fetchUserFromSession();
   }, []);
 
+  // Re-fetch session whenever username changes (e.g., after login)
+  useEffect(() => {
+    if (username !== '') {
+      setIsHydrated(true);
+    }
+  }, [username]);
+
   // setUsername now just updates local state - session is server-side
   const setUsername = (value: string) => {
     setUsernameState(value);
