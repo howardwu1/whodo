@@ -247,10 +247,10 @@ export async function DELETE(request: Request) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const projectId = searchParams.get('projectId');
+    const projectId = searchParams.get('id');
 
     if (!projectId) {
-      return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Project ID is required' }, { status: 400 });
     }
 
     // Check project ownership - only the owner can delete
@@ -274,7 +274,7 @@ export async function DELETE(request: Request) {
       where: { id: projectId }
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Error deleting project:', error);
     return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
