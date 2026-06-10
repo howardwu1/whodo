@@ -41,6 +41,7 @@ export default function DashboardClient({ username }: DashboardClientProps) {
   const calcProjectHealth = (projectIndex: number) => {
     const proj = projects[projectIndex];
     if (!proj) return 'green';
+    if (proj.velocity.length === 0) return 'green';
     const lastVelocity = proj.velocity[proj.velocity.length - 1];
     const gap = pointsGap(projectIndex);
     if (gap <= lastVelocity) return 'green';
