@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
 
 function BlogArticle() {
   return (
@@ -99,14 +98,23 @@ export default function Blog() {
                 { text: '"WhoDo" We Look To Mentor', href: '#' },
               ]}
             />
-            <Button
-              variant="contained"
-              fullWidth
-              className="!mt-4 !bg-indigo-600 hover:!bg-indigo-700 !rounded-lg"
+            <Link
               href="/register"
+              style={{
+                display: 'block',
+                marginTop: '16px',
+                padding: '12px',
+                background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
+                borderRadius: '12px',
+                color: 'white',
+                textAlign: 'center',
+                textDecoration: 'none',
+                fontWeight: 600,
+                fontSize: '14px',
+              }}
             >
               Get Started
-            </Button>
+            </Link>
           </Box>
         </Box>
       </Box>
