@@ -6,8 +6,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ArticleIcon from '@mui/icons-material/Article';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
-import PersonIcon from '@mui/icons-material/Person';
-import AssessmentIcon from '@mui/icons-material/Assessment';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAppContext } from '@/lib/registry';
 import { useState, useEffect } from 'react';
@@ -38,11 +36,6 @@ export function Navigation() {
     { href: '/', label: 'Blog', icon: <ArticleIcon /> },
     { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon />, requiresAuth: true },
     { href: '/contact', label: 'Contact', icon: <ContactPageIcon /> },
-  ];
-
-  const userItems = [
-    { href: '/profile', label: 'Profile', icon: <PersonIcon /> },
-    { href: '/reports', label: 'Reports', icon: <AssessmentIcon /> },
   ];
 
   return (
@@ -246,24 +239,6 @@ export function Navigation() {
             );
           })}
         </nav>
-
-        {/* User section */}
-        {isHydrated && username !== '' && (
-          <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', padding: '8px' }}>
-            {userItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="sidebar-item"
-                onClick={() => setIsExpanded(false)}
-                style={{ justifyContent: isExpanded ? 'flex-start' : 'center' }}
-              >
-                <span style={{ fontSize: '22px' }}>{item.icon}</span>
-                {isExpanded && <span>{item.label}</span>}
-              </Link>
-            ))}
-          </div>
-        )}
 
         {/* Login button when not authenticated */}
         {isHydrated && username === '' && (
