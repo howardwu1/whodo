@@ -130,6 +130,7 @@ function StoriesColumn({
 
   const saveTitle = async (story: Story) => {
     if (editingTitle.trim() && editingTitle !== story.title) {
+      const csrfToken = getCsrfToken();
       const updated = localStoryList.map(s =>
         s.id === story.id ? { ...s, title: editingTitle.trim() } : s
       );
@@ -141,7 +142,10 @@ function StoriesColumn({
         try {
           await fetch('/api/stories', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'x-csrf-token': csrfToken,
+            },
             body: JSON.stringify({ id: story.dbId, title: editingTitle.trim() }),
           });
         } catch (error) {
@@ -155,6 +159,7 @@ function StoriesColumn({
 
   // Helper to update story locally and in database
   const updateStory = async (story: Story, updates: Partial<Story>) => {
+    const csrfToken = getCsrfToken();
     const updated = localStoryList.map(s =>
       s.id === story.id ? { ...s, ...updates } : s
     );
@@ -165,13 +170,28 @@ function StoriesColumn({
       try {
         await fetch('/api/stories', {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken,
+          },
           body: JSON.stringify({ id: story.dbId, ...updates }),
         });
       } catch (error) {
         console.error('Error updating story:', error);
       }
     }
+  };
+
+  // Helper to get CSRF token from cookies
+  const getCsrfToken = (): string => {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split('=');
+      if (name === 'whodo_csrf') {
+        return value;
+      }
+    }
+    return '';
   };
 
   return (
@@ -476,12 +496,28 @@ export default function ProjectPage() {
         const data = await res.json();
 
         if (data.length === 0) {
+          // Helper to get CSRF token from cookies
+          const getCsrfToken = (): string => {
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+              const [name, value] = cookie.trim().split('=');
+              if (name === 'whodo_csrf') {
+                return value;
+              }
+            }
+            return '';
+          };
+          const csrfToken = getCsrfToken();
+          const csrfHeaders = {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrfToken,
+          };
           // Seed default stories
           const currentIteration = await Promise.all(
             defaultStories.map(s => 
               fetch('/api/stories', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'current_iteration' }),
               }).then(r => r.json())
             )
@@ -490,7 +526,7 @@ export default function ProjectPage() {
             iceboxDefaultStories.map(s =>
               fetch('/api/stories', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'icebox' }),
               }).then(r => r.json())
             )
@@ -499,7 +535,7 @@ export default function ProjectPage() {
             doneDefaultStories.map(s =>
               fetch('/api/stories', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: csrfHeaders,
                 body: JSON.stringify({ ...s, projectId, status: 'done' }),
               }).then(r => r.json())
             )
