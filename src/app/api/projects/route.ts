@@ -58,8 +58,49 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const username = searchParams.get('username');
+  const projectId = searchParams.get('projectId');
 
   try {
+    // If projectId is provided, fetch a single project
+    if (projectId) {
+      const project = await prisma.project.findUnique({
+        where: { id: projectId },
+        include: {
+          stories: true,
+          members: {
+            include: {
+              user: { select: { id: true, username: true, email: true } }
+            }
+          }
+        },
+      });
+
+      if (!project) {
+        return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+      }
+
+      // Fetch the owner username separately since Project has userId but not user relation
+      const owner = await prisma.user.findUnique({
+        where: { id: project.userId },
+        select: { username: true }
+      });
+
+      return NextResponse.json({
+        project: {
+          id: project.id,
+          name: project.name,
+          createdAt: project.createdAt,
+          userId: project.userId,
+          ownerUsername: owner?.username ?? 'Unknown',
+          velocity: project.velocity as number[],
+          target: project.target as number[],
+          health: project.health,
+          isPrivate: project.isPrivate,
+          isFavorite: project.isFavorite,
+        }
+      });
+    }
+
     let projects;
 
     if (username) {
@@ -182,5 +223,60 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error creating project:', error);
     return NextResponse.json({ error: 'Failed to create project' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  // Check session - require auth for this protected route
+  const userId = await getSessionUserId(request);
+  if (!userId) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  // Validate CSRF token
+  const isValidCsrf = await validateCsrf(request);
+  if (!isValidCsrf) {
+    return NextResponse.json(
+      { error: 'CSRF token missing or invalid' },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const { searchParams } = new URL(request.url);
+    const projectId = searchParams.get('projectId');
+
+    if (!projectId) {
+      return NextResponse.json({ error: 'projectId is required' }, { status: 400 });
+    }
+
+    // Check project ownership - only the owner can delete
+    const project = await prisma.project.findUnique({
+      where: { id: projectId }
+    });
+
+    if (!project) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    }
+
+    if (project.userId !== userId) {
+      return NextResponse.json(
+        { error: 'Only the project owner can delete this project' },
+        { status: 403 }
+      );
+    }
+
+    // Delete the project (cascades to stories and members due to onDelete: Cascade)
+    await prisma.project.delete({
+      where: { id: projectId }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }
