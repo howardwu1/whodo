@@ -5,12 +5,7 @@
 body {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
   min-height: 100vh;
-  margin-left: 64px;
   transition: margin-left 0.3s ease;
-}
-
-body.sidebar-expanded {
-  margin-left: 260px;
 }
 
 /* Navigation */

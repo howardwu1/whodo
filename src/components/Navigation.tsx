@@ -22,7 +22,10 @@ const heartLogoSvg =
 
 export function Navigation() {
   const { username, setUsername } = useAppContext();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const collapsedWidth = 64;
+  const expandedWidth = typeof window !== 'undefined' ? Math.floor(window.innerWidth * (2/3)) : 520;
   const [isHydrated, setIsHydrated] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -32,11 +35,11 @@ export function Navigation() {
 
   useEffect(() => {
     if (isExpanded) {
-      document.body.classList.add('sidebar-expanded');
+      document.body.style.marginLeft = expandedWidth + 'px';
     } else {
-      document.body.classList.remove('sidebar-expanded');
+      document.body.style.marginLeft = collapsedWidth + 'px';
     }
-  }, [isExpanded]);
+  }, [isExpanded, expandedWidth, collapsedWidth]);
 
   const navItems = [
     { href: '/', label: 'Blog', icon: <ArticleIcon /> },
@@ -99,7 +102,7 @@ export function Navigation() {
         style={{
           position: 'fixed',
           top: '16px',
-          left: isExpanded ? '276px' : '80px',
+          left: isExpanded ? expandedWidth + 16 : '80px',
           zIndex: 1001,
           background: 'white',
           border: 'none',
@@ -250,7 +253,7 @@ export function Navigation() {
             position: 'fixed',
             top: 0,
             left: 0,
-            width: '64px',
+            width: collapsedWidth,
             height: '100vh',
             background: 'linear-gradient(180deg, #191970 0%, #0f0f4a 100%)',
             zIndex: 999,
@@ -265,7 +268,7 @@ export function Navigation() {
           position: 'fixed',
           top: 0,
           left: 0,
-          width: isExpanded ? '260px' : '64px',
+          width: isExpanded ? expandedWidth : collapsedWidth,
           height: '100vh',
           background: 'linear-gradient(180deg, #191970 0%, #0f0f4a 100%)',
           zIndex: 1000,
@@ -285,6 +288,7 @@ export function Navigation() {
             gap: '12px',
             borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
             justifyContent: isExpanded ? 'flex-start' : 'center',
+            minHeight: '76px',
           }}
         >
           <img
