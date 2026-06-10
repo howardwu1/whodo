@@ -43,11 +43,13 @@ export function Navigation() {
     }
   }, [isExpanded, expandedWidth, collapsedWidth]);
 
-  const navItems = [
+  const allNavItems = [
     { href: '/', label: 'Blog', icon: <ArticleIcon /> },
-    { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+    { href: '/dashboard', label: 'Dashboard', icon: <DashboardIcon />, requiresAuth: true },
     { href: '/contact', label: 'Contact', icon: <ContactPageIcon /> },
   ];
+
+  const navItems = allNavItems.filter(item => !item.requiresAuth || username !== '');
 
   return (
     <>
