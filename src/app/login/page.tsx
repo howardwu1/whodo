@@ -193,6 +193,7 @@ export default function Login() {
 
                 <button
                   type="submit"
+                  className="btn-gradient-pill"
                   style={{
                     width: '100%',
                     padding: '14px',
@@ -289,6 +290,7 @@ export default function Login() {
 
                     <button
                       type="submit"
+                      className="btn-gradient-pill"
                       style={{
                         width: '100%',
                         padding: '14px',

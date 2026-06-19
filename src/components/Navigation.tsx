@@ -153,17 +153,6 @@ export function Navigation() {
           outline: 2px solid #FF69B4;
           outline-offset: 3px;
         }
-        .signin-btn {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .signin-btn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 6px 18px rgba(25, 25, 112, 0.35);
-        }
-        .signin-btn:focus-visible {
-          outline: 2px solid #FF69B4;
-          outline-offset: 3px;
-        }
         @keyframes dropdownFadeIn {
           from { opacity: 0; transform: translateX(-8px); }
           to { opacity: 1; transform: translateX(0); }
@@ -404,7 +393,7 @@ export function Navigation() {
           <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
             <Link
               href="/login"
-              className="signin-btn"
+              className="btn-gradient-pill"
               style={
                 isExpanded
                   ? {
@@ -419,7 +408,6 @@ export function Navigation() {
                       textDecoration: 'none',
                       fontWeight: 600,
                       fontSize: '14px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                       fontFamily: "'Outfit', sans-serif",
                     }
                   : {
@@ -432,7 +420,6 @@ export function Navigation() {
                       background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
                       borderRadius: '50%',
                       color: 'white',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                     }
               }
             >

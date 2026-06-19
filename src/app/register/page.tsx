@@ -280,6 +280,7 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isSubmitting}
+                className="btn-gradient-pill"
                 style={{
                   width: '100%',
                   padding: '14px',

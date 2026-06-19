@@ -100,6 +100,7 @@ export default function Blog() {
             />
             <Link
               href="/register"
+              className="btn-gradient-pill"
               style={{
                 display: 'block',
                 marginTop: '16px',

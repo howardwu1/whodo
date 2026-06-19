@@ -8,6 +8,29 @@ body {
   transition: margin-left 0.3s ease;
 }
 
+/* Gradient pill button highlight (Sign In, Get Started, etc.) */
+.btn-gradient-pill {
+  box-shadow: 0 4px 12px rgba(25, 25, 112, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.3s ease, filter 0.2s ease;
+}
+.btn-gradient-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(255, 105, 180, 0.45), 0 4px 12px rgba(25, 25, 112, 0.35);
+  filter: brightness(1.06);
+}
+.btn-gradient-pill:active {
+  transform: translateY(0) scale(0.98);
+}
+.btn-gradient-pill:focus-visible {
+  outline: 2px solid #FF69B4;
+  outline-offset: 3px;
+}
+.btn-gradient-pill:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 12px rgba(25, 25, 112, 0.15);
+  filter: none;
+}
+
 /* Navigation */
 .navigation {
   @apply flex items-center bg-[#191970] h-[50px] w-full;
