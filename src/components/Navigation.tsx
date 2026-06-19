@@ -8,6 +8,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import ContactPageIcon from '@mui/icons-material/ContactPage';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LoginIcon from '@mui/icons-material/Login';
 import { useAppContext } from '@/lib/registry';
 import { logout } from '@/app/actions/auth';
 import { useState, useEffect, useRef } from 'react';
@@ -30,7 +31,9 @@ export function Navigation() {
   const expandedWidth = Math.floor(originalWidth * (2/3));
   const [isHydrated, setIsHydrated] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ left: number; bottom: number } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsHydrated(true);
@@ -46,6 +49,19 @@ export function Navigation() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [userMenuOpen]);
+
+  const toggleUserMenu = () => {
+    if (userMenuOpen) {
+      setUserMenuOpen(false);
+      return;
+    }
+    const el = menuButtonRef.current;
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      setMenuPos({ left: rect.right + 8, bottom: window.innerHeight - rect.bottom });
+    }
+    setUserMenuOpen(true);
+  };
 
   useEffect(() => {
     if (isExpanded) {
@@ -102,19 +118,12 @@ export function Navigation() {
         .sidebar-item svg {
           flex-shrink: 0;
         }
+        .sidebar-item:focus-visible {
+          outline: 2px solid #FF69B4;
+          outline-offset: 2px;
+        }
         .user-menu-item:hover {
           background-color: #f5f5f5;
-        }
-        .profile-avatar {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .profile-avatar:hover {
-          transform: scale(1.05);
-          box-shadow: 0 6px 18px rgba(25, 25, 112, 0.35);
-        }
-        .profile-avatar:focus-visible {
-          outline: 2px solid #FF69B4;
-          outline-offset: 3px;
         }
         .sidebar-toggle-btn {
           transition: left 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
@@ -138,14 +147,17 @@ export function Navigation() {
           outline-offset: 3px;
         }
         @keyframes dropdownFadeIn {
-          from { opacity: 0; transform: translateY(-8px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateX(-8px); }
+          to { opacity: 1; transform: translateX(0); }
         }
       `}</style>
 
       {/* Toggle button - attached to sidebar edge */}
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          setUserMenuOpen(false);
+          setIsExpanded(!isExpanded);
+        }}
         aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
         className="sidebar-toggle-btn"
         style={{
@@ -171,158 +183,6 @@ export function Navigation() {
       >
         {isExpanded ? <CloseIcon style={{ fontSize: '18px' }} /> : <MenuIcon style={{ fontSize: '18px' }} />}
       </button>
-
-      {/* Top app-bar divider - ties the corner controls together */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: 'fixed',
-          top: '64px',
-          left: isExpanded ? expandedWidth : collapsedWidth,
-          right: 0,
-          height: '1px',
-          background: 'rgba(0, 0, 0, 0.06)',
-          zIndex: 999,
-          pointerEvents: 'none',
-        }}
-      />
-
-      {/* User icon - top right (authenticated) */}
-      {isHydrated && username !== '' && (
-        <div ref={menuRef} style={{ position: 'fixed', top: '16px', right: '16px', zIndex: 1000 }}>
-          <div
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setUserMenuOpen(!userMenuOpen);
-              }
-              if (e.key === 'Escape') setUserMenuOpen(false);
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label="Open user menu"
-            aria-expanded={userMenuOpen}
-            className="profile-avatar"
-            style={{
-              width: '50px',
-              height: '50px',
-              borderRadius: '50%',
-              padding: '3px',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxSizing: 'border-box',
-            }}
-          >
-            <img
-              src="/blank-profile-picture-973460_1280.webp"
-              alt="User profile"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                borderRadius: '50%',
-                border: '2px solid white',
-              }}
-            />
-          </div>
-
-          {/* User dropdown menu */}
-          {userMenuOpen && (
-            <div
-              style={{
-                position: 'absolute',
-                top: '56px',
-                right: 0,
-                background: 'white',
-                borderRadius: '12px',
-                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
-                minWidth: '180px',
-                overflow: 'hidden',
-                animation: 'dropdownFadeIn 0.15s ease-out',
-              }}
-            >
-                <Link
-                  href="/profile"
-                  className="user-menu-item"
-                  onClick={() => setUserMenuOpen(false)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '14px 16px',
-                    textDecoration: 'none',
-                    color: '#333',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                  }}
-                >
-                  <PersonIcon style={{ color: '#191970', fontSize: '20px' }} />
-                  Profile
-                </Link>
-                <div style={{ height: '1px', backgroundColor: '#eee' }} />
-                <button
-                  onClick={async () => {
-                    setUserMenuOpen(false);
-                    try {
-                      await logout();
-                    } catch {
-                      // If logout() fails or redirect doesn't work, do hard redirect
-                      window.location.href = '/login';
-                    }
-                  }}
-                  className="user-menu-item"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '14px 16px',
-                    width: '100%',
-                    border: 'none',
-                    background: 'none',
-                    textAlign: 'left',
-                    color: '#d32f2f',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <LogoutIcon style={{ fontSize: '20px' }} />
-                  Sign Out
-                </button>
-              </div>
-          )}
-        </div>
-      )}
-
-      {/* Login button - top right (not authenticated) */}
-      {isHydrated && username === '' && (
-        <Link
-          href="/login"
-          className="signin-btn"
-          style={{
-            position: 'fixed',
-            top: '16px',
-            right: '16px',
-            zIndex: 1000,
-            padding: '10px 20px',
-            background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
-            borderRadius: '10px',
-            color: 'white',
-            textDecoration: 'none',
-            fontWeight: 600,
-            fontSize: '14px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            fontFamily: "'Outfit', sans-serif",
-          }}
-        >
-          Sign In
-        </Link>
-      )}
 
       {/* Sidebar overlay when collapsed */}
       {!isExpanded && (
@@ -401,6 +261,175 @@ export function Navigation() {
             );
           })}
         </nav>
+
+        {/* Account area - bottom of sidebar (authenticated) */}
+        {isHydrated && username !== '' && (
+          <div ref={menuRef} style={{ padding: '12px 8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <div
+              ref={menuButtonRef}
+              onClick={toggleUserMenu}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  toggleUserMenu();
+                }
+                if (e.key === 'Escape') setUserMenuOpen(false);
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label="Open user menu"
+              aria-expanded={userMenuOpen}
+              className="sidebar-item"
+              style={{
+                justifyContent: isExpanded ? 'flex-start' : 'center',
+                display: 'flex',
+                cursor: 'pointer',
+              }}
+            >
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  padding: '2px',
+                  background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  boxSizing: 'border-box',
+                }}
+              >
+                <img
+                  src="/blank-profile-picture-973460_1280.webp"
+                  alt="User profile"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%',
+                    border: '1.5px solid white',
+                  }}
+                />
+              </div>
+              {isExpanded && (
+                <span style={{ color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {username}
+                </span>
+              )}
+            </div>
+
+            {/* User dropdown menu - fixed so it escapes the sidebar's overflow:hidden */}
+            {userMenuOpen && menuPos && (
+              <div
+                style={{
+                  position: 'fixed',
+                  left: menuPos.left,
+                  bottom: menuPos.bottom,
+                  background: 'white',
+                  borderRadius: '12px',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.2)',
+                  minWidth: '180px',
+                  overflow: 'hidden',
+                  animation: 'dropdownFadeIn 0.15s ease-out',
+                  zIndex: 1002,
+                }}
+              >
+                <Link
+                  href="/profile"
+                  className="user-menu-item"
+                  onClick={() => setUserMenuOpen(false)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '14px 16px',
+                    textDecoration: 'none',
+                    color: '#333',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                  }}
+                >
+                  <PersonIcon style={{ color: '#191970', fontSize: '20px' }} />
+                  Profile
+                </Link>
+                <div style={{ height: '1px', backgroundColor: '#eee' }} />
+                <button
+                  onClick={async () => {
+                    setUserMenuOpen(false);
+                    try {
+                      await logout();
+                    } catch {
+                      // If logout() fails or redirect doesn't work, do hard redirect
+                      window.location.href = '/login';
+                    }
+                  }}
+                  className="user-menu-item"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '14px 16px',
+                    width: '100%',
+                    border: 'none',
+                    background: 'none',
+                    textAlign: 'left',
+                    color: '#d32f2f',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  <LogoutIcon style={{ fontSize: '20px' }} />
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Sign In CTA - bottom of sidebar (not authenticated) */}
+        {isHydrated && username === '' && (
+          <div style={{ padding: '12px 8px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+            <Link
+              href="/login"
+              className="signin-btn"
+              style={
+                isExpanded
+                  ? {
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '12px 16px',
+                      background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
+                      borderRadius: '12px',
+                      color: 'white',
+                      textDecoration: 'none',
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                      fontFamily: "'Outfit', sans-serif",
+                    }
+                  : {
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '40px',
+                      height: '40px',
+                      margin: '0 auto',
+                      background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
+                      borderRadius: '50%',
+                      color: 'white',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    }
+              }
+            >
+              <LoginIcon style={{ fontSize: isExpanded ? '20px' : '22px' }} />
+              {isExpanded && <span>Sign In</span>}
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Update CSS variable for content margin */}
