@@ -126,14 +126,32 @@ export function Navigation() {
           background-color: #f5f5f5;
         }
         .sidebar-toggle-btn {
-          transition: left 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+          background: linear-gradient(135deg, #191970 0%, #FF69B4 100%);
+          color: white;
+          border: none;
+          border-radius: 50%;
+          box-shadow: 0 4px 14px rgba(25, 25, 112, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+          transition: left 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        .sidebar-toggle-btn.is-collapsed {
+          box-shadow: 0 4px 14px rgba(255, 105, 180, 0.45), 0 0 0 2px rgba(255, 105, 180, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.4);
         }
         .sidebar-toggle-btn:hover {
-          transform: scale(1.05);
+          transform: scale(1.08);
+          box-shadow: 0 8px 24px rgba(255, 105, 180, 0.6), 0 2px 8px rgba(25, 25, 112, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+        .sidebar-toggle-btn:active {
+          transform: scale(0.94);
+        }
+        .sidebar-toggle-btn svg {
+          transition: transform 0.3s ease;
+        }
+        .sidebar-toggle-btn:hover svg {
+          transform: rotate(90deg);
         }
         .sidebar-toggle-btn:focus-visible {
           outline: 2px solid #FF69B4;
-          outline-offset: 2px;
+          outline-offset: 3px;
         }
         .signin-btn {
           transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -159,25 +177,18 @@ export function Navigation() {
           setIsExpanded(!isExpanded);
         }}
         aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
-        className="sidebar-toggle-btn"
+        className={`sidebar-toggle-btn${isExpanded ? '' : ' is-collapsed'}`}
         style={{
           position: 'fixed',
           top: '16px',
           left: isExpanded ? expandedWidth - 18 : collapsedWidth - 18,
           zIndex: 1001,
-          background: 'white',
-          border: 'none',
-          borderRadius: '8px',
           width: '36px',
           height: '36px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: isExpanded
-            ? '0 2px 8px rgba(0, 0, 0, 0.15)'
-            : '0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(255, 105, 180, 0.4)',
-          color: isExpanded ? '#191970' : '#FF69B4',
           padding: 0,
         }}
       >
