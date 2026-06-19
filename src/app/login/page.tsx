@@ -119,6 +119,9 @@ export default function Login() {
                   <input
                     {...register('name', { required: true })}
                     placeholder="Enter your username or email"
+                    spellCheck={false}
+                    autoCapitalize="off"
+                    autoCorrect="off"
                     onClick={() => { clearErrors('signin'); setGlobalError(''); }}
                     style={{
                       width: '100%',
@@ -268,6 +271,9 @@ export default function Login() {
                       <input
                         {...register('name', { required: true })}
                         placeholder="Enter your username or email"
+                        spellCheck={false}
+                        autoCapitalize="off"
+                        autoCorrect="off"
                         style={{
                           width: '100%',
                           padding: '14px 16px',

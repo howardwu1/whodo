@@ -122,6 +122,9 @@ export default function Register() {
                     minLength: { value: 3, message: 'Username must be at least 3 characters' },
                   })}
                   placeholder="Choose a username"
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
                   style={{
                     width: '100%',
                     padding: '14px 16px',
@@ -164,6 +167,9 @@ export default function Register() {
                   })}
                   type="email"
                   placeholder="your@email.com"
+                  spellCheck={false}
+                  autoCapitalize="off"
+                  autoCorrect="off"
                   style={{
                     width: '100%',
                     padding: '14px 16px',
