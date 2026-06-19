@@ -10,7 +10,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAppContext } from '@/lib/registry';
 import { logout } from '@/app/actions/auth';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const heartLogoSvg =
   'data:image/svg+xml,' +
@@ -30,10 +30,22 @@ export function Navigation() {
   const expandedWidth = Math.floor(originalWidth * (2/3));
   const [isHydrated, setIsHydrated] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [userMenuOpen]);
 
   useEffect(() => {
     if (isExpanded) {
@@ -93,6 +105,38 @@ export function Navigation() {
         .user-menu-item:hover {
           background-color: #f5f5f5;
         }
+        .profile-avatar {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .profile-avatar:hover {
+          transform: scale(1.05);
+          box-shadow: 0 6px 18px rgba(25, 25, 112, 0.35);
+        }
+        .profile-avatar:focus-visible {
+          outline: 2px solid #FF69B4;
+          outline-offset: 3px;
+        }
+        .sidebar-toggle-btn {
+          transition: left 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .sidebar-toggle-btn:hover {
+          transform: scale(1.05);
+        }
+        .sidebar-toggle-btn:focus-visible {
+          outline: 2px solid #FF69B4;
+          outline-offset: 2px;
+        }
+        .signin-btn {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .signin-btn:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 18px rgba(25, 25, 112, 0.35);
+        }
+        .signin-btn:focus-visible {
+          outline: 2px solid #FF69B4;
+          outline-offset: 3px;
+        }
         @keyframes dropdownFadeIn {
           from { opacity: 0; transform: translateY(-8px); }
           to { opacity: 1; transform: translateY(0); }
@@ -102,7 +146,8 @@ export function Navigation() {
       {/* Toggle button - attached to sidebar edge */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="sidebar-toggle"
+        aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
+        className="sidebar-toggle-btn"
         style={{
           position: 'fixed',
           top: '16px',
@@ -117,64 +162,90 @@ export function Navigation() {
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-          transition: 'left 0.3s ease',
-          color: '#191970',
+          boxShadow: isExpanded
+            ? '0 2px 8px rgba(0, 0, 0, 0.15)'
+            : '0 2px 8px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(255, 105, 180, 0.4)',
+          color: isExpanded ? '#191970' : '#FF69B4',
           padding: 0,
         }}
       >
         {isExpanded ? <CloseIcon style={{ fontSize: '18px' }} /> : <MenuIcon style={{ fontSize: '18px' }} />}
       </button>
 
+      {/* Top app-bar divider - ties the corner controls together */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top: '64px',
+          left: isExpanded ? expandedWidth : collapsedWidth,
+          right: 0,
+          height: '1px',
+          background: 'rgba(0, 0, 0, 0.06)',
+          zIndex: 999,
+          pointerEvents: 'none',
+        }}
+      />
+
       {/* User icon - top right (authenticated) */}
       {isHydrated && username !== '' && (
-        <div style={{ position: 'fixed', top: '16px', right: '16px', zIndex: 1000 }}>
+        <div ref={menuRef} style={{ position: 'fixed', top: '16px', right: '16px', zIndex: 1000 }}>
           <div
             onClick={() => setUserMenuOpen(!userMenuOpen)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setUserMenuOpen(!userMenuOpen);
+              }
+              if (e.key === 'Escape') setUserMenuOpen(false);
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label="Open user menu"
+            aria-expanded={userMenuOpen}
+            className="profile-avatar"
             style={{
-              width: '44px',
-              height: '44px',
+              width: '50px',
+              height: '50px',
               borderRadius: '50%',
-              overflow: 'hidden',
+              padding: '3px',
               cursor: 'pointer',
               boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-              border: userMenuOpen ? '3px solid #FF69B4' : '2px solid white',
+              background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxSizing: 'border-box',
             }}
           >
             <img
               src="/blank-profile-picture-973460_1280.webp"
               alt="User profile"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                borderRadius: '50%',
+                border: '2px solid white',
+              }}
             />
           </div>
 
           {/* User dropdown menu */}
           {userMenuOpen && (
-            <>
-              <div
-                onClick={() => setUserMenuOpen(false)}
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  zIndex: -1,
-                }}
-              />
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '52px',
-                  right: 0,
-                  background: 'white',
-                  borderRadius: '12px',
-                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
-                  minWidth: '180px',
-                  overflow: 'hidden',
-                  animation: 'dropdownFadeIn 0.15s ease-out',
-                }}
-              >
+            <div
+              style={{
+                position: 'absolute',
+                top: '56px',
+                right: 0,
+                background: 'white',
+                borderRadius: '12px',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                minWidth: '180px',
+                overflow: 'hidden',
+                animation: 'dropdownFadeIn 0.15s ease-out',
+              }}
+            >
                 <Link
                   href="/profile"
                   className="user-menu-item"
@@ -224,7 +295,6 @@ export function Navigation() {
                   Sign Out
                 </button>
               </div>
-            </>
           )}
         </div>
       )}
@@ -233,13 +303,14 @@ export function Navigation() {
       {isHydrated && username === '' && (
         <Link
           href="/login"
+          className="signin-btn"
           style={{
             position: 'fixed',
             top: '16px',
             right: '16px',
             zIndex: 1000,
             padding: '10px 20px',
-            background: 'linear-gradient(90deg, #191970, #FF69B4)',
+            background: 'linear-gradient(135deg, #191970 0%, #FF69B4 100%)',
             borderRadius: '10px',
             color: 'white',
             textDecoration: 'none',
